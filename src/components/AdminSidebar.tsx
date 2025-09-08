@@ -1,0 +1,621 @@
+import {
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Icon,
+  useColorModeValue,
+  Collapse,
+  useDisclosure,
+  Button,
+  Divider,
+  Badge,
+  Tooltip,
+  IconButton,
+  useToast,
+  SimpleGrid,
+} from '@chakra-ui/react';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  SettingsIcon,
+  ViewIcon,
+  EditIcon,
+  DeleteIcon,
+  AddIcon,
+  InfoIcon,
+  WarningIcon,
+  CheckIcon,
+  CloseIcon,
+  ExternalLinkIcon,
+  RepeatIcon,
+  DownloadIcon,
+  SearchIcon,
+  BellIcon,
+  StarIcon,
+  TimeIcon,
+  CalendarIcon,
+  TriangleUpIcon,
+  TriangleDownIcon,
+  LockIcon,
+  UnlockIcon,
+  PhoneIcon,
+  EmailIcon,
+  AttachmentIcon,
+  CopyIcon,
+  HamburgerIcon,
+  CloseButton,
+} from '@chakra-ui/icons';
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+
+interface SidebarItemProps {
+  icon: any;
+  label: string;
+  href?: string;
+  children?: SidebarItemProps[];
+  badge?: string | number;
+  isActive?: boolean;
+  tooltip?: string;
+  isExternal?: boolean;
+  onClick?: () => void;
+}
+
+const SidebarItem = ({ icon, label, href, children, badge, isActive, tooltip, isExternal, onClick }: SidebarItemProps) => {
+  const { isOpen, onToggle } = useDisclosure();
+  const hasChildren = children && children.length > 0;
+  const location = useLocation();
+  
+  const bg = useColorModeValue('white', 'gray.800');
+  const hoverBg = useColorModeValue('gray.50', 'gray.700');
+  const activeBg = useColorModeValue('blue.50', 'blue.900');
+  const textColor = useColorModeValue('gray.700', 'gray.200');
+  const activeTextColor = useColorModeValue('blue.600', 'blue.200');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const iconColor = useColorModeValue('gray.500', 'gray.400');
+  const activeIconColor = useColorModeValue('blue.500', 'blue.300');
+
+  const isCurrentActive = href ? location.pathname === href : false;
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+    if (hasChildren) {
+      onToggle();
+    }
+  };
+
+  if (hasChildren) {
+    return (
+      <Box>
+        <Tooltip label={tooltip} placement="right" hasArrow>
+          <Button
+            variant="ghost"
+            justifyContent="flex-start"
+            leftIcon={<Icon as={icon} color={iconColor} />}
+            rightIcon={isOpen ? <ChevronDownIcon color={iconColor} /> : <ChevronRightIcon color={iconColor} />}
+            onClick={handleClick}
+            w="full"
+            h="auto"
+            py={3}
+            px={4}
+            textAlign="left"
+            fontWeight="medium"
+            color={textColor}
+            borderRadius="md"
+            _hover={{ 
+              bg: hoverBg,
+              transform: 'translateX(2px)',
+            }}
+            _active={{ bg: hoverBg }}
+            transition="all 0.2s"
+          >
+            <HStack justify="space-between" w="full">
+              <Text fontSize="sm">{label}</Text>
+              {badge && (
+                <Badge colorScheme="blue" variant="subtle" fontSize="xs" borderRadius="full">
+                  {badge}
+                </Badge>
+              )}
+            </HStack>
+          </Button>
+        </Tooltip>
+        <Collapse in={isOpen} animateOpacity>
+          <VStack spacing={0} align="stretch" pl={6} mt={1}>
+            {children.map((child, index) => (
+              <SidebarItem key={index} {...child} />
+            ))}
+          </VStack>
+        </Collapse>
+      </Box>
+    );
+  }
+
+  const buttonContent = (
+    <Button
+      as={isExternal ? 'a' : Link}
+      to={isExternal ? undefined : href || '#'}
+      href={isExternal ? href : undefined}
+      target={isExternal ? '_blank' : undefined}
+      variant="ghost"
+      justifyContent="flex-start"
+      leftIcon={<Icon as={icon} color={isCurrentActive ? activeIconColor : iconColor} />}
+      rightIcon={isExternal ? <ExternalLinkIcon color={iconColor} /> : undefined}
+      w="full"
+      h="auto"
+      py={3}
+      px={4}
+      textAlign="left"
+      fontWeight="medium"
+      color={isCurrentActive ? activeTextColor : textColor}
+      bg={isCurrentActive ? activeBg : 'transparent'}
+      borderRadius="md"
+      _hover={{ 
+        bg: isCurrentActive ? activeBg : hoverBg,
+        transform: 'translateX(2px)',
+      }}
+      _active={{ bg: isCurrentActive ? activeBg : hoverBg }}
+      borderLeft={isCurrentActive ? '3px solid' : '3px solid transparent'}
+      borderLeftColor={isCurrentActive ? 'blue.500' : 'transparent'}
+      onClick={onClick}
+      transition="all 0.2s"
+    >
+      <HStack justify="space-between" w="full">
+        <Text fontSize="sm">{label}</Text>
+        {badge && (
+          <Badge colorScheme="blue" variant="subtle" fontSize="xs" borderRadius="full">
+            {badge}
+          </Badge>
+        )}
+      </HStack>
+    </Button>
+  );
+
+  return tooltip ? (
+    <Tooltip label={tooltip} placement="right" hasArrow>
+      {buttonContent}
+    </Tooltip>
+  ) : buttonContent;
+};
+
+const AdminSidebar = () => {
+  const bg = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const { user } = useAuth();
+  const toast = useToast();
+
+  // Mock data for badges - in real app, these would come from API
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalFarmers: 0,
+    activeFarms: 0,
+    totalDevices: 0,
+    activeSubscriptions: 0,
+    pendingTasks: 0,
+    alerts: 0,
+  });
+
+  useEffect(() => {
+    // In a real app, you would fetch these stats from your API
+    // For now, using mock data
+    setStats({
+      totalUsers: 156,
+      totalFarmers: 89,
+      activeFarms: 67,
+      totalDevices: 234,
+      activeSubscriptions: 45,
+      pendingTasks: 12,
+      alerts: 3,
+    });
+  }, []);
+
+  const handleRefreshData = () => {
+    toast({
+      title: "Data Refreshed",
+      description: "All dashboard data has been updated.",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
+  const handleExportData = () => {
+    toast({
+      title: "Export Started",
+      description: "Data export has been initiated. You'll receive an email when ready.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const sidebarItems: SidebarItemProps[] = [
+    {
+      icon: ViewIcon,
+      label: 'Dashboard',
+      href: '/admin',
+      tooltip: 'Main admin dashboard with system overview',
+    },
+    {
+      icon: SettingsIcon,
+      label: 'User Management',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'All Users',
+          href: '/admin/users',
+          badge: stats.totalUsers,
+          tooltip: 'Manage all system users',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Farmers',
+          href: '/admin/farmers',
+          badge: stats.totalFarmers,
+          tooltip: 'Manage farmer accounts and profiles',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'Farm Operations',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'Farms',
+          href: '/admin/farms',
+          badge: stats.activeFarms,
+          tooltip: 'Manage all farms and their details',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Devices',
+          href: '/admin/devices',
+          badge: stats.totalDevices,
+          tooltip: 'Monitor and manage IoT devices',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Batches',
+          href: '/admin/batches',
+          tooltip: 'Manage poultry batches and lifecycle',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Activities',
+          href: '/admin/activities',
+          tooltip: 'Track farm activities and operations',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Sensor Readings',
+          href: '/admin/readings',
+          tooltip: 'View and analyze sensor data',
+        },
+        {
+          icon: WarningIcon,
+          label: 'Alerts & Notifications',
+          href: '/admin/alerts',
+          badge: stats.alerts,
+          tooltip: 'Manage system alerts and notifications',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'Master Data',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'Breed Types',
+          href: '/admin/breed-types',
+          tooltip: 'Manage poultry breed categories',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Breeds',
+          href: '/admin/breeds',
+          tooltip: 'Manage specific breed information',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Activity Types',
+          href: '/admin/activity-types',
+          tooltip: 'Define farm activity categories',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Health Conditions',
+          href: '/admin/health-conditions',
+          tooltip: 'Manage health condition definitions',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Food Types',
+          href: '/admin/food-types',
+          tooltip: 'Manage feed and food categories',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Sensor Types',
+          href: '/admin/sensor-types',
+          tooltip: 'Configure sensor types and parameters',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'Knowledge Base',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'Health Conditions',
+          href: '/admin/health-conditions',
+          tooltip: 'Manage poultry health conditions',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Recommendations',
+          href: '/admin/recommendations',
+          tooltip: 'Manage farming recommendations',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Disease Exceptions',
+          href: '/admin/disease-exceptions',
+          tooltip: 'Handle disease exception cases',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Anomalies',
+          href: '/admin/anomalies',
+          tooltip: 'Track and manage system anomalies',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Medications',
+          href: '/admin/medications',
+          tooltip: 'Manage medication database',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'Subscriptions & Billing',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'All Subscriptions',
+          href: '/admin/subscriptions',
+          badge: stats.activeSubscriptions,
+          tooltip: 'Manage all farmer subscriptions',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Subscription Types',
+          href: '/admin/subscription-types',
+          tooltip: 'Configure subscription plans',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Resources',
+          href: '/admin/resources',
+          tooltip: 'Manage subscription resources',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Payments',
+          href: '/admin/payments',
+          tooltip: 'Track payment transactions',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Billing Reports',
+          href: '/admin/billing-reports',
+          tooltip: 'Generate billing and revenue reports',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'System Administration',
+      children: [
+        {
+          icon: SettingsIcon,
+          label: 'System Settings',
+          href: '/admin/settings',
+          tooltip: 'Configure system-wide settings',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Django Admin',
+          href: 'http://localhost:8000/admin/',
+          isExternal: true,
+          tooltip: 'Access Django admin interface',
+        },
+        {
+          icon: ViewIcon,
+          label: 'API Documentation',
+          href: 'http://localhost:8000/api/docs/',
+          isExternal: true,
+          tooltip: 'View API documentation',
+        },
+        {
+          icon: ViewIcon,
+          label: 'System Logs',
+          href: '/admin/logs',
+          tooltip: 'View system logs and errors',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Backup & Recovery',
+          href: '/admin/backup',
+          tooltip: 'Manage system backups',
+        },
+      ],
+    },
+    {
+      icon: SettingsIcon,
+      label: 'Reports & Analytics',
+      children: [
+        {
+          icon: ViewIcon,
+          label: 'Farm Performance',
+          href: '/admin/reports/farm-performance',
+          tooltip: 'Farm performance analytics',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Revenue Reports',
+          href: '/admin/reports/revenue',
+          tooltip: 'Revenue and financial reports',
+        },
+        {
+          icon: ViewIcon,
+          label: 'User Analytics',
+          href: '/admin/reports/users',
+          tooltip: 'User engagement analytics',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Device Status',
+          href: '/admin/reports/devices',
+          tooltip: 'Device health and status reports',
+        },
+        {
+          icon: DownloadIcon,
+          label: 'Export Data',
+          onClick: handleExportData,
+          tooltip: 'Export system data',
+        },
+      ],
+    },
+  ];
+
+  return (
+    <Box
+      w="280px"
+      h="100vh"
+      bg={bg}
+      borderRightWidth="1px"
+      borderRightColor={borderColor}
+      position="fixed"
+      left={0}
+      top={0}
+      overflowY="auto"
+      zIndex={20}
+      boxShadow="xl"
+      _dark={{
+        bg: 'gray.800',
+        borderRightColor: 'gray.700',
+      }}
+    >
+      <VStack spacing={0} align="stretch" p={4}>
+        {/* Header */}
+        <Box mb={4}>
+          <HStack justify="space-between" mb={3}>
+            <VStack align="start" spacing={0}>
+              <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                Smart Kuku
+              </Text>
+              <Text fontSize="xs" color="gray.500" fontWeight="medium">
+                Admin Panel
+              </Text>
+            </VStack>
+            <HStack spacing={1}>
+              <Tooltip label="Refresh Data" placement="bottom">
+                <IconButton
+                  aria-label="Refresh data"
+                  icon={<RepeatIcon />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleRefreshData}
+                  colorScheme="blue"
+                />
+              </Tooltip>
+              <Tooltip label="Notifications" placement="bottom">
+                <IconButton
+                  aria-label="Notifications"
+                  icon={<BellIcon />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme={stats.alerts > 0 ? "red" : "gray"}
+                  position="relative"
+                >
+                  {stats.alerts > 0 && (
+                    <Badge
+                      position="absolute"
+                      top="-1"
+                      right="-1"
+                      colorScheme="red"
+                      borderRadius="full"
+                      fontSize="xs"
+                      minW="16px"
+                      h="16px"
+                    >
+                      {stats.alerts}
+                    </Badge>
+                  )}
+                </IconButton>
+              </Tooltip>
+            </HStack>
+          </HStack>
+          <Text fontSize="sm" color={textColor} mb={3}>
+            Welcome, {user?.first_name || 'Admin'}
+          </Text>
+          <Divider />
+        </Box>
+        
+        {/* Quick Stats */}
+        <Box mb={4} p={3} bg={useColorModeValue('blue.50', 'blue.900')} borderRadius="lg" border="1px solid" borderColor={useColorModeValue('blue.200', 'blue.700')}>
+          <Text fontSize="sm" fontWeight="semibold" mb={3} color={useColorModeValue('blue.700', 'blue.200')}>
+            System Overview
+          </Text>
+          <SimpleGrid columns={2} spacing={3}>
+            <Box textAlign="center" p={2} bg={useColorModeValue('white', 'gray.800')} borderRadius="md" border="1px solid" borderColor={useColorModeValue('blue.100', 'blue.600')}>
+              <Text fontSize="xs" color={textColor} mb={1}>Users</Text>
+              <Text fontSize="lg" fontWeight="bold" color="blue.500">{stats.totalUsers}</Text>
+            </Box>
+            <Box textAlign="center" p={2} bg={useColorModeValue('white', 'gray.800')} borderRadius="md" border="1px solid" borderColor={useColorModeValue('blue.100', 'blue.600')}>
+              <Text fontSize="xs" color={textColor} mb={1}>Farms</Text>
+              <Text fontSize="lg" fontWeight="bold" color="green.500">{stats.activeFarms}</Text>
+            </Box>
+            <Box textAlign="center" p={2} bg={useColorModeValue('white', 'gray.800')} borderRadius="md" border="1px solid" borderColor={useColorModeValue('blue.100', 'blue.600')}>
+              <Text fontSize="xs" color={textColor} mb={1}>Devices</Text>
+              <Text fontSize="lg" fontWeight="bold" color="purple.500">{stats.totalDevices}</Text>
+            </Box>
+            <Box textAlign="center" p={2} bg={useColorModeValue('white', 'gray.800')} borderRadius="md" border="1px solid" borderColor={useColorModeValue('blue.100', 'blue.600')}>
+              <Text fontSize="xs" color={textColor} mb={1}>Subscriptions</Text>
+              <Text fontSize="lg" fontWeight="bold" color="orange.500">{stats.activeSubscriptions}</Text>
+            </Box>
+          </SimpleGrid>
+        </Box>
+        
+        {/* Navigation Items */}
+        <VStack spacing={1} align="stretch">
+          {sidebarItems.map((item, index) => (
+            <SidebarItem key={index} {...item} />
+          ))}
+        </VStack>
+
+        {/* Footer */}
+        <Box mt="auto" pt={4}>
+          <Divider mb={3} />
+          <VStack spacing={1}>
+            <Text fontSize="xs" color={textColor} textAlign="center" fontWeight="medium">
+              Smart Kuku v1.0.0
+            </Text>
+            <Text fontSize="xs" color="gray.500" textAlign="center">
+              © 2024 Poultry Management System
+            </Text>
+          </VStack>
+        </Box>
+      </VStack>
+    </Box>
+  );
+};
+
+export default AdminSidebar;
