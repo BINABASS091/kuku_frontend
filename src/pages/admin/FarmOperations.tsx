@@ -68,7 +68,7 @@ import {
   SettingsIcon,
 } from '@chakra-ui/icons';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
-import { farmAPI, farmerAPI, deviceAPI, batchAPI, breedAPI } from '../../services/api';
+import { farmAPI, farmerAPI, deviceAPI, batchAPI, breedAPI, activityAPI, activityTypeAPI, sensorReadingAPI, sensorTypeAPI, alertAPI } from '../../services/api';
 
 // TypeScript Interfaces
 interface Farm {
@@ -179,6 +179,47 @@ const FarmOperations = () => {
     notes: '',
   });
 
+  const [activityFormData, setActivityFormData] = useState({
+    breedID: '',
+    activityTypeID: '',
+    age: 0,
+    breed_activity_status: 1,
+  });
+
+  // Activities state
+  const [activities, setActivities] = useState<any[]>([]);
+  const [activityTypes, setActivityTypes] = useState<any[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<any[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<any>(null);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+
+  // Sensor readings state
+  const [sensorReadings, setSensorReadings] = useState<any[]>([]);
+  const [sensorTypes, setSensorTypes] = useState<any[]>([]);
+  const [filteredSensorReadings, setFilteredSensorReadings] = useState<any[]>([]);
+  const [selectedSensorReading, setSelectedSensorReading] = useState<any>(null);
+  const [isSensorReadingModalOpen, setIsSensorReadingModalOpen] = useState(false);
+
+  const [sensorReadingFormData, setSensorReadingFormData] = useState({
+    deviceID: '',
+    sensor_typeID: '',
+    value: 0,
+  });
+
+  // Alerts state
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [filteredAlerts, setFilteredAlerts] = useState<any[]>([]);
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+
+  const [alertFormData, setAlertFormData] = useState({
+    title: '',
+    message: '',
+    severity: 'medium',
+    alert_type: '',
+    farm_id: '',
+  });
+
   // Fetch data functions
   const fetchFarms = async () => {
     try {
@@ -252,6 +293,75 @@ const FarmOperations = () => {
     }
   };
 
+  const fetchActivities = async () => {
+    try {
+      const response = await activityAPI.list();
+      setActivities(response.results || response);
+      setFilteredActivities(response.results || response);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch activities',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const fetchActivityTypes = async () => {
+    try {
+      const response = await activityTypeAPI.list();
+      setActivityTypes(response.results || response);
+    } catch (error) {
+      console.error('Error fetching activity types:', error);
+    }
+  };
+
+  const fetchSensorReadings = async () => {
+    try {
+      const response = await sensorReadingAPI.list();
+      setSensorReadings(response.results || response);
+      setFilteredSensorReadings(response.results || response);
+    } catch (error) {
+      console.error('Error fetching sensor readings:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch sensor readings',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const fetchSensorTypes = async () => {
+    try {
+      const response = await sensorTypeAPI.list();
+      setSensorTypes(response.results || response);
+    } catch (error) {
+      console.error('Error fetching sensor types:', error);
+    }
+  };
+
+  const fetchAlerts = async () => {
+    try {
+      const response = await alertAPI.list();
+      setAlerts(response.results || response);
+      setFilteredAlerts(response.results || response);
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch alerts',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   // Search functionality
   useEffect(() => {
     if (activeTab === 0) { // Farms tab
@@ -276,14 +386,41 @@ const FarmOperations = () => {
         batch.breed_details?.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBatches(filtered);
+    } else if (activeTab === 3) { // Activities tab
+      const filtered = activities.filter(activity =>
+        activity.breed_detail?.breedName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.activity_type_detail?.activityType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.age?.toString().includes(searchTerm.toLowerCase())
+      );
+      setFilteredActivities(filtered);
+    } else if (activeTab === 4) { // Sensor Readings tab
+      const filtered = sensorReadings.filter(reading =>
+        reading.device_detail?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reading.sensor_type_detail?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reading.value?.toString().includes(searchTerm.toLowerCase())
+      );
+      setFilteredSensorReadings(filtered);
+    } else if (activeTab === 5) { // Alerts tab
+      const filtered = alerts.filter(alert =>
+        alert.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alert.message?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alert.alert_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alert.farm_details?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredAlerts(filtered);
     }
-  }, [searchTerm, farms, devices, batches, activeTab]);
+  }, [searchTerm, farms, devices, batches, activities, sensorReadings, alerts, activeTab]);
 
   useEffect(() => {
     fetchFarms();
     fetchDevices();
     fetchBatches();
     fetchBreeds();
+    fetchActivities();
+    fetchActivityTypes();
+    fetchSensorReadings();
+    fetchSensorTypes();
+    fetchAlerts();
     fetchFarmers();
   }, []);
 
@@ -295,6 +432,18 @@ const FarmOperations = () => {
     activeDevices: devices.filter(d => d.status).length,
     totalBatches: batches.length,
     activeBatches: batches.filter(b => b.batch_status === 'Active').length,
+    totalActivities: activities.length,
+    activeActivities: activities.filter(a => a.breed_activity_status === 1).length,
+    totalSensorReadings: sensorReadings.length,
+    recentReadings: sensorReadings.filter(r => {
+      const readingDate = new Date(r.timestamp);
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      return readingDate > yesterday;
+    }).length,
+    totalAlerts: alerts.length,
+    unreadAlerts: alerts.filter(a => !a.is_read).length,
+    highPriorityAlerts: alerts.filter(a => a.severity === 'high').length,
     totalBirds: farms.reduce((sum, farm) => sum + farm.total_birds, 0),
   };
 
@@ -606,6 +755,293 @@ const FarmOperations = () => {
     }
   };
 
+  // Activity handlers
+  const handleCreateActivity = () => {
+    setActivityFormData({
+      breedID: '',
+      activityTypeID: '',
+      age: 0,
+      breed_activity_status: 1,
+    });
+    setSelectedActivity(null);
+    setIsActivityModalOpen(true);
+  };
+
+  const handleEditActivity = (activity: any) => {
+    setActivityFormData({
+      breedID: activity.breedID?.toString() || '',
+      activityTypeID: activity.activityTypeID?.toString() || '',
+      age: activity.age || 0,
+      breed_activity_status: activity.breed_activity_status || 1,
+    });
+    setSelectedActivity(activity);
+    setIsActivityModalOpen(true);
+  };
+
+  const handleSubmitActivity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      console.log('Activity payload being sent:', activityFormData);
+      
+      if (selectedActivity) {
+        await activityAPI.update(selectedActivity.breedActivityID, activityFormData);
+        toast({
+          title: 'Success',
+          description: 'Activity updated successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        await activityAPI.create(activityFormData);
+        toast({
+          title: 'Success',
+          description: 'Activity created successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      
+      setIsActivityModalOpen(false);
+      fetchActivities();
+    } catch (error) {
+      console.error('Error submitting activity:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save activity',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteActivity = async (activity: any) => {
+    if (window.confirm('Are you sure you want to delete this activity?')) {
+      try {
+        await activityAPI.delete(activity.breedActivityID);
+        toast({
+          title: 'Success',
+          description: 'Activity deleted successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchActivities();
+      } catch (error) {
+        console.error('Error deleting activity:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete activity',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  // Sensor reading handlers
+  const handleCreateSensorReading = () => {
+    setSensorReadingFormData({
+      deviceID: '',
+      sensor_typeID: '',
+      value: 0,
+    });
+    setSelectedSensorReading(null);
+    setIsSensorReadingModalOpen(true);
+  };
+
+  const handleEditSensorReading = (reading: any) => {
+    setSensorReadingFormData({
+      deviceID: reading.deviceID?.toString() || '',
+      sensor_typeID: reading.sensor_typeID?.toString() || '',
+      value: reading.value || 0,
+    });
+    setSelectedSensorReading(reading);
+    setIsSensorReadingModalOpen(true);
+  };
+
+  const handleSubmitSensorReading = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      console.log('Sensor reading payload being sent:', sensorReadingFormData);
+      
+      if (selectedSensorReading) {
+        await sensorReadingAPI.update(selectedSensorReading.readingID, sensorReadingFormData);
+        toast({
+          title: 'Success',
+          description: 'Sensor reading updated successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        await sensorReadingAPI.create(sensorReadingFormData);
+        toast({
+          title: 'Success',
+          description: 'Sensor reading created successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      
+      setIsSensorReadingModalOpen(false);
+      fetchSensorReadings();
+    } catch (error) {
+      console.error('Error submitting sensor reading:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save sensor reading',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteSensorReading = async (reading: any) => {
+    if (window.confirm('Are you sure you want to delete this sensor reading?')) {
+      try {
+        await sensorReadingAPI.delete(reading.readingID);
+        toast({
+          title: 'Success',
+          description: 'Sensor reading deleted successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchSensorReadings();
+      } catch (error) {
+        console.error('Error deleting sensor reading:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete sensor reading',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  // Alert handlers
+  const handleCreateAlert = () => {
+    setAlertFormData({
+      title: '',
+      message: '',
+      severity: 'medium',
+      alert_type: '',
+      farm_id: '',
+    });
+    setSelectedAlert(null);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleEditAlert = (alert: any) => {
+    setAlertFormData({
+      title: alert.title || '',
+      message: alert.message || '',
+      severity: alert.severity || 'medium',
+      alert_type: alert.alert_type || '',
+      farm_id: alert.farm_id?.toString() || '',
+    });
+    setSelectedAlert(alert);
+    setIsAlertModalOpen(true);
+  };
+
+  const handleSubmitAlert = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      console.log('Alert payload being sent:', alertFormData);
+      
+      if (selectedAlert) {
+        await alertAPI.update(selectedAlert.alertID, alertFormData);
+        toast({
+          title: 'Success',
+          description: 'Alert updated successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        await alertAPI.create(alertFormData);
+        toast({
+          title: 'Success',
+          description: 'Alert created successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      
+      setIsAlertModalOpen(false);
+      fetchAlerts();
+    } catch (error) {
+      console.error('Error submitting alert:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save alert',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteAlert = async (alert: any) => {
+    if (window.confirm('Are you sure you want to delete this alert?')) {
+      try {
+        await alertAPI.delete(alert.alertID);
+        toast({
+          title: 'Success',
+          description: 'Alert deleted successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchAlerts();
+      } catch (error) {
+        console.error('Error deleting alert:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete alert',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  const handleMarkAsRead = async (alert: any) => {
+    try {
+      await alertAPI.markAsRead(alert.alertID);
+      toast({
+        title: 'Success',
+        description: 'Alert marked as read',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+      fetchAlerts();
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to mark alert as read',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="400px">
@@ -635,13 +1071,13 @@ const FarmOperations = () => {
         </Flex>
 
         {/* Statistics Cards */}
-        <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
-          <Card bg={cardBg} borderColor={borderColor}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Total Farms</StatLabel>
-                <StatNumber>{stats.totalFarms}</StatNumber>
-                <StatHelpText>
+        <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={3}>
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Total Farms</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalFarms}</StatNumber>
+                <StatHelpText fontSize="xs">
                   <StatArrow type="increase" />
                   {stats.activeFarms} active
                 </StatHelpText>
@@ -649,12 +1085,12 @@ const FarmOperations = () => {
             </CardBody>
           </Card>
           
-          <Card bg={cardBg} borderColor={borderColor}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Devices</StatLabel>
-                <StatNumber>{stats.totalDevices}</StatNumber>
-                <StatHelpText>
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Devices</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalDevices}</StatNumber>
+                <StatHelpText fontSize="xs">
                   <StatArrow type={stats.activeDevices === stats.totalDevices ? "increase" : "decrease"} />
                   {stats.activeDevices} active
                 </StatHelpText>
@@ -662,12 +1098,12 @@ const FarmOperations = () => {
             </CardBody>
           </Card>
 
-          <Card bg={cardBg} borderColor={borderColor}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Batches</StatLabel>
-                <StatNumber>{stats.totalBatches}</StatNumber>
-                <StatHelpText>
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Batches</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalBatches}</StatNumber>
+                <StatHelpText fontSize="xs">
                   <StatArrow type="increase" />
                   {stats.activeBatches} active
                 </StatHelpText>
@@ -675,12 +1111,51 @@ const FarmOperations = () => {
             </CardBody>
           </Card>
 
-          <Card bg={cardBg} borderColor={borderColor}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Total Birds</StatLabel>
-                <StatNumber>{stats.totalBirds}</StatNumber>
-                <StatHelpText>Across all farms</StatHelpText>
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Activities</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalActivities}</StatNumber>
+                <StatHelpText fontSize="xs">
+                  <StatArrow type="increase" />
+                  {stats.activeActivities} active
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Sensor Readings</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalSensorReadings}</StatNumber>
+                <StatHelpText fontSize="xs">
+                  <StatArrow type="increase" />
+                  {stats.recentReadings} recent
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Alerts</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalAlerts}</StatNumber>
+                <StatHelpText fontSize="xs">
+                  <StatArrow type={stats.highPriorityAlerts > 0 ? "decrease" : "increase"} />
+                  {stats.unreadAlerts} unread
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg={cardBg} borderColor={borderColor} size="sm">
+            <CardBody p={3}>
+              <Stat size="sm">
+                <StatLabel fontSize="xs">Total Birds</StatLabel>
+                <StatNumber fontSize="lg">{stats.totalBirds}</StatNumber>
+                <StatHelpText fontSize="xs">Across all farms</StatHelpText>
               </Stat>
             </CardBody>
           </Card>
@@ -970,24 +1445,248 @@ const FarmOperations = () => {
                 </TabPanel>
 
                 <TabPanel>
-                  <Alert status="info">
-                    <AlertIcon />
-                    Activity tracking functionality will be implemented here.
-                  </Alert>
+                  <VStack spacing={4} align="stretch">
+                    <HStack justify="space-between">
+                      <Heading size="md">Activities Management</Heading>
+                      <Button
+                        colorScheme="blue"
+                        leftIcon={<FaPlus />}
+                        onClick={handleCreateActivity}
+                      >
+                        Add Activity
+                      </Button>
+                    </HStack>
+
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>ID</Th>
+                            <Th>Breed</Th>
+                            <Th>Activity Type</Th>
+                            <Th>Age (days)</Th>
+                            <Th>Status</Th>
+                            <Th>Actions</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {filteredActivities.map((activity) => (
+                            <Tr key={activity.breedActivityID}>
+                              <Td>{activity.breedActivityID}</Td>
+                              <Td>{activity.breed_detail?.breedName || 'N/A'}</Td>
+                              <Td>{activity.activity_type_detail?.activityType || 'N/A'}</Td>
+                              <Td>{activity.age}</Td>
+                              <Td>
+                                <Badge
+                                  colorScheme={
+                                    activity.breed_activity_status === 1 ? 'green' : 'red'
+                                  }
+                                >
+                                  {activity.breed_activity_status === 1 ? 'Active' : 'Inactive'}
+                                </Badge>
+                              </Td>
+                              <Td>
+                                <HStack spacing={2}>
+                                  <IconButton
+                                    aria-label="Edit activity"
+                                    icon={<FaEdit />}
+                                    size="sm"
+                                    colorScheme="yellow"
+                                    onClick={() => handleEditActivity(activity)}
+                                  />
+                                  <IconButton
+                                    aria-label="Delete activity"
+                                    icon={<FaTrash />}
+                                    size="sm"
+                                    colorScheme="red"
+                                    onClick={() => handleDeleteActivity(activity)}
+                                  />
+                                </HStack>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </VStack>
                 </TabPanel>
 
                 <TabPanel>
-                  <Alert status="info">
-                    <AlertIcon />
-                    Sensor readings and analytics will be implemented here.
-                  </Alert>
+                  <VStack spacing={4} align="stretch">
+                    <HStack justify="space-between">
+                      <Heading size="md">Sensor Readings Management</Heading>
+                      <Button
+                        colorScheme="blue"
+                        leftIcon={<FaPlus />}
+                        onClick={handleCreateSensorReading}
+                      >
+                        Add Reading
+                      </Button>
+                    </HStack>
+
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>ID</Th>
+                            <Th>Device</Th>
+                            <Th>Sensor Type</Th>
+                            <Th>Value</Th>
+                            <Th>Timestamp</Th>
+                            <Th>Actions</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {filteredSensorReadings.map((reading) => (
+                            <Tr key={reading.readingID}>
+                              <Td>{reading.readingID}</Td>
+                              <Td>{reading.device_detail?.name || 'N/A'}</Td>
+                              <Td>
+                                {reading.sensor_type_detail?.name || 'N/A'}
+                                {reading.sensor_type_detail?.unit && (
+                                  <Text fontSize="sm" color="gray.500">
+                                    ({reading.sensor_type_detail.unit})
+                                  </Text>
+                                )}
+                              </Td>
+                              <Td>
+                                <Badge colorScheme="blue">
+                                  {reading.value}
+                                  {reading.sensor_type_detail?.unit && (
+                                    <> {reading.sensor_type_detail.unit}</>
+                                  )}
+                                </Badge>
+                              </Td>
+                              <Td>
+                                <Text fontSize="sm">
+                                  {new Date(reading.timestamp).toLocaleString()}
+                                </Text>
+                              </Td>
+                              <Td>
+                                <HStack spacing={2}>
+                                  <IconButton
+                                    aria-label="Edit reading"
+                                    icon={<FaEdit />}
+                                    size="sm"
+                                    colorScheme="yellow"
+                                    onClick={() => handleEditSensorReading(reading)}
+                                  />
+                                  <IconButton
+                                    aria-label="Delete reading"
+                                    icon={<FaTrash />}
+                                    size="sm"
+                                    colorScheme="red"
+                                    onClick={() => handleDeleteSensorReading(reading)}
+                                  />
+                                </HStack>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </VStack>
                 </TabPanel>
 
                 <TabPanel>
-                  <Alert status="info">
-                    <AlertIcon />
-                    Alerts and notifications management will be implemented here.
-                  </Alert>
+                  <VStack spacing={4} align="stretch">
+                    <HStack justify="space-between">
+                      <Heading size="md">Alerts & Notifications Management</Heading>
+                      <Button
+                        colorScheme="blue"
+                        leftIcon={<FaPlus />}
+                        onClick={handleCreateAlert}
+                      >
+                        Add Alert
+                      </Button>
+                    </HStack>
+
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Status</Th>
+                            <Th>Title</Th>
+                            <Th>Type</Th>
+                            <Th>Severity</Th>
+                            <Th>Farm</Th>
+                            <Th>Time</Th>
+                            <Th>Actions</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {filteredAlerts.map((alert) => (
+                            <Tr key={alert.alertID} bg={!alert.is_read ? 'blue.50' : 'transparent'}>
+                              <Td>
+                                {!alert.is_read && (
+                                  <Badge colorScheme="red" variant="solid">
+                                    New
+                                  </Badge>
+                                )}
+                              </Td>
+                              <Td>
+                                <VStack align="start" spacing={1}>
+                                  <Text fontWeight="bold">{alert.title}</Text>
+                                  <Text fontSize="sm" color="gray.600" noOfLines={2}>
+                                    {alert.message}
+                                  </Text>
+                                </VStack>
+                              </Td>
+                              <Td>
+                                <Badge colorScheme="blue">{alert.alert_type}</Badge>
+                              </Td>
+                              <Td>
+                                <Badge
+                                  colorScheme={
+                                    alert.severity === 'high'
+                                      ? 'red'
+                                      : alert.severity === 'medium'
+                                      ? 'yellow'
+                                      : 'green'
+                                  }
+                                >
+                                  {alert.severity.toUpperCase()}
+                                </Badge>
+                              </Td>
+                              <Td>{alert.farm_details?.name || 'N/A'}</Td>
+                              <Td>
+                                <Text fontSize="sm">
+                                  {new Date(alert.timestamp).toLocaleString()}
+                                </Text>
+                              </Td>
+                              <Td>
+                                <HStack spacing={2}>
+                                  {!alert.is_read && (
+                                    <IconButton
+                                      aria-label="Mark as read"
+                                      icon={<ViewIcon />}
+                                      size="sm"
+                                      colorScheme="green"
+                                      onClick={() => handleMarkAsRead(alert)}
+                                    />
+                                  )}
+                                  <IconButton
+                                    aria-label="Edit alert"
+                                    icon={<FaEdit />}
+                                    size="sm"
+                                    colorScheme="yellow"
+                                    onClick={() => handleEditAlert(alert)}
+                                  />
+                                  <IconButton
+                                    aria-label="Delete alert"
+                                    icon={<FaTrash />}
+                                    size="sm"
+                                    colorScheme="red"
+                                    onClick={() => handleDeleteAlert(alert)}
+                                  />
+                                </HStack>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </VStack>
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -1265,6 +1964,307 @@ const FarmOperations = () => {
                   </Button>
                   <Button type="submit" colorScheme="blue">
                     {selectedBatch ? 'Update' : 'Create'} Batch
+                  </Button>
+                </HStack>
+              </VStack>
+            </ModalBody>
+          </form>
+        </ModalContent>
+      </Modal>
+
+      {/* Activity Modal */}
+      <Modal isOpen={isActivityModalOpen} onClose={() => setIsActivityModalOpen(false)} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <form onSubmit={handleSubmitActivity}>
+            <ModalHeader>
+              {selectedActivity ? 'Edit Activity' : 'Add New Activity'}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl isRequired>
+                  <FormLabel>Breed</FormLabel>
+                  <Select
+                    value={activityFormData.breedID}
+                    onChange={(e) => setActivityFormData({
+                      ...activityFormData,
+                      breedID: e.target.value
+                    })}
+                    placeholder="Select breed"
+                  >
+                    {breeds.map((breed) => (
+                      <option key={breed.breedID} value={breed.breedID}>
+                        {breed.breedName}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Activity Type</FormLabel>
+                  <Select
+                    value={activityFormData.activityTypeID}
+                    onChange={(e) => setActivityFormData({
+                      ...activityFormData,
+                      activityTypeID: e.target.value
+                    })}
+                    placeholder="Select activity type"
+                  >
+                    {activityTypes.map((activityType) => (
+                      <option key={activityType.activityTypeID} value={activityType.activityTypeID}>
+                        {activityType.activityType}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Age (days)</FormLabel>
+                  <NumberInput
+                    value={activityFormData.age}
+                    onChange={(valueString, valueNumber) => setActivityFormData({
+                      ...activityFormData,
+                      age: valueNumber || 0
+                    })}
+                    min={0}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    value={activityFormData.breed_activity_status}
+                    onChange={(e) => setActivityFormData({
+                      ...activityFormData,
+                      breed_activity_status: parseInt(e.target.value)
+                    })}
+                  >
+                    <option value={1}>Active</option>
+                    <option value={0}>Inactive</option>
+                    <option value={9}>Archived</option>
+                  </Select>
+                </FormControl>
+
+                <HStack spacing={4} width="100%">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsActivityModalOpen(false)}
+                    flex={1}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    flex={1}
+                  >
+                    {selectedActivity ? 'Update' : 'Create'} Activity
+                  </Button>
+                </HStack>
+              </VStack>
+            </ModalBody>
+          </form>
+        </ModalContent>
+      </Modal>
+
+      {/* Sensor Reading Modal */}
+      <Modal isOpen={isSensorReadingModalOpen} onClose={() => setIsSensorReadingModalOpen(false)} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <form onSubmit={handleSubmitSensorReading}>
+            <ModalHeader>
+              {selectedSensorReading ? 'Edit Sensor Reading' : 'Add New Sensor Reading'}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl isRequired>
+                  <FormLabel>Device</FormLabel>
+                  <Select
+                    value={sensorReadingFormData.deviceID}
+                    onChange={(e) => setSensorReadingFormData({
+                      ...sensorReadingFormData,
+                      deviceID: e.target.value
+                    })}
+                    placeholder="Select device"
+                  >
+                    {devices.map((device) => (
+                      <option key={device.deviceID} value={device.deviceID}>
+                        {device.name} ({device.device_id})
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Sensor Type</FormLabel>
+                  <Select
+                    value={sensorReadingFormData.sensor_typeID}
+                    onChange={(e) => setSensorReadingFormData({
+                      ...sensorReadingFormData,
+                      sensor_typeID: e.target.value
+                    })}
+                    placeholder="Select sensor type"
+                  >
+                    {sensorTypes.map((sensorType) => (
+                      <option key={sensorType.sensorTypeID} value={sensorType.sensorTypeID}>
+                        {sensorType.name} ({sensorType.unit})
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Value</FormLabel>
+                  <NumberInput
+                    value={sensorReadingFormData.value}
+                    onChange={(valueString, valueNumber) => setSensorReadingFormData({
+                      ...sensorReadingFormData,
+                      value: valueNumber || 0
+                    })}
+                    precision={2}
+                    step={0.01}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+
+                <HStack spacing={4} width="100%">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsSensorReadingModalOpen(false)}
+                    flex={1}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    flex={1}
+                  >
+                    {selectedSensorReading ? 'Update' : 'Create'} Reading
+                  </Button>
+                </HStack>
+              </VStack>
+            </ModalBody>
+          </form>
+        </ModalContent>
+      </Modal>
+
+      {/* Alert Modal */}
+      <Modal isOpen={isAlertModalOpen} onClose={() => setIsAlertModalOpen(false)} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <form onSubmit={handleSubmitAlert}>
+            <ModalHeader>
+              {selectedAlert ? 'Edit Alert' : 'Add New Alert'}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl isRequired>
+                  <FormLabel>Title</FormLabel>
+                  <Input
+                    value={alertFormData.title}
+                    onChange={(e) => setAlertFormData({
+                      ...alertFormData,
+                      title: e.target.value
+                    })}
+                    placeholder="Alert title"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Message</FormLabel>
+                  <Textarea
+                    value={alertFormData.message}
+                    onChange={(e) => setAlertFormData({
+                      ...alertFormData,
+                      message: e.target.value
+                    })}
+                    placeholder="Alert message"
+                    rows={3}
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Alert Type</FormLabel>
+                  <Select
+                    value={alertFormData.alert_type}
+                    onChange={(e) => setAlertFormData({
+                      ...alertFormData,
+                      alert_type: e.target.value
+                    })}
+                    placeholder="Select alert type"
+                  >
+                    <option value="Temperature">Temperature</option>
+                    <option value="Humidity">Humidity</option>
+                    <option value="Feeding">Feeding</option>
+                    <option value="Health">Health</option>
+                    <option value="Security">Security</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="General">General</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Severity</FormLabel>
+                  <Select
+                    value={alertFormData.severity}
+                    onChange={(e) => setAlertFormData({
+                      ...alertFormData,
+                      severity: e.target.value
+                    })}
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Farm</FormLabel>
+                  <Select
+                    value={alertFormData.farm_id}
+                    onChange={(e) => setAlertFormData({
+                      ...alertFormData,
+                      farm_id: e.target.value
+                    })}
+                    placeholder="Select farm (optional)"
+                  >
+                    {farms.map((farm) => (
+                      <option key={farm.farmID} value={farm.farmID}>
+                        {farm.name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <HStack spacing={4} width="100%">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsAlertModalOpen(false)}
+                    flex={1}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    flex={1}
+                  >
+                    {selectedAlert ? 'Update' : 'Create'} Alert
                   </Button>
                 </HStack>
               </VStack>

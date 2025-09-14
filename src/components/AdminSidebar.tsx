@@ -273,6 +273,12 @@ const AdminSidebar = () => {
     },
     {
       icon: SettingsIcon,
+      label: 'Relational Master Data',
+      href: '/admin/relational-master-data',
+      tooltip: 'Complete relational database management with all model relationships',
+    },
+    {
+      icon: SettingsIcon,
       label: 'Subscriptions & Billing',
       children: [
         {

@@ -15,6 +15,7 @@ import FarmOperations from './pages/admin/FarmOperations';
 import DeviceManagement from './pages/admin/DeviceManagement';
 import SubscriptionManagement from './pages/admin/SubscriptionManagement';
 import MasterData from './pages/admin/MasterData';
+import RelationalMasterData from './pages/admin/RelationalMasterData';
 import BatchesPage from './pages/admin/operations/BatchesPage';
 import ActivitiesPage from './pages/admin/operations/ActivitiesPage';
 import ReadingsPage from './pages/admin/operations/ReadingsPage';
@@ -161,6 +162,7 @@ function App() {
           <Route path="farms" element={<FarmOperations />} />
           <Route path="devices" element={<DeviceManagement />} />
           <Route path="master-data" element={<MasterData />} />
+          <Route path="relational-master-data" element={<RelationalMasterData />} />
           <Route path="batches" element={<BatchesPage />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="readings" element={<ReadingsPage />} />

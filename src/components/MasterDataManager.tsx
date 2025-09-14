@@ -37,7 +37,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { SearchIcon, AddIcon, EditIcon, DeleteIcon, ViewIcon } from '@chakra-ui/icons';
-import api from '../services/api';
+import apiClient from '../services/api';
 
 export type ColumnConfig<T> = {
   key: keyof T | string;
@@ -52,14 +52,20 @@ export type FieldConfig =
 
 type MasterDataManagerProps<T extends { id: number }> = {
   title: string;
-  endpoint: string; // e.g. 'breed-types/'
+  endpoint?: string; // legacy - e.g. 'breed-types/' 
+  api?: {
+    list: (params?: any) => Promise<any>;
+    create: (data: any) => Promise<any>;
+    update: (id: number, data: any) => Promise<any>;
+    delete: (id: number) => Promise<void>;
+  }; // new API approach
   columns: ColumnConfig<T>[];
   fields: FieldConfig[];
   normalizeOut?: (payload: any) => Partial<T>; // when editing existing item to form values
   normalizeIn?: (formValues: Record<string, any>) => any; // before send to API
 };
 
-function MasterDataManager<T extends { id: number }>({ title, endpoint, columns, fields, normalizeOut, normalizeIn }: MasterDataManagerProps<T>) {
+function MasterDataManager<T extends { id: number }>({ title, endpoint, api, columns, fields, normalizeOut, normalizeIn }: MasterDataManagerProps<T>) {
   const [items, setItems] = useState<T[]>([]);
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -82,12 +88,24 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, columns,
     try {
       setIsLoading(true);
       setError(null);
-      const res = await api.get(endpoint);
-      const data = res.data.results || res.data;
+      
+      let data;
+      if (api) {
+        // Use new API approach
+        const res = await api.list();
+        data = res.results || res;
+      } else if (endpoint) {
+        // Legacy approach
+        const res = await apiClient.get(endpoint);
+        data = res.data.results || res.data;
+      } else {
+        throw new Error('Either api or endpoint must be provided');
+      }
+      
       setItems(data);
       setFilteredItems(data);
     } catch (err: any) {
-      const msg = err?.response?.data?.detail || 'Failed to fetch data.';
+      const msg = err?.response?.data?.detail || err?.message || 'Failed to fetch data.';
       setError(msg);
       toast({ title: 'Error', description: msg, status: 'error', duration: 4000, isClosable: true });
     } finally {
@@ -123,13 +141,27 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, columns,
     setIsSubmitting(true);
     try {
       const payload = normalizeIn ? normalizeIn(formValues) : formValues;
-      if (selectedItem) {
-        await api.put(`${endpoint}${selectedItem.id}/`, payload);
-        toast({ title: 'Updated', description: `${title} updated successfully`, status: 'success', duration: 3000, isClosable: true });
-      } else {
-        await api.post(endpoint, payload);
-        toast({ title: 'Created', description: `${title} created successfully`, status: 'success', duration: 3000, isClosable: true });
+      
+      if (api) {
+        // Use new API approach
+        if (selectedItem) {
+          await api.update(selectedItem.id, payload);
+          toast({ title: 'Updated', description: `${title} updated successfully`, status: 'success', duration: 3000, isClosable: true });
+        } else {
+          await api.create(payload);
+          toast({ title: 'Created', description: `${title} created successfully`, status: 'success', duration: 3000, isClosable: true });
+        }
+      } else if (endpoint) {
+        // Legacy approach
+        if (selectedItem) {
+          await apiClient.put(`${endpoint}${selectedItem.id}/`, payload);
+          toast({ title: 'Updated', description: `${title} updated successfully`, status: 'success', duration: 3000, isClosable: true });
+        } else {
+          await apiClient.post(endpoint, payload);
+          toast({ title: 'Created', description: `${title} created successfully`, status: 'success', duration: 3000, isClosable: true });
+        }
       }
+      
       onClose();
       resetForm();
       fetchItems();
@@ -142,7 +174,14 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, columns,
 
   const remove = async (row: T) => {
     try {
-      await api.delete(`${endpoint}${row.id}/`);
+      if (api) {
+        // Use new API approach
+        await api.delete(row.id);
+      } else if (endpoint) {
+        // Legacy approach
+        await apiClient.delete(`${endpoint}${row.id}/`);
+      }
+      
       toast({ title: 'Deleted', description: `${title} deleted successfully`, status: 'success', duration: 3000, isClosable: true });
       fetchItems();
     } catch (err: any) {
@@ -263,7 +302,11 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, columns,
             <form onSubmit={save}>
               <ModalBody>
                 <VStack spacing={4} align="stretch">
-                  {fields.map(renderField)}
+                  {fields.map((field) => (
+                    <div key={field.name}>
+                      {renderField(field)}
+                    </div>
+                  ))}
                 </VStack>
               </ModalBody>
               <Box p={6} pt={0}>
