@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { keyframes } from '@emotion/react';
 import {
   Box,
   Button,
@@ -14,20 +13,14 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  Flex,
-  Container,
+  // Removed unused Container and Flex after layout refactor
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 
-// Animation keyframes
-const floatAnimation = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-`;
+// (Reserved for future subtle background animation)
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -81,12 +74,9 @@ const Login = () => {
       position="relative"
       overflow="hidden"
       display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      textAlign="center"
-      px={4}
-      py={8}
+      flexDirection={{ base: 'column', md: 'row' }}
+      alignItems="stretch"
+      w="100%"
     >
       {/* Animated background elements */}
       <Box
@@ -110,15 +100,16 @@ const Login = () => {
         filter="blur(40px)"
       />
       
-      <Container 
-        maxW="container.sm" 
-        position="relative" 
-        zIndex={1}
+      {/* Left panel (form) */}
+      <Box
+        flexBasis={{ base: '100%', md: '45%', lg: '38%' }}
         display="flex"
         flexDirection="column"
-        alignItems="center"
         justifyContent="center"
-        flex="1"
+        px={{ base: 6, md: 12 }}
+        py={{ base: 10, md: 12 }}
+        position="relative"
+        zIndex={1}
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -128,14 +119,14 @@ const Login = () => {
         >
           <Box
             bg={cardBg}
-            p={8}
+            p={{ base: 6, md: 8 }}
             borderRadius="xl"
             boxShadow="xl"
             position="relative"
             overflow="hidden"
             w="100%"
-            maxW="md"
-            mx="auto"
+            maxW={{ base: '100%', md: '420px' }}
+            mx="0"
             _before={{
               content: '""',
               position: 'absolute',
@@ -324,7 +315,27 @@ const Login = () => {
             </VStack>
           </Box>
         </motion.div>
-      </Container>
+      </Box>
+      {/* Right visual / branding panel */}
+      <Box
+        flexGrow={1}
+        display={{ base: 'none', md: 'flex' }}
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+        _after={{
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+          bgGradient: 'linear(to-r, rgba(0,0,0,0.15), rgba(0,0,0,0))',
+        }}
+      >
+        <Box textAlign="center" color="white" px={10} maxW="640px">
+          <Heading size="2xl" mb={6} lineHeight="1.15">Smart Poultry Management</Heading>
+          <Text fontSize="lg" opacity={0.9} mb={4}>Monitor, optimize and grow your poultry operations with data‑driven insights.</Text>
+          <Text fontSize="md" opacity={0.8}>Secure platform • Real‑time monitoring • Actionable recommendations</Text>
+        </Box>
+      </Box>
     </Box>
   );
 };

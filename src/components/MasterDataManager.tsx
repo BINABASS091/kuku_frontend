@@ -236,7 +236,9 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, columns,
                 {filteredItems.map((row) => (
                   <Tr key={row.id}>
                     {columns.map((col) => (
-                      <Td key={String(col.key)}>{col.render ? col.render(row) : (row as any)[col.key]}</Td>
+                      <Td key={`${row.id}-${String(col.key)}`}>
+                        {col.render ? col.render(row) : (row as any)[col.key]}
+                      </Td>
                     ))}
                     <Td whiteSpace="nowrap">
                       <HStack spacing={2}>

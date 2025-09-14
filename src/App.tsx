@@ -11,15 +11,10 @@ import NotFound from './pages/NotFound';
 import Home from './pages/Home.tsx';
 import UserManagement from './pages/admin/UserManagement';
 import FarmerManagement from './pages/admin/FarmerManagement';
-import FarmManagement from './pages/admin/FarmManagement';
+import FarmOperations from './pages/admin/FarmOperations';
 import DeviceManagement from './pages/admin/DeviceManagement';
 import SubscriptionManagement from './pages/admin/SubscriptionManagement';
-import BreedTypesPage from './pages/admin/masterdata/BreedTypesPage';
-import BreedsPage from './pages/admin/masterdata/BreedsPage';
-import ActivityTypesPage from './pages/admin/masterdata/ActivityTypesPage';
-import ConditionTypesPage from './pages/admin/masterdata/ConditionTypesPage';
-import FoodTypesPage from './pages/admin/masterdata/FoodTypesPage';
-import SensorTypesPage from './pages/admin/masterdata/SensorTypesPage';
+import MasterData from './pages/admin/MasterData';
 import BatchesPage from './pages/admin/operations/BatchesPage';
 import ActivitiesPage from './pages/admin/operations/ActivitiesPage';
 import ReadingsPage from './pages/admin/operations/ReadingsPage';
@@ -163,14 +158,9 @@ function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="farmers" element={<FarmerManagement />} />
-          <Route path="farms" element={<FarmManagement />} />
+          <Route path="farms" element={<FarmOperations />} />
           <Route path="devices" element={<DeviceManagement />} />
-          <Route path="breed-types" element={<BreedTypesPage />} />
-          <Route path="breeds" element={<BreedsPage />} />
-          <Route path="activity-types" element={<ActivityTypesPage />} />
-          <Route path="condition-types" element={<ConditionTypesPage />} />
-          <Route path="food-types" element={<FoodTypesPage />} />
-          <Route path="sensor-types" element={<SensorTypesPage />} />
+          <Route path="master-data" element={<MasterData />} />
           <Route path="batches" element={<BatchesPage />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="readings" element={<ReadingsPage />} />

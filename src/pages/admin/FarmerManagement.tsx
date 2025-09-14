@@ -68,7 +68,7 @@ import {
   EmailIcon,
   CalendarIcon,
 } from '@chakra-ui/icons';
-import api from '../../services/api';
+import api, { farmerAPI, userAPI } from '../../services/api';
 
 interface Farmer {
   id: number;
@@ -78,10 +78,17 @@ interface Farmer {
     email: string;
     first_name: string;
     last_name: string;
+    role: string;
     is_active: boolean;
+    is_staff: boolean;
+    is_superuser: boolean;
+    date_joined: string;
   };
-  phone_number: string;
+  full_name: string;
   address: string;
+  email: string;
+  phone: string;
+  phone_number: string;
   city: string;
   state: string;
   country: string;
@@ -90,13 +97,11 @@ interface Farmer {
   gender: string;
   experience_years: number;
   farm_size: number;
-  created_at: string;
-  updated_at: string;
   is_verified: boolean;
   subscription_status: string;
   total_farms: number;
   total_batches: number;
-  total_devices: number;
+  created_date: string;
 }
 
 interface FarmerFormData {
@@ -152,9 +157,9 @@ const FarmerManagement = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await api.get('farmers/');
-      setFarmers(response.data.results || response.data);
-      setFilteredFarmers(response.data.results || response.data);
+      const response = await farmerAPI.list();
+      setFarmers(response.results || response);
+      setFilteredFarmers(response.results || response);
     } catch (err: any) {
       console.error('Error fetching farmers:', err);
       setError('Failed to fetch farmers. Please try again.');
@@ -173,8 +178,8 @@ const FarmerManagement = () => {
   // Fetch users for dropdown
   const fetchUsers = async () => {
     try {
-      const response = await api.get('users/');
-      setUsers(response.data.results || response.data);
+      const response = await userAPI.list();
+      setUsers(response.results || response);
     } catch (err: any) {
       console.error('Error fetching users:', err);
     }
@@ -182,14 +187,22 @@ const FarmerManagement = () => {
 
   // Search functionality
   useEffect(() => {
-    const filtered = farmers.filter(farmer =>
-      farmer.user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmer.user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmer.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmer.phone_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmer.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      farmer.state.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = farmers.filter(farmer => {
+      const searchTermLower = searchTerm.toLowerCase();
+      return (
+        (farmer.user.first_name || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.user.last_name || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.full_name || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.user.username || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.user.email || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.email || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.phone_number || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.phone || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.city || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.state || '').toLowerCase().includes(searchTermLower) ||
+        (farmer.country || '').toLowerCase().includes(searchTermLower)
+      );
+    });
     setFilteredFarmers(filtered);
   }, [searchTerm, farmers]);
 
@@ -223,7 +236,7 @@ const FarmerManagement = () => {
 
       if (selectedFarmer) {
         // Update existing farmer
-        await api.put(`farmers/${selectedFarmer.id}/`, payload);
+        await farmerAPI.update(selectedFarmer.id, payload);
         toast({
           title: 'Success',
           description: 'Farmer updated successfully',
@@ -233,7 +246,7 @@ const FarmerManagement = () => {
         });
       } else {
         // Create new farmer
-        await api.post('farmers/', payload);
+        await farmerAPI.create(payload);
         toast({
           title: 'Success',
           description: 'Farmer created successfully',
@@ -277,7 +290,7 @@ const FarmerManagement = () => {
     if (!selectedFarmer) return;
 
     try {
-      await api.delete(`farmers/${selectedFarmer.id}/`);
+      await farmerAPI.delete(selectedFarmer.id);
       toast({
         title: 'Success',
         description: 'Farmer deleted successfully',
@@ -354,7 +367,7 @@ const FarmerManagement = () => {
   // Toggle farmer verification status
   const toggleVerification = async (farmer: Farmer) => {
     try {
-      await api.patch(`farmers/${farmer.id}/`, { is_verified: !farmer.is_verified });
+      await farmerAPI.update(farmer.id, { is_verified: !farmer.is_verified });
       toast({
         title: 'Success',
         description: `Farmer ${farmer.is_verified ? 'unverified' : 'verified'} successfully`,
@@ -377,6 +390,10 @@ const FarmerManagement = () => {
 
   const getSubscriptionColor = (status: string) => {
     switch (status?.toUpperCase()) {
+      case 'BASIC':
+        return 'blue';
+      case 'PREMIUM':
+        return 'green';
       case 'ACTIVE':
         return 'green';
       case 'EXPIRED':
@@ -526,7 +543,10 @@ const FarmerManagement = () => {
                     <Td>
                       <VStack align="start" spacing={0}>
                         <Text fontWeight="semibold">
-                          {farmer.user.first_name} {farmer.user.last_name}
+                          {farmer.user.first_name && farmer.user.last_name 
+                            ? `${farmer.user.first_name} ${farmer.user.last_name}`
+                            : farmer.full_name || farmer.user.username
+                          }
                         </Text>
                         <Text fontSize="sm" color={textColor}>
                           @{farmer.user.username}
@@ -545,11 +565,11 @@ const FarmerManagement = () => {
                       <VStack align="start" spacing={1}>
                         <HStack spacing={1}>
                           <EmailIcon boxSize={3} />
-                          <Text fontSize="sm">{farmer.user.email}</Text>
+                          <Text fontSize="sm">{farmer.user.email || farmer.email || 'No email'}</Text>
                         </HStack>
                         <HStack spacing={1}>
                           <PhoneIcon boxSize={3} />
-                          <Text fontSize="sm">{farmer.phone_number}</Text>
+                          <Text fontSize="sm">{farmer.phone_number || farmer.phone || 'No phone'}</Text>
                         </HStack>
                       </VStack>
                     </Td>

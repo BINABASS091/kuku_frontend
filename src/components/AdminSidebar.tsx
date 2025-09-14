@@ -20,13 +20,6 @@ import {
   ChevronRightIcon,
   SettingsIcon,
   ViewIcon,
-  EditIcon,
-  DeleteIcon,
-  AddIcon,
-  InfoIcon,
-  WarningIcon,
-  CheckIcon,
-  CloseIcon,
   ExternalLinkIcon,
   RepeatIcon,
   DownloadIcon,
@@ -196,6 +189,9 @@ const AdminSidebar = () => {
     activeSubscriptions: 0,
     pendingTasks: 0,
     alerts: 0,
+    batches: 0,
+    activities: 0,
+    sensorReadings: 0,
   });
 
   useEffect(() => {
@@ -209,6 +205,9 @@ const AdminSidebar = () => {
       activeSubscriptions: 45,
       pendingTasks: 12,
       alerts: 3,
+      batches: 120,
+      activities: 350,
+      sensorReadings: 890,
     });
   }, []);
 
@@ -262,125 +261,15 @@ const AdminSidebar = () => {
     {
       icon: SettingsIcon,
       label: 'Farm Operations',
-      children: [
-        {
-          icon: ViewIcon,
-          label: 'Farms',
-          href: '/admin/farms',
-          badge: stats.activeFarms,
-          tooltip: 'Manage all farms and their details',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Devices',
-          href: '/admin/devices',
-          badge: stats.totalDevices,
-          tooltip: 'Monitor and manage IoT devices',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Batches',
-          href: '/admin/batches',
-          tooltip: 'Manage poultry batches and lifecycle',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Activities',
-          href: '/admin/activities',
-          tooltip: 'Track farm activities and operations',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Sensor Readings',
-          href: '/admin/readings',
-          tooltip: 'View and analyze sensor data',
-        },
-        {
-          icon: WarningIcon,
-          label: 'Alerts & Notifications',
-          href: '/admin/alerts',
-          badge: stats.alerts,
-          tooltip: 'Manage system alerts and notifications',
-        },
-      ],
+      href: '/admin/farms',
+      badge: stats.activeFarms + stats.totalDevices + stats.batches + stats.activities + stats.sensorReadings + stats.alerts,
+      tooltip: 'Comprehensive farm management with farms, devices, batches, activities, sensor readings, and alerts',
     },
     {
       icon: SettingsIcon,
       label: 'Master Data',
-      children: [
-        {
-          icon: ViewIcon,
-          label: 'Breed Types',
-          href: '/admin/breed-types',
-          tooltip: 'Manage poultry breed categories',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Breeds',
-          href: '/admin/breeds',
-          tooltip: 'Manage specific breed information',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Activity Types',
-          href: '/admin/activity-types',
-          tooltip: 'Define farm activity categories',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Health Conditions',
-          href: '/admin/health-conditions',
-          tooltip: 'Manage health condition definitions',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Food Types',
-          href: '/admin/food-types',
-          tooltip: 'Manage feed and food categories',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Sensor Types',
-          href: '/admin/sensor-types',
-          tooltip: 'Configure sensor types and parameters',
-        },
-      ],
-    },
-    {
-      icon: SettingsIcon,
-      label: 'Knowledge Base',
-      children: [
-        {
-          icon: ViewIcon,
-          label: 'Health Conditions',
-          href: '/admin/health-conditions',
-          tooltip: 'Manage poultry health conditions',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Recommendations',
-          href: '/admin/recommendations',
-          tooltip: 'Manage farming recommendations',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Disease Exceptions',
-          href: '/admin/disease-exceptions',
-          tooltip: 'Handle disease exception cases',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Anomalies',
-          href: '/admin/anomalies',
-          tooltip: 'Track and manage system anomalies',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Medications',
-          href: '/admin/medications',
-          tooltip: 'Manage medication database',
-        },
-      ],
+      href: '/admin/master-data',
+      tooltip: 'Unified management of breeds, types, knowledge base, and subscription data',
     },
     {
       icon: SettingsIcon,

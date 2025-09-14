@@ -48,13 +48,8 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText,
   SimpleGrid,
-  Divider,
-  Progress,
-  Tooltip,
-  Image,
-  Link,
+  Link
 } from '@chakra-ui/react';
 import {
   SearchIcon,
@@ -63,12 +58,8 @@ import {
   DeleteIcon,
   ViewIcon,
   ChevronDownIcon,
-  WarningIcon,
   CheckIcon,
   CloseIcon,
-  CalendarIcon,
-  PhoneIcon,
-  EmailIcon,
 } from '@chakra-ui/icons';
 import api from '../../services/api';
 
@@ -229,9 +220,16 @@ const FarmManagement = () => {
     setIsSubmitting(true);
 
     try {
+      const payload = {
+        farmerID: formData.farmer,
+        name: formData.name,
+        location: formData.address, // Assuming 'address' maps to 'location'
+        size: formData.size_acres, // Assuming 'size_acres' maps to 'size'
+      };
+
       if (selectedFarm) {
         // Update existing farm
-        await api.put(`farms/${selectedFarm.id}/`, formData);
+        await api.put(`farms/${selectedFarm.id}/`, payload);
         toast({
           title: 'Success',
           description: 'Farm updated successfully',
@@ -241,7 +239,7 @@ const FarmManagement = () => {
         });
       } else {
         // Create new farm
-        await api.post('farms/', formData);
+        await api.post('farms/', payload);
         toast({
           title: 'Success',
           description: 'Farm created successfully',
@@ -321,19 +319,19 @@ const FarmManagement = () => {
   const handleEdit = (farm: Farm) => {
     setSelectedFarm(farm);
     setFormData({
-      farmer: farm.farmer.id,
-      name: farm.name,
-      description: farm.description,
-      address: farm.address,
-      city: farm.city,
-      state: farm.state,
-      country: farm.country,
-      zip_code: farm.zip_code,
-      latitude: farm.latitude,
-      longitude: farm.longitude,
-      size_acres: farm.size_acres,
-      established_date: farm.established_date,
-      status: farm.status,
+      farmer: typeof farm.farmer === 'object' && farm.farmer !== null ? farm.farmer.id : farm.farmer,
+      name: farm.name ?? '',
+      description: farm.description ?? '',
+      address: farm.address ?? '',
+      city: farm.city ?? '',
+      state: farm.state ?? '',
+      country: farm.country ?? '',
+      zip_code: farm.zip_code ?? '',
+      latitude: farm.latitude ?? 0,
+      longitude: farm.longitude ?? 0,
+      size_acres: farm.size_acres ?? 0,
+      established_date: farm.established_date ?? '',
+      status: farm.status ?? 'Inactive',
     });
     onOpen();
   };

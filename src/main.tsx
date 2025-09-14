@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 import { SpinnerIcon } from '@chakra-ui/icons';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -8,7 +8,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
-import Loading from './components/Loading';
 import './index.css';
 import theme from './theme';
 
@@ -29,26 +28,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <ChakraProvider theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <ErrorBoundary
-          fallback={({ error, resetErrorBoundary }) => (
+          fallback={
             <Box textAlign="center" py={10} px={6}>
               <SpinnerIcon boxSize={'50px'} color={'red.500'} />
               <Heading as="h2" size="xl" mt={6} mb={2}>
                 Something went wrong
               </Heading>
-              <Text color={'gray.500'} mb={6}>
-                {error.message}
-              </Text>
-              <Button
-                colorScheme="teal"
-                bgGradient="linear(to-r, teal.400, teal.500, teal.600)"
-                color="white"
-                variant="solid"
-                onClick={resetErrorBoundary}
-              >
-                Try again
-              </Button>
+              <Button onClick={() => window.location.reload()}>Reload</Button>
             </Box>
-          )}
+          }
         >
           <Router>
             <AuthProvider>

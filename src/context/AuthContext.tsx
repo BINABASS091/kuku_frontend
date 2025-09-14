@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (token) {
         try {
           // Get user profile
@@ -53,8 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser({ ...data, role: normalizedRole } as User);
         } catch (error) {
           console.error('Auth check failed:', error);
-          localStorage.removeItem('token');
-          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       }
       setIsLoading(false);
@@ -79,8 +79,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password: password 
       });
       const { access, refresh } = response.data;
-      localStorage.setItem('token', access);
-      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
       
       // Get user profile
       const userResponse = await api.get('users/me/');
@@ -178,7 +178,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setUser(null);
     queryClient.clear();
     navigate('/login');

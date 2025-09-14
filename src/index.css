@@ -51,10 +51,16 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* Removed flex centering so pages (e.g., Login) can use full viewport width */
+  display: block;
   min-width: 320px;
   min-height: 100vh;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
 }
 
 h1 {

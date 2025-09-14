@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardAPI } from '../services/api';
+import type { DashboardStats, RecentActivity, SystemAlert } from '../types/models';
 
 // Additional types for dashboard
 export interface TopFarm {
@@ -10,39 +11,6 @@ export interface TopFarm {
   health: number;
   revenue: number;
   status: 'active' | 'inactive';
-}
-
-// Dashboard statistics type
-export interface DashboardStats {
-  totalUsers: number;
-  totalFarmers: number;
-  activeFarms: number;
-  totalDevices: number;
-  activeSubscriptions: number;
-  batches: number;
-  activities: number;
-  sensorReadings: number;
-  alerts: number;
-}
-
-// System alert type
-export interface SystemAlert {
-  id: string;
-  type: 'info' | 'warning' | 'error';
-  message: string;
-  time: string;
-  count: number;
-  severity: 'low' | 'medium' | 'high';
-}
-
-// Recent activity type
-export interface RecentActivity {
-  id: string;
-  action: string;
-  time: string;
-  status: 'success' | 'warning' | 'error';
-  user: string;
-  details: string;
 }
 
 // Custom hook for fetching dashboard statistics
