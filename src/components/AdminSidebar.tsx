@@ -326,10 +326,16 @@ const AdminSidebar = () => {
         },
         {
           icon: ViewIcon,
-          label: 'Django Admin',
-          href: 'http://localhost:8000/admin/',
+          label: 'Django Admin Portal',
+          href: '/admin/django-admin',
+          tooltip: 'Access Django admin interface with instructions',
+        },
+        {
+          icon: ViewIcon,
+          label: 'Django Admin Direct',
+          href: 'http://127.0.0.1:8000/admin/',
           isExternal: true,
-          tooltip: 'Access Django admin interface',
+          tooltip: 'Direct access to Django admin interface',
         },
         {
           icon: ViewIcon,

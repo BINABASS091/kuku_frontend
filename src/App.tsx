@@ -29,6 +29,7 @@ import AnomaliesPage from './pages/admin/knowledge/AnomaliesPage';
 import MedicationsPage from './pages/admin/knowledge/MedicationsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import ReportsPage from './pages/admin/ReportsPage';
+import DjangoAdmin from './pages/admin/DjangoAdmin';
 
 // This component is used to wrap protected routes
 const ProtectedLayout = () => {
@@ -177,7 +178,7 @@ function App() {
           <Route path="medications" element={<MedicationsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="reports" element={<ReportsPage />} />
-          <Route path="django-admin" element={<div>Django Admin</div>} />
+          <Route path="django-admin" element={<DjangoAdmin />} />
         </Route>
         
         {/* 404 route */}

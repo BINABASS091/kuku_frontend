@@ -79,6 +79,60 @@ export const authAPI = {
     const response = await api.get('/accounts/me/');
     return response.data;
   },
+
+  // Django admin helpers
+  checkDjangoAdminSession: async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/admin/', {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+      });
+      return !response.url.includes('/login');
+    } catch (error) {
+      console.error('Error checking Django admin session:', error);
+      return false;
+    }
+  },
+
+  loginToDjangoAdmin: async (username: string, password: string) => {
+    try {
+      // Get CSRF token first
+      const csrfResponse = await fetch('http://127.0.0.1:8000/admin/login/', {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+      });
+      
+      const csrfText = await csrfResponse.text();
+      const csrfMatch = csrfText.match(/name='csrfmiddlewaretoken' value='([^']+)'/);
+      
+      if (!csrfMatch) {
+        throw new Error('Could not retrieve CSRF token');
+      }
+      
+      const csrfToken = csrfMatch[1];
+      
+      // Login to Django admin
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+      formData.append('csrfmiddlewaretoken', csrfToken);
+      formData.append('next', '/admin/');
+      
+      const loginResponse = await fetch('http://127.0.0.1:8000/admin/login/', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+        mode: 'cors',
+      });
+      
+      return loginResponse.ok && !loginResponse.url.includes('/login');
+    } catch (error) {
+      console.error('Error logging into Django admin:', error);
+      return false;
+    }
+  },
 };
 
 export const dashboardAPI = {
