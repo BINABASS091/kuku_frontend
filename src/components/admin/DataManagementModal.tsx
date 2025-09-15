@@ -115,12 +115,14 @@ interface DataManagementModalProps {
   isOpen: boolean;
   onClose: () => void;
   activeTab: string;
+  onDataChange?: () => void;
 }
 
 const DataManagementModal: React.FC<DataManagementModalProps> = ({
   isOpen,
   onClose,
   activeTab,
+  onDataChange,
 }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [farmers, setFarmers] = useState<Farmer[]>([]);
@@ -300,6 +302,8 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         isClosable: true,
       });
       loadData();
+      // Refresh parent dashboard data
+      onDataChange?.();
     } catch (error) {
       console.error('Delete error:', error);
       toast({
@@ -353,6 +357,8 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
       });
       setIsEditing(false);
       loadData();
+      // Refresh parent dashboard data
+      onDataChange?.();
     } catch (error) {
       console.error('Save error:', error);
       console.error('Error response:', error.response?.data);
@@ -750,7 +756,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
               >
                 <option value="">Select farm owner</option>
                 {farmers.map((farmer) => (
-                  <option key={farmer.id} value={farmer.id}>
+                  <option key={farmer.farmerID} value={farmer.farmerID}>
                     {farmer.farmerName} ({farmer.email})
                   </option>
                 ))}

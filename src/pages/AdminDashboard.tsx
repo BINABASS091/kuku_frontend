@@ -508,6 +508,7 @@ const AdminDashboard: React.FC = () => {
           isOpen={isOpen}
           onClose={onClose}
           activeTab={activeTab}
+          onDataChange={loadDashboardStats}
         />
       </VStack>
     </Container>
