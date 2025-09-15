@@ -280,46 +280,8 @@ const AdminSidebar = () => {
     {
       icon: SettingsIcon,
       label: 'System Administration',
-      children: [
-        {
-          icon: SettingsIcon,
-          label: 'System Settings',
-          href: '/admin/settings',
-          tooltip: 'Configure system-wide settings',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Django Admin Portal',
-          href: '/admin/django-admin',
-          tooltip: 'Access Django admin interface with instructions',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Django Admin Direct',
-          href: 'http://127.0.0.1:8000/admin/',
-          isExternal: true,
-          tooltip: 'Direct access to Django admin interface',
-        },
-        {
-          icon: ViewIcon,
-          label: 'API Documentation',
-          href: 'http://localhost:8000/api/docs/',
-          isExternal: true,
-          tooltip: 'View API documentation',
-        },
-        {
-          icon: ViewIcon,
-          label: 'System Logs',
-          href: '/admin/logs',
-          tooltip: 'View system logs and errors',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Backup & Recovery',
-          href: '/admin/backup',
-          tooltip: 'Manage system backups',
-        },
-      ],
+      href: '/admin/system-administration',
+      tooltip: 'Comprehensive system management, configuration, and administrative tools',
     },
     {
       icon: SettingsIcon,

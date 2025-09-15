@@ -13,12 +13,15 @@ import UserManagement from './pages/admin/UserManagement';
 import FarmerManagement from './pages/admin/FarmerManagement';
 import FarmOperations from './pages/admin/FarmOperations';
 import DeviceManagement from './pages/admin/DeviceManagement';
-import SubscriptionsBilling from './pages/admin/SubscriptionsBilling';
+import SubscriptionManagement from './pages/admin/SubscriptionManagement';
 import MasterData from './pages/admin/MasterData';
 import RelationalMasterData from './pages/admin/RelationalMasterData';
 import BatchesPage from './pages/admin/operations/BatchesPage';
 import ActivitiesPage from './pages/admin/operations/ActivitiesPage';
 import ReadingsPage from './pages/admin/operations/ReadingsPage';
+import SubscriptionTypesPage from './pages/admin/subscriptions/SubscriptionTypesPage';
+import ResourcesPage from './pages/admin/subscriptions/ResourcesPage';
+import PaymentsPage from './pages/admin/subscriptions/PaymentsPage';
 import HealthConditionsPage from './pages/admin/knowledge/HealthConditionsPage';
 import RecommendationsPage from './pages/admin/knowledge/RecommendationsPage';
 import DiseaseExceptionsPage from './pages/admin/knowledge/DiseaseExceptionsPage';
@@ -27,6 +30,8 @@ import MedicationsPage from './pages/admin/knowledge/MedicationsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import DjangoAdmin from './pages/admin/DjangoAdmin';
+import SystemAdministration from './pages/admin/SystemAdministration';
+import SubscriptionsBilling from './pages/admin/SubscriptionsBilling';
 
 // This component is used to wrap protected routes
 const ProtectedLayout = () => {
@@ -164,12 +169,17 @@ function App() {
           <Route path="batches" element={<BatchesPage />} />
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="readings" element={<ReadingsPage />} />
-          <Route path="subscriptions-billing" element={<SubscriptionsBilling />} />
+          <Route path="subscriptions" element={<SubscriptionManagement />} />
+          <Route path="subscription-types" element={<SubscriptionTypesPage />} />
+          <Route path="resources" element={<ResourcesPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
           <Route path="health-conditions" element={<HealthConditionsPage />} />
           <Route path="recommendations" element={<RecommendationsPage />} />
           <Route path="disease-exceptions" element={<DiseaseExceptionsPage />} />
           <Route path="anomalies" element={<AnomaliesPage />} />
           <Route path="medications" element={<MedicationsPage />} />
+          <Route path="subscriptions-billing" element={<SubscriptionsBilling />} />
+          <Route path="system-administration" element={<SystemAdministration />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="django-admin" element={<DjangoAdmin />} />
