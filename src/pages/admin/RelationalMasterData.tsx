@@ -106,8 +106,8 @@ type BreedActivity = {
 type ConditionType = {
   id: number;
   condition_typeID: number;
-  name: string;
-  unit: string;
+  conditionName: string;
+  condition_unit: string;
   breed_conditions_count?: number;
   active_conditions_count?: number;
 };
@@ -128,7 +128,7 @@ type BreedCondition = {
 type FoodType = {
   id: number;
   foodTypeID: number;
-  name: string;
+  foodName: string;
   feeding_schedules_count?: number;
   breeds_using_count?: number;
 };
@@ -675,9 +675,20 @@ const RelationalMasterData: React.FC = () => {
                           value: bt.breed_typeID 
                         })) || []
                       },
-                      { type: 'text', name: 'preedphoto', label: 'Photo URL', placeholder: 'breed_photo.jpg' },
+                      { type: 'text', name: 'preedphoto', label: 'Photo URL', required: false, placeholder: 'breed_photo.jpg (optional)' },
                     ]}
                     normalizeOut={(item) => ({ ...item, id: item.breedID })}
+                    normalizeIn={(formData) => {
+                      const breedTypeID = formData.breed_typeID ? parseInt(formData.breed_typeID) : undefined;
+                      if (!breedTypeID) {
+                        throw new Error('Please select a breed type');
+                      }
+                      return {
+                        ...formData,
+                        breed_typeID: breedTypeID,
+                        preedphoto: formData.preedphoto || 'preedphoto.png'
+                      };
+                    }}
                   />
                 </TabPanel>
 
@@ -704,12 +715,12 @@ const RelationalMasterData: React.FC = () => {
                     endpoint=""
                     api={masterDataAPI.conditionTypes}
                     columns={[
-                      { key: 'name', header: 'Condition Name' },
-                      { key: 'unit', header: 'Unit' },
+                      { key: 'conditionName', header: 'Condition Name' },
+                      { key: 'condition_unit', header: 'Unit' },
                     ]}
                     fields={[
-                      { type: 'text', name: 'name', label: 'Condition Name', required: true, placeholder: 'e.g., Temperature, Humidity' },
-                      { type: 'text', name: 'unit', label: 'Unit', required: true, placeholder: 'e.g., °C, %' },
+                      { type: 'text', name: 'conditionName', label: 'Condition Name', required: true, placeholder: 'e.g., Temperature, Humidity' },
+                      { type: 'text', name: 'condition_unit', label: 'Unit', required: true, placeholder: 'e.g., °C, %' },
                     ]}
                     normalizeOut={(item) => ({ ...item, id: item.condition_typeID })}
                   />
@@ -722,10 +733,10 @@ const RelationalMasterData: React.FC = () => {
                     endpoint=""
                     api={masterDataAPI.foodTypes}
                     columns={[
-                      { key: 'name', header: 'Food Type' },
+                      { key: 'foodName', header: 'Food Type' },
                     ]}
                     fields={[
-                      { type: 'text', name: 'name', label: 'Food Type', required: true, placeholder: 'e.g., Starter Feed, Grower Feed' },
+                      { type: 'text', name: 'foodName', label: 'Food Type', required: true, placeholder: 'e.g., Starter Feed, Grower Feed' },
                     ]}
                     normalizeOut={(item) => ({ ...item, id: item.foodTypeID })}
                   />
@@ -867,7 +878,7 @@ const RelationalMasterData: React.FC = () => {
                         label: 'Condition Type', 
                         required: true,
                         options: dropdownData.conditionTypes?.map((ct: any) => ({ 
-                          label: `${ct.name} (${ct.unit})`, 
+                          label: `${ct.conditionName} (${ct.condition_unit})`, 
                           value: ct.condition_typeID 
                         })) || []
                       },
@@ -939,7 +950,7 @@ const RelationalMasterData: React.FC = () => {
                         label: 'Food Type', 
                         required: true,
                         options: dropdownData.foodTypes?.map((ft: any) => ({ 
-                          label: ft.name, 
+                          label: ft.foodName, 
                           value: ft.foodTypeID 
                         })) || []
                       },

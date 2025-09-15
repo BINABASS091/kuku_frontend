@@ -168,6 +168,7 @@ const MasterData: React.FC = () => {
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
+  const [breedTypes, setBreedTypes] = useState<any[]>([]);
   
   const toast = useToast();
 
@@ -178,6 +179,15 @@ const MasterData: React.FC = () => {
 
   useEffect(() => {
     fetchMasterDataStats();
+    // Fetch breed types for dropdown
+    api.get('v1/breed-types/').then((res: any) => {
+      // Handle both paginated and non-paginated responses
+      const breedTypesData = res.data.results || res.data || [];
+      setBreedTypes(Array.isArray(breedTypesData) ? breedTypesData : []);
+    }).catch((error) => {
+      console.error('Error fetching breed types:', error);
+      setBreedTypes([]); // Set empty array on error
+    });
   }, []);
 
   const fetchMasterDataStats = async () => {
@@ -402,39 +412,6 @@ const MasterData: React.FC = () => {
               <TabPanels>
                 {/* Breed Types Tab */}
                 <TabPanel>
-                  <MasterDataManager<BreedType>
-                    title="Breed Types"
-                    endpoint="breed-types/"
-                    columns={[
-                      { key: 'breedType', header: 'Breed Type' },
-                      { 
-                        key: 'breeds_count', 
-                        header: 'Breeds Count',
-                        render: (row) => (
-                          <Badge colorScheme="blue" variant="subtle">
-                            {row.breeds_count}
-                          </Badge>
-                        )
-                      },
-                      { 
-                        key: 'total_activities', 
-                        header: 'Total Activities',
-                        render: (row) => (
-                          <Badge colorScheme="green" variant="subtle">
-                            {row.total_activities}
-                          </Badge>
-                        )
-                      },
-                    ]}
-                    fields={[
-                      { type: 'text', name: 'breedType', label: 'Breed Type', required: true, placeholder: 'e.g., Broiler, Layer' },
-                    ]}
-                    normalizeOut={(item) => ({ ...item, id: item.breed_typeID })}
-                  />
-                </TabPanel>
-
-                {/* Breeds Tab */}
-                <TabPanel>
                   <MasterDataManager<Breed>
                     title="Breeds"
                     endpoint="breeds/"
@@ -466,9 +443,27 @@ const MasterData: React.FC = () => {
                     ]}
                     fields={[
                       { type: 'text', name: 'breedName', label: 'Breed Name', required: true, placeholder: 'e.g., Rhode Island Red' },
+                      {
+                        type: 'select',
+                        name: 'breed_typeID',
+                        label: 'Breed Type',
+                        required: true,
+                        options: Array.isArray(breedTypes) ? breedTypes.map((bt: any) => ({
+                          label: bt.breedType,
+                          value: bt.breed_typeID
+                        })) : [],
+                        defaultValue: (Array.isArray(breedTypes) && breedTypes.length === 1)
+                          ? breedTypes[0].breed_typeID
+                          : undefined
+                      },
                       { type: 'text', name: 'preedphoto', label: 'Photo URL', placeholder: 'breed_photo.jpg' },
                     ]}
                     normalizeOut={(item) => ({ ...item, id: item.breedID })}
+                    normalizeIn={(formData) => ({
+                      ...formData,
+                      breed_typeID: formData.breed_typeID ? parseInt(formData.breed_typeID) : undefined,
+                      preedphoto: formData.preedphoto || 'preedphoto.png'
+                    })}
                   />
                 </TabPanel>
 
