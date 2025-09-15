@@ -267,12 +267,6 @@ const AdminSidebar = () => {
     },
     {
       icon: SettingsIcon,
-      label: 'Master Data',
-      href: '/admin/master-data',
-      tooltip: 'Unified management of breeds, types, knowledge base, and subscription data',
-    },
-    {
-      icon: SettingsIcon,
       label: 'Relational Master Data',
       href: '/admin/relational-master-data',
       tooltip: 'Complete relational database management with all model relationships',
