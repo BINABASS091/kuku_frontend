@@ -53,12 +53,10 @@ import {
 import { 
   DownloadIcon, 
   RepeatIcon, 
-  EmailIcon, 
   CalendarIcon,
   ExternalLinkIcon,
   ViewIcon,
   SettingsIcon,
-  AttachmentIcon 
 } from '@chakra-ui/icons';
 
 interface ExportFormat {
@@ -363,7 +361,7 @@ export default function ExportDataPage() {
     }
   };
 
-  const handleDownload = (exportId: number) => {
+  const handleDownload = (_exportId: number) => {
     toast({
       title: 'Download Started',
       description: 'Your file download has begun',
@@ -500,7 +498,7 @@ export default function ExportDataPage() {
                     {/* Data Type Selection */}
                     <Box>
                       <Text fontWeight="bold" mb={3}>Select Data Types</Text>
-                      <CheckboxGroup value={selectedDataTypes} onChange={setSelectedDataTypes}>
+                      <CheckboxGroup value={selectedDataTypes} onChange={(values) => setSelectedDataTypes(values as string[])}>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                           {dataTypes.map((dataType) => (
                             <Card key={dataType.id} bg={cardBg} border="1px" borderColor={borderColor}>

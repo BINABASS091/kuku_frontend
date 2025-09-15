@@ -1,30 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
   VStack,
-  HStack,
   Text,
   Badge,
   Card,
-  CardHeader,
   CardBody,
   useColorModeValue,
-  Flex,
-  Button,
   useToast,
   Spinner,
-  Alert,
-  AlertIcon,
   SimpleGrid,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
-  Progress,
-  Divider,
 } from '@chakra-ui/react';
-import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import MasterDataManager from '../../components/MasterDataManager';
 import api from '../../services/api';
 
@@ -319,8 +310,7 @@ export default function SubscriptionManagement() {
                     { label: 'Suspended', value: 'SUSPENDED' },
                     { label: 'Cancelled', value: 'CANCELLED' },
                     { label: 'Expired', value: 'EXPIRED' }
-                  ],
-                  defaultValue: 'PENDING'
+                  ]
                 },
                 { type: 'text', name: 'start_date', label: 'Start Date (YYYY-MM-DD)', required: true, placeholder: 'e.g., 2024-01-01' },
                 { type: 'text', name: 'end_date', label: 'End Date (YYYY-MM-DD, optional)', placeholder: 'e.g., 2024-12-31' },
@@ -331,8 +321,7 @@ export default function SubscriptionManagement() {
                   options: [
                     { label: 'Yes', value: 'true' },
                     { label: 'No', value: 'false' }
-                  ],
-                  defaultValue: 'true'
+                  ]
                 },
                 { type: 'textarea', name: 'notes', label: 'Notes (optional)', placeholder: 'Additional notes about this subscription' },
               ]}

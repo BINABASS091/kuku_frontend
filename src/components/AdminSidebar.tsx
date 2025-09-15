@@ -22,22 +22,7 @@ import {
   ViewIcon,
   ExternalLinkIcon,
   RepeatIcon,
-  DownloadIcon,
-  SearchIcon,
   BellIcon,
-  StarIcon,
-  TimeIcon,
-  CalendarIcon,
-  TriangleUpIcon,
-  TriangleDownIcon,
-  LockIcon,
-  UnlockIcon,
-  PhoneIcon,
-  EmailIcon,
-  AttachmentIcon,
-  CopyIcon,
-  HamburgerIcon,
-  CloseButton,
 } from '@chakra-ui/icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -49,23 +34,20 @@ interface SidebarItemProps {
   href?: string;
   children?: SidebarItemProps[];
   badge?: string | number;
-  isActive?: boolean;
   tooltip?: string;
   isExternal?: boolean;
   onClick?: () => void;
 }
 
-const SidebarItem = ({ icon, label, href, children, badge, isActive, tooltip, isExternal, onClick }: SidebarItemProps) => {
+const SidebarItem = ({ icon, label, href, children, badge, tooltip, isExternal, onClick }: SidebarItemProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const hasChildren = children && children.length > 0;
   const location = useLocation();
   
-  const bg = useColorModeValue('white', 'gray.800');
   const hoverBg = useColorModeValue('gray.50', 'gray.700');
   const activeBg = useColorModeValue('blue.50', 'blue.900');
   const textColor = useColorModeValue('gray.700', 'gray.200');
   const activeTextColor = useColorModeValue('blue.600', 'blue.200');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
   const iconColor = useColorModeValue('gray.500', 'gray.400');
   const activeIconColor = useColorModeValue('blue.500', 'blue.300');
 
@@ -126,10 +108,41 @@ const SidebarItem = ({ icon, label, href, children, badge, isActive, tooltip, is
     );
   }
 
-  const buttonContent = (
+  const buttonContent = href && !isExternal ? (
     <Button
-      as={isExternal ? 'a' : Link}
-      to={isExternal ? undefined : href || '#'}
+      as={Link}
+      to={href}
+      variant="ghost"
+      justifyContent="flex-start"
+      leftIcon={<Icon as={icon} color={isCurrentActive ? activeIconColor : iconColor} />}
+      w="full"
+      h="auto"
+      py={3}
+      px={4}
+      textAlign="left"
+      fontWeight="medium"
+      color={isCurrentActive ? activeTextColor : textColor}
+      bg={isCurrentActive ? activeBg : 'transparent'}
+      borderRadius="md"
+      _hover={{ 
+        bg: hoverBg 
+      }}
+      transition="all 0.2s"
+      onClick={handleClick}
+    >
+      <HStack spacing={3} flex="1" justify="space-between">
+        <Text>{label}</Text>
+        {badge && (
+          <Badge colorScheme="blue" size="sm">
+            {badge}
+          </Badge>
+        )}
+        {hasChildren && <Icon as={isOpen ? ChevronDownIcon : ChevronRightIcon} />}
+      </HStack>
+    </Button>
+  ) : (
+    <Button
+      as={isExternal ? 'a' : 'button'}
       href={isExternal ? href : undefined}
       target={isExternal ? '_blank' : undefined}
       variant="ghost"
@@ -146,22 +159,19 @@ const SidebarItem = ({ icon, label, href, children, badge, isActive, tooltip, is
       bg={isCurrentActive ? activeBg : 'transparent'}
       borderRadius="md"
       _hover={{ 
-        bg: isCurrentActive ? activeBg : hoverBg,
-        transform: 'translateX(2px)',
+        bg: hoverBg 
       }}
-      _active={{ bg: isCurrentActive ? activeBg : hoverBg }}
-      borderLeft={isCurrentActive ? '3px solid' : '3px solid transparent'}
-      borderLeftColor={isCurrentActive ? 'blue.500' : 'transparent'}
-      onClick={onClick}
       transition="all 0.2s"
+      onClick={handleClick}
     >
-      <HStack justify="space-between" w="full">
-        <Text fontSize="sm">{label}</Text>
+      <HStack spacing={3} flex="1" justify="space-between">
+        <Text>{label}</Text>
         {badge && (
-          <Badge colorScheme="blue" variant="subtle" fontSize="xs" borderRadius="full">
+          <Badge colorScheme="blue" size="sm">
             {badge}
           </Badge>
         )}
+        {hasChildren && <Icon as={isOpen ? ChevronDownIcon : ChevronRightIcon} />}
       </HStack>
     </Button>
   );
@@ -217,16 +227,6 @@ const AdminSidebar = () => {
       description: "All dashboard data has been updated.",
       status: "success",
       duration: 2000,
-      isClosable: true,
-    });
-  };
-
-  const handleExportData = () => {
-    toast({
-      title: "Export Started",
-      description: "Data export has been initiated. You'll receive an email when ready.",
-      status: "info",
-      duration: 3000,
       isClosable: true,
     });
   };
@@ -360,7 +360,7 @@ const AdminSidebar = () => {
             </HStack>
           </HStack>
           <Text fontSize="sm" color={textColor} mb={3}>
-            Welcome, {user?.first_name || 'Admin'}
+            Welcome, {user?.name || 'Admin'}
           </Text>
           <Divider />
         </Box>

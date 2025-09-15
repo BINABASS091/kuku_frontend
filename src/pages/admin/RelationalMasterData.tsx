@@ -24,7 +24,6 @@ import {
   Heading,
   Icon,
   useToast,
-  Flex,
 } from '@chakra-ui/react';
 import {
   ViewIcon,
@@ -34,7 +33,6 @@ import {
   CheckCircleIcon,
   WarningIcon,
   LinkIcon,
-  AddIcon,
 } from '@chakra-ui/icons';
 import MasterDataManager from '../../components/MasterDataManager';
 import { masterDataAPI } from '../../services/api';

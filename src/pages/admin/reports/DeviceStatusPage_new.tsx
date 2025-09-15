@@ -1,28 +1,22 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
-  VStack,
-  HStack,
   Text,
+  SimpleGrid,
   Card,
   CardHeader,
   CardBody,
-  Button,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  SimpleGrid,
-  Badge,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   useColorModeValue,
-  Spinner,
-  Alert,
-  AlertIcon,
-  Flex,
+  VStack,
+  HStack,
+  Badge,
+  Button,
+  Select,
   Table,
   Thead,
   Tbody,
@@ -30,10 +24,19 @@ import {
   Th,
   Td,
   TableContainer,
+  Flex,
+  IconButton,
+  Tooltip,
   useToast,
-  Select,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Progress,
+  Spinner,
+  Center,
 } from '@chakra-ui/react';
-import { DownloadIcon, RepeatIcon, SearchIcon } from '@chakra-ui/icons';
+import { DownloadIcon, RepeatIcon, ViewIcon, WarningIcon } from '@chakra-ui/icons';
 
 interface DeviceMetrics {
   total_devices: number;

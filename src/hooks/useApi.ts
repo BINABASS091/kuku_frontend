@@ -1,5 +1,5 @@
-import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { AxiosError, AxiosResponse } from 'axios';
+import { useMutation, useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { type AxiosError, type AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';

@@ -20,10 +20,6 @@ import {
 import { ViewIcon, SettingsIcon, RepeatIcon, DownloadIcon, ExternalLinkIcon, InfoIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 import { useDashboardStats, useRecentActivities, useSystemAlerts, useTopFarms, useRefreshDashboard } from '../hooks/useDashboardData';
-import { StatsCards, QuickActions, SystemAlertsBanner, DashboardTabs, DataManagement } from '../features/admin/dashboard/components';t { Heading, Box, Text, Card, CardHeader, CardBody, VStack, HStack, IconButton, Tooltip, useToast, useColorModeValue } from '@chakra-ui/react';
-import { ViewIcon, SettingsIcon, RepeatIcon, DownloadIcon, ExternalLinkIcon } from '@chakra-ui/icons';
-import { useAuth } from '../context/AuthContext';
-import { useDashboardStats, useRecentActivities, useSystemAlerts, useTopFarms, useRefreshDashboard } from '../hooks/useDashboardData';
 import { StatsCards, QuickActions, SystemAlertsBanner, DashboardTabs } from '../features/admin/dashboard/components';
 
 // Clean modular Admin Dashboard (legacy monolithic implementation removed)

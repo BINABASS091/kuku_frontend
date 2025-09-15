@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Heading,
@@ -48,7 +48,7 @@ export type ColumnConfig<T> = {
 export type FieldConfig =
   | { type: 'text'; name: string; label: string; required?: boolean; placeholder?: string }
   | { type: 'textarea'; name: string; label: string; required?: boolean; placeholder?: string }
-  | { type: 'select'; name: string; label: string; required?: boolean; options: { label: string; value: string | number }[] };
+  | { type: 'select'; name: string; label: string; required?: boolean; options: { label: string; value: string | number | boolean }[]; defaultValue?: string | number | boolean };
 
 type MasterDataManagerProps<T extends { id: number }> = {
   title: string;
@@ -80,7 +80,6 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, api, col
 
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const textColor = useColorModeValue('gray.600', 'gray.300');
 
   const resetForm = () => setFormValues({});
 
