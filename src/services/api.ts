@@ -392,6 +392,20 @@ export const breedAPI = {
     return response.data;
   },
 
+  create: async (breedData: any) => {
+    const response = await api.post('/breeds/', breedData);
+    return response.data;
+  },
+
+  update: async (id: number, breedData: any) => {
+    const response = await api.patch(`/breeds/${id}/`, breedData);
+    return response.data;
+  },
+
+  delete: async (id: number) => {
+    await api.delete(`/breeds/${id}/`);
+  },
+
   breedTypes: {
     list: async () => {
       const response = await api.get('/breed-types/');

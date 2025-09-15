@@ -56,8 +56,32 @@ const AdminDashboard: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [activeTab, setActiveTab] = useState('users');
   
+  // Move all useColorModeValue calls to the top level to fix hooks order
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
+  const cardBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const headingColor = useColorModeValue('gray.800', 'white');
+  
+  // Quick Actions colors
+  const usersBgColor = useColorModeValue('blue.50', 'blue.900');
+  const usersBorderColor = useColorModeValue('blue.100', 'blue.700');
+  const usersHoverBorderColor = useColorModeValue('blue.300', 'blue.500');
+  const usersTextColor = useColorModeValue('blue.700', 'blue.200');
+  
+  const farmersBgColor = useColorModeValue('green.50', 'green.900');
+  const farmersBorderColor = useColorModeValue('green.100', 'green.700');
+  const farmersHoverBorderColor = useColorModeValue('green.300', 'green.500');
+  const farmersTextColor = useColorModeValue('green.700', 'green.200');
+  
+  const farmsBgColor = useColorModeValue('purple.50', 'purple.900');
+  const farmsBorderColor = useColorModeValue('purple.100', 'purple.700');
+  const farmsHoverBorderColor = useColorModeValue('purple.300', 'purple.500');
+  const farmsTextColor = useColorModeValue('purple.700', 'purple.200');
+  
+  const batchesBgColor = useColorModeValue('orange.50', 'orange.900');
+  const batchesBorderColor = useColorModeValue('orange.100', 'orange.700');
+  const batchesHoverBorderColor = useColorModeValue('orange.300', 'orange.500');
+  const batchesTextColor = useColorModeValue('orange.700', 'orange.200');
 
   const getTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -89,7 +113,7 @@ const AdminDashboard: React.FC = () => {
         userAPI.list(),
         farmerAPI.list(),
         farmAPI.list(),
-        api.get('/api/v1/subscriptions/'),
+        api.get('/farmer-subscriptions/'),
         deviceAPI.list()
       ]);
 
@@ -330,11 +354,11 @@ const AdminDashboard: React.FC = () => {
         </SimpleGrid>
 
         {/* Quick Actions */}
-        <Card bg={cardBg} boxShadow="lg" borderRadius="xl" border="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
+        <Card bg={cardBg} boxShadow="lg" borderRadius="xl" border="1px solid" borderColor={cardBorderColor}>
           <CardBody p={8}>
             <VStack spacing={6} align="stretch">
               <Box>
-                <Heading size="lg" mb={2} color={useColorModeValue('gray.800', 'white')}>
+                <Heading size="lg" mb={2} color={headingColor}>
                   Quick Actions
                 </Heading>
                 <Text color={textColor} fontSize="md">
@@ -347,21 +371,21 @@ const AdminDashboard: React.FC = () => {
                 <VStack
                   spacing={4}
                   p={6}
-                  bg={useColorModeValue('blue.50', 'blue.900')}
+                  bg={usersBgColor}
                   borderRadius="xl"
                   border="2px solid"
-                  borderColor={useColorModeValue('blue.100', 'blue.700')}
+                  borderColor={usersBorderColor}
                   cursor="pointer"
                   transition="all 0.2s"
                   _hover={{
                     transform: 'translateY(-2px)',
                     boxShadow: 'lg',
-                    borderColor: useColorModeValue('blue.300', 'blue.500'),
+                    borderColor: usersHoverBorderColor,
                   }}
                   onClick={() => handleDataManagement('users')}
                 >
                   <Icon as={FiUsers} boxSize={8} color="blue.500" />
-                  <Text fontWeight="bold" color={useColorModeValue('blue.700', 'blue.200')}>
+                  <Text fontWeight="bold" color={usersTextColor}>
                     User Management
                   </Text>
                   <Text fontSize="sm" textAlign="center" color={textColor}>
@@ -372,21 +396,21 @@ const AdminDashboard: React.FC = () => {
                 <VStack
                   spacing={4}
                   p={6}
-                  bg={useColorModeValue('green.50', 'green.900')}
+                  bg={farmersBgColor}
                   borderRadius="xl"
                   border="2px solid"
-                  borderColor={useColorModeValue('green.100', 'green.700')}
+                  borderColor={farmersBorderColor}
                   cursor="pointer"
                   transition="all 0.2s"
                   _hover={{
                     transform: 'translateY(-2px)',
                     boxShadow: 'lg',
-                    borderColor: useColorModeValue('green.300', 'green.500'),
+                    borderColor: farmersHoverBorderColor,
                   }}
                   onClick={() => handleDataManagement('farms')}
                 >
                   <Icon as={FiHome} boxSize={8} color="green.500" />
-                  <Text fontWeight="bold" color={useColorModeValue('green.700', 'green.200')}>
+                  <Text fontWeight="bold" color={farmersTextColor}>
                     Farm Management
                   </Text>
                   <Text fontSize="sm" textAlign="center" color={textColor}>
@@ -397,21 +421,21 @@ const AdminDashboard: React.FC = () => {
                 <VStack
                   spacing={4}
                   p={6}
-                  bg={useColorModeValue('purple.50', 'purple.900')}
+                  bg={farmsBgColor}
                   borderRadius="xl"
                   border="2px solid"
-                  borderColor={useColorModeValue('purple.100', 'purple.700')}
+                  borderColor={farmsBorderColor}
                   cursor="pointer"
                   transition="all 0.2s"
                   _hover={{
                     transform: 'translateY(-2px)',
                     boxShadow: 'lg',
-                    borderColor: useColorModeValue('purple.300', 'purple.500'),
+                    borderColor: farmsHoverBorderColor,
                   }}
                   onClick={() => handleDataManagement('batches')}
                 >
                   <Icon as={FiLayers} boxSize={8} color="purple.500" />
-                  <Text fontWeight="bold" color={useColorModeValue('purple.700', 'purple.200')}>
+                  <Text fontWeight="bold" color={farmsTextColor}>
                     Batch Management
                   </Text>
                   <Text fontSize="sm" textAlign="center" color={textColor}>
@@ -422,21 +446,21 @@ const AdminDashboard: React.FC = () => {
                 <VStack
                   spacing={4}
                   p={6}
-                  bg={useColorModeValue('orange.50', 'orange.900')}
+                  bg={batchesBgColor}
                   borderRadius="xl"
                   border="2px solid"
-                  borderColor={useColorModeValue('orange.100', 'orange.700')}
+                  borderColor={batchesBorderColor}
                   cursor="pointer"
                   transition="all 0.2s"
                   _hover={{
                     transform: 'translateY(-2px)',
                     boxShadow: 'lg',
-                    borderColor: useColorModeValue('orange.300', 'orange.500'),
+                    borderColor: batchesHoverBorderColor,
                   }}
                   onClick={() => handleDataManagement('breeds')}
                 >
                   <Icon as={FiGitBranch} boxSize={8} color="orange.500" />
-                  <Text fontWeight="bold" color={useColorModeValue('orange.700', 'orange.200')}>
+                  <Text fontWeight="bold" color={batchesTextColor}>
                     Breed Management
                   </Text>
                   <Text fontSize="sm" textAlign="center" color={textColor}>

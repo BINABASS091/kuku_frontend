@@ -24,6 +24,7 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Textarea,
   useToast,
   AlertDialog,
   AlertDialogBody,
@@ -47,7 +48,8 @@ import {
   Heading,
 } from '@chakra-ui/react';
 import { AddIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
-import { FiUser, FiMail, FiPhone, FiMapPin, FiHome, FiLayers } from 'react-icons/fi';
+import { FiUser, FiUsers, FiMail, FiPhone, FiMapPin, FiHome, FiLayers, FiHash } from 'react-icons/fi';
+import api, { userAPI, farmerAPI, farmAPI, batchAPI, breedAPI } from '../../services/api';
 
 interface User {
   id: number;
@@ -135,116 +137,117 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
   const cancelRef = React.useRef<HTMLButtonElement>(null);
   const toast = useToast();
 
+  // Move all useColorModeValue calls to the top level to fix hooks order
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+  const headingColor = useColorModeValue('gray.700', 'gray.200');
+  const textColor = useColorModeValue('gray.500', 'gray.400');
+  const labelColor = useColorModeValue('gray.700', 'gray.200');
+  const inputBgColor = useColorModeValue('white', 'gray.700');
+  const inputBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const modalBgColor = useColorModeValue('white', 'gray.800');
+  const modalBorderColor = useColorModeValue('gray.200', 'gray.700');
+  const closeIconColor = useColorModeValue('gray.400', 'gray.300');
+  const closeIconHoverColor = useColorModeValue('gray.600', 'gray.100');
+  const modalHeadingColor = useColorModeValue('gray.800', 'white');
+
   useEffect(() => {
     if (isOpen) {
       loadData();
+      // Load dependent data for forms that need it
+      if (['farms', 'batches', 'breeds'].includes(activeTab)) {
+        loadDependentData();
+      }
     }
   }, [isOpen, activeTab]);
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
-
       switch (activeTab) {
         case 'users':
           try {
-            const response = await fetch('/api/v1/users/', { headers });
-            if (response.ok) {
-              const data = await response.json();
-              setUsers(data.results || []);
-            } else {
-              setUsers([]);
-            }
-          } catch {
+            const data = await userAPI.list();
+            setUsers(data.results || []);
+          } catch (error) {
+            console.error('Error loading users:', error);
             setUsers([]);
           }
           break;
         case 'farmers':
           try {
-            const response = await fetch('/api/v1/farmers/', { headers });
-            if (response.ok) {
-              const data = await response.json();
-              setFarmers(data.results || []);
-            } else {
-              setFarmers([]);
-            }
-          } catch {
+            const data = await farmerAPI.list();
+            setFarmers(data.results || []);
+          } catch (error) {
+            console.error('Error loading farmers:', error);
             setFarmers([]);
           }
           break;
         case 'farms':
           try {
-            const response = await fetch('/api/v1/farms/', { headers });
-            if (response.ok) {
-              const data = await response.json();
-              setFarms(data.results || []);
-            }
-            // Also load farmers for farm creation
-            const farmersResponse = await fetch('/api/v1/farmers/', { headers });
-            if (farmersResponse.ok) {
-              const farmersData = await farmersResponse.json();
-              setFarmers(farmersData.results || []);
-            }
-          } catch {
+            const data = await farmAPI.list();
+            setFarms(data.results || []);
+          } catch (error) {
+            console.error('Error loading farms:', error);
             setFarms([]);
           }
           break;
         case 'batches':
           try {
-            const response = await fetch('/api/v1/batches/', { headers });
-            if (response.ok) {
-              const data = await response.json();
-              setBatches(data.results || []);
-            }
-            // Also load farms and breeds for batch creation
-            const farmsResponse = await fetch('/api/v1/farms/', { headers });
-            if (farmsResponse.ok) {
-              const farmsData = await farmsResponse.json();
-              setFarms(farmsData.results || []);
-            }
-            const breedsResponse = await fetch('/api/v1/breeds/', { headers });
-            if (breedsResponse.ok) {
-              const breedsData = await breedsResponse.json();
-              setBreeds(breedsData.results || []);
-            }
-          } catch {
+            const data = await batchAPI.list();
+            setBatches(data.results || []);
+          } catch (error) {
+            console.error('Error loading batches:', error);
             setBatches([]);
           }
           break;
         case 'breeds':
           try {
-            const response = await fetch('/api/v1/breeds/', { headers });
-            if (response.ok) {
-              const data = await response.json();
-              setBreeds(data.results || []);
-            }
-            // Also load breed types for breed creation
-            const breedTypesResponse = await fetch('/api/v1/breed-types/', { headers });
-            if (breedTypesResponse.ok) {
-              const breedTypesData = await breedTypesResponse.json();
-              setBreedTypes(breedTypesData.results || []);
-            }
-          } catch {
+            const data = await breedAPI.list();
+            setBreeds(data.results || []);
+          } catch (error) {
+            console.error('Error loading breeds:', error);
             setBreeds([]);
           }
           break;
       }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load data',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const loadDependentData = async () => {
+    // Load farmers for farm creation
+    try {
+      const farmersData = await farmerAPI.list();
+      setFarmers(farmersData.results || []);
+    } catch (error) {
+      console.error('Error loading farmers:', error);
+    }
+
+    // Load farms and breeds for batch creation
+    try {
+      const [farmsData, breedsData] = await Promise.allSettled([
+        farmAPI.list(),
+        breedAPI.list()
+      ]);
+      
+      if (farmsData.status === 'fulfilled') {
+        setFarms(farmsData.value.results || []);
+      }
+      if (breedsData.status === 'fulfilled') {
+        setBreeds(breedsData.value.results || []);
+      }
+    } catch (error) {
+      console.error('Error loading dependent data:', error);
+    }
+
+    // Load breed types for breed creation
+    try {
+      const breedTypesData = await api.get('/breed-types/');
+      setBreedTypes(breedTypesData.data.results || []);
+    } catch (error) {
+      console.error('Error loading breed types:', error);
+    }
   };
 
   const handleAdd = () => {
@@ -266,27 +269,39 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
   const confirmDelete = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/v1/${activeTab}/${selectedItem.id}/`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: `${activeTab.slice(0, -1)} deleted successfully`,
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        loadData();
-      } else {
-        throw new Error('Delete failed');
+      let apiService;
+      switch (activeTab) {
+        case 'users':
+          apiService = userAPI;
+          break;
+        case 'farmers':
+          apiService = farmerAPI;
+          break;
+        case 'farms':
+          apiService = farmAPI;
+          break;
+        case 'batches':
+          apiService = batchAPI;
+          break;
+        case 'breeds':
+          apiService = breedAPI;
+          break;
+        default:
+          throw new Error('Unknown tab');
       }
+
+      await apiService.delete(selectedItem.id);
+      
+      toast({
+        title: 'Success',
+        description: `${activeTab.slice(0, -1)} deleted successfully`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      loadData();
     } catch (error) {
+      console.error('Delete error:', error);
       toast({
         title: 'Error',
         description: `Failed to delete ${activeTab.slice(0, -1)}`,
@@ -300,53 +315,66 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const method = selectedItem ? 'PUT' : 'POST';
-      const url = selectedItem 
-        ? `/api/v1/${activeTab}/${selectedItem.id}/`
-        : `/api/v1/${activeTab}/`;
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: `${activeTab.slice(0, -1)} ${selectedItem ? 'updated' : 'created'} successfully`,
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        setIsEditing(false);
-        loadData();
-      } else {
-        throw new Error('Save failed');
+      let apiService;
+      switch (activeTab) {
+        case 'users':
+          apiService = userAPI;
+          break;
+        case 'farmers':
+          apiService = farmerAPI;
+          break;
+        case 'farms':
+          apiService = farmAPI;
+          break;
+        case 'batches':
+          apiService = batchAPI;
+          break;
+        case 'breeds':
+          apiService = breedAPI;
+          break;
+        default:
+          throw new Error('Unknown tab');
       }
+
+      if (selectedItem) {
+        // Update existing item
+        await apiService.update(selectedItem.id, formData);
+      } else {
+        // Create new item
+        await apiService.create(formData);
+      }
+
+      toast({
+        title: 'Success',
+        description: `${activeTab.slice(0, -1)} ${selectedItem ? 'updated' : 'created'} successfully`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsEditing(false);
+      loadData();
     } catch (error) {
+      console.error('Save error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Form data being sent:', formData);
       toast({
         title: 'Error',
-        description: `Failed to save ${activeTab.slice(0, -1)}`,
+        description: `Failed to save ${activeTab.slice(0, -1)}: ${error.response?.data?.message || error.message}`,
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }
   };
 
   const renderUserForm = () => (
-    <Box p={6} bg={useColorModeValue('gray.50', 'gray.800')} borderRadius="lg">
+    <Box p={6} bg={bgColor} borderRadius="lg">
       <VStack spacing={6} align="stretch">
         <Box>
-          <Heading size="md" mb={2} color={useColorModeValue('gray.700', 'gray.200')}>
+          <Heading size="md" mb={2} color={headingColor}>
             {selectedItem ? 'Edit User Details' : 'Create New User'}
           </Heading>
-          <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+          <Text fontSize="sm" color={textColor}>
             {selectedItem ? 'Update the user information below' : 'Fill in the details to create a new user account'}
           </Text>
           <Divider mt={4} />
@@ -355,7 +383,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Username
               </FormLabel>
               <InputGroup>
@@ -366,9 +394,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.username || ''}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   placeholder="Enter username"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -377,7 +405,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Email Address
               </FormLabel>
               <InputGroup>
@@ -389,9 +417,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.email || ''}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter email address"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -400,16 +428,16 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 First Name
               </FormLabel>
               <Input
                 value={formData.first_name || ''}
                 onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                 placeholder="Enter first name"
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
               />
             </FormControl>
@@ -417,16 +445,16 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Last Name
               </FormLabel>
               <Input
                 value={formData.last_name || ''}
                 onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                 placeholder="Enter last name"
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
               />
             </FormControl>
@@ -434,37 +462,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
-                Phone Number
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement>
-                  <Icon as={FiPhone} color="gray.400" />
-                </InputLeftElement>
-                <Input
-                  value={formData.phone || ''}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="Enter phone number"
-                  bg={useColorModeValue('white', 'gray.700')}
-                  border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
-                  _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
-                />
-              </InputGroup>
-            </FormControl>
-          </GridItem>
-
-          <GridItem>
-            <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 User Role
               </FormLabel>
               <Select
                 value={formData.role || ''}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
               >
                 <option value="">Select role</option>
@@ -478,15 +484,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Account Status
               </FormLabel>
               <Select
                 value={formData.is_active !== undefined ? (formData.is_active ? 'true' : 'false') : 'true'}
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'true' })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
               >
                 <option value="true">Active</option>
@@ -498,7 +504,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
           {!selectedItem && (
             <GridItem colSpan={{ base: 1, md: 2 }}>
               <FormControl>
-                <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+                <FormLabel fontWeight="semibold" color={labelColor}>
                   Password
                 </FormLabel>
                 <Input
@@ -506,9 +512,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.password || ''}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Enter password"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
                 />
               </FormControl>
@@ -520,13 +526,13 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
   );
 
   const renderFarmerForm = () => (
-    <Box p={6} bg={useColorModeValue('gray.50', 'gray.800')} borderRadius="lg">
+    <Box p={6} bg={bgColor} borderRadius="lg">
       <VStack spacing={6} align="stretch">
         <Box>
-          <Heading size="md" mb={2} color={useColorModeValue('gray.700', 'gray.200')}>
+          <Heading size="md" mb={2} color={headingColor}>
             {selectedItem ? 'Edit Farmer Details' : 'Register New Farmer'}
           </Heading>
-          <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+          <Text fontSize="sm" color={textColor}>
             {selectedItem ? 'Update the farmer information below' : 'Fill in the details to register a new farmer'}
           </Text>
           <Divider mt={4} />
@@ -535,7 +541,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Farmer Name
               </FormLabel>
               <InputGroup>
@@ -546,9 +552,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.farmerName || ''}
                   onChange={(e) => setFormData({ ...formData, farmerName: e.target.value })}
                   placeholder="Enter farmer name"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'green.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -557,7 +563,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Email Address
               </FormLabel>
               <InputGroup>
@@ -569,9 +575,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.email || ''}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter email address"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'green.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -580,7 +586,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Phone Number
               </FormLabel>
               <InputGroup>
@@ -591,9 +597,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.phone || ''}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="Enter phone number"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'green.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -602,15 +608,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 User Account
               </FormLabel>
               <Select
                 value={formData.user || ''}
                 onChange={(e) => setFormData({ ...formData, user: parseInt(e.target.value) })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'green.500', boxShadow: 'none' }}
               >
                 <option value="">Select user account</option>
@@ -625,7 +631,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem colSpan={{ base: 1, md: 2 }}>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Address
               </FormLabel>
               <InputGroup>
@@ -636,9 +642,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.address || ''}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Enter farmer address"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'green.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -650,13 +656,13 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
   );
 
   const renderFarmForm = () => (
-    <Box p={6} bg={useColorModeValue('gray.50', 'gray.800')} borderRadius="lg">
+    <Box p={6} bg={bgColor} borderRadius="lg">
       <VStack spacing={6} align="stretch">
         <Box>
-          <Heading size="md" mb={2} color={useColorModeValue('gray.700', 'gray.200')}>
+          <Heading size="md" mb={2} color={headingColor}>
             {selectedItem ? 'Edit Farm Details' : 'Register New Farm'}
           </Heading>
-          <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+          <Text fontSize="sm" color={textColor}>
             {selectedItem ? 'Update the farm information below' : 'Fill in the details to register a new farm'}
           </Text>
           <Divider mt={4} />
@@ -665,7 +671,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Farm Name
               </FormLabel>
               <InputGroup>
@@ -676,9 +682,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.farmName || ''}
                   onChange={(e) => setFormData({ ...formData, farmName: e.target.value })}
                   placeholder="Enter farm name"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'purple.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -687,15 +693,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Farm Size
               </FormLabel>
               <Select
                 value={formData.farmSize || ''}
                 onChange={(e) => setFormData({ ...formData, farmSize: e.target.value })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'purple.500', boxShadow: 'none' }}
               >
                 <option value="">Select farm size</option>
@@ -709,7 +715,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem colSpan={{ base: 1, md: 2 }}>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Location
               </FormLabel>
               <InputGroup>
@@ -720,9 +726,9 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   value={formData.location || ''}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Enter farm location (address, coordinates, etc.)"
-                  bg={useColorModeValue('white', 'gray.700')}
+                  bg={inputBgColor}
                   border="2px solid"
-                  borderColor={useColorModeValue('gray.200', 'gray.600')}
+                  borderColor={inputBorderColor}
                   _focus={{ borderColor: 'purple.500', boxShadow: 'none' }}
                 />
               </InputGroup>
@@ -731,15 +737,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem colSpan={{ base: 1, md: 2 }}>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Farm Owner
               </FormLabel>
               <Select
                 value={formData.farmerID || ''}
                 onChange={(e) => setFormData({ ...formData, farmerID: parseInt(e.target.value) })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'purple.500', boxShadow: 'none' }}
               >
                 <option value="">Select farm owner</option>
@@ -757,90 +763,171 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
   );
 
   const renderBatchForm = () => (
-    <VStack spacing={4} align="stretch">
-      <FormControl>
-        <FormLabel>Farm</FormLabel>
-        <Select
-          value={formData.farmID || ''}
-          onChange={(e) => setFormData({ ...formData, farmID: parseInt(e.target.value) })}
-        >
-          <option value="">Select farm</option>
-          {farms.map((farm) => (
-            <option key={farm.farmID} value={farm.farmID}>
-              {farm.farmName}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl>
-        <FormLabel>Breed</FormLabel>
-        <Select
-          value={formData.breedID || ''}
-          onChange={(e) => setFormData({ ...formData, breedID: parseInt(e.target.value) })}
-        >
-          <option value="">Select breed</option>
-          {breeds.map((breed) => (
-            <option key={breed.breedID} value={breed.breedID}>
-              {breed.breedName}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl>
-        <FormLabel>Quantity (Number of Birds)</FormLabel>
-        <Input
-          type="number"
-          value={formData.quanitity || ''}
-          onChange={(e) => setFormData({ ...formData, quanitity: parseInt(e.target.value) })}
-          placeholder="Enter bird count"
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Arrive Date</FormLabel>
-        <Input
-          type="date"
-          value={formData.arriveDate || ''}
-          onChange={(e) => setFormData({ ...formData, arriveDate: e.target.value })}
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Initial Age (days)</FormLabel>
-        <Input
-          type="number"
-          value={formData.initAge || ''}
-          onChange={(e) => setFormData({ ...formData, initAge: parseInt(e.target.value) })}
-          placeholder="Enter initial age in days"
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Harvest Age (days)</FormLabel>
-        <Input
-          type="number"
-          value={formData.harvestAge || ''}
-          onChange={(e) => setFormData({ ...formData, harvestAge: parseInt(e.target.value) })}
-          placeholder="Enter planned harvest age in days"
-        />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Initial Weight (grams)</FormLabel>
-        <Input
-          type="number"
-          value={formData.initWeight || ''}
-          onChange={(e) => setFormData({ ...formData, initWeight: parseInt(e.target.value) })}
-          placeholder="Enter initial weight in grams"
-        />
-      </FormControl>
-    </VStack>
+    <Box p={6} bg={bgColor} borderRadius="lg">
+      <VStack spacing={6} align="stretch">
+        <Box>
+          <Heading size="md" mb={2} color={headingColor}>
+            {selectedItem ? 'Edit Batch Details' : 'Register New Batch'}
+          </Heading>
+          <Text fontSize="sm" color={textColor}>
+            {selectedItem ? 'Update the batch information below' : 'Fill in the details to register a new batch'}
+          </Text>
+          <Divider mt={4} />
+        </Box>
+
+        <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Farm
+              </FormLabel>
+              <Select
+                value={formData.farmID || ''}
+                onChange={(e) => setFormData({ ...formData, farmID: parseInt(e.target.value) })}
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              >
+                <option value="">Select farm</option>
+                {farms.map((farm) => (
+                  <option key={farm.farmID} value={farm.farmID}>
+                    {farm.farmName}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </GridItem>
+
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Breed
+              </FormLabel>
+              <Select
+                value={formData.breedID || ''}
+                onChange={(e) => setFormData({ ...formData, breedID: parseInt(e.target.value) })}
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              >
+                <option value="">Select breed</option>
+                {breeds.map((breed) => (
+                  <option key={breed.breedID} value={breed.breedID}>
+                    {breed.breedName}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </GridItem>
+
+          <GridItem>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Quantity (Number of Birds)
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement>
+                  <Icon as={FiUsers} color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  type="number"
+                  value={formData.quanitity || ''}
+                  onChange={(e) => setFormData({ ...formData, quanitity: parseInt(e.target.value) })}
+                  placeholder="Enter bird count"
+                  bg={inputBgColor}
+                  border="2px solid"
+                  borderColor={inputBorderColor}
+                  _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+                />
+              </InputGroup>
+            </FormControl>
+          </GridItem>
+
+          <GridItem>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Arrive Date
+              </FormLabel>
+              <Input
+                type="date"
+                value={formData.arriveDate || ''}
+                onChange={(e) => setFormData({ ...formData, arriveDate: e.target.value })}
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              />
+            </FormControl>
+          </GridItem>
+
+          <GridItem>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Initial Age (days)
+              </FormLabel>
+              <Input
+                type="number"
+                value={formData.initAge || ''}
+                onChange={(e) => setFormData({ ...formData, initAge: parseInt(e.target.value) })}
+                placeholder="Enter initial age in days"
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              />
+            </FormControl>
+          </GridItem>
+
+          <GridItem>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Harvest Age (days)
+              </FormLabel>
+              <Input
+                type="number"
+                value={formData.harvestAge || ''}
+                onChange={(e) => setFormData({ ...formData, harvestAge: parseInt(e.target.value) })}
+                placeholder="Enter planned harvest age in days"
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              />
+            </FormControl>
+          </GridItem>
+
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Initial Weight (grams)
+              </FormLabel>
+              <Input
+                type="number"
+                value={formData.initWeight || ''}
+                onChange={(e) => setFormData({ ...formData, initWeight: parseInt(e.target.value) })}
+                placeholder="Enter initial weight in grams"
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'orange.500', boxShadow: 'none' }}
+              />
+            </FormControl>
+          </GridItem>
+        </Grid>
+      </VStack>
+    </Box>
   );
 
   const renderBreedForm = () => (
-    <Box p={6} bg={useColorModeValue('gray.50', 'gray.800')} borderRadius="lg">
+    <Box p={6} bg={bgColor} borderRadius="lg">
       <VStack spacing={6} align="stretch">
         <Box>
-          <Heading size="md" mb={2} color={useColorModeValue('gray.700', 'gray.200')}>
+          <Heading size="md" mb={2} color={headingColor}>
             {selectedItem ? 'Edit Breed Details' : 'Register New Breed'}
           </Heading>
-          <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')}>
+          <Text fontSize="sm" color={textColor}>
             {selectedItem ? 'Update the breed information below' : 'Fill in the details to register a new poultry breed'}
           </Text>
           <Divider mt={4} />
@@ -849,16 +936,16 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Breed Name
               </FormLabel>
               <Input
                 value={formData.breedName || ''}
                 onChange={(e) => setFormData({ ...formData, breedName: e.target.value })}
                 placeholder="Enter breed name"
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'teal.500', boxShadow: 'none' }}
               />
             </FormControl>
@@ -866,15 +953,15 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Breed Type
               </FormLabel>
               <Select
                 value={formData.breed_typeID || ''}
                 onChange={(e) => setFormData({ ...formData, breed_typeID: parseInt(e.target.value) })}
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'teal.500', boxShadow: 'none' }}
               >
                 <option value="">Select breed type</option>
@@ -889,17 +976,36 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
           <GridItem colSpan={{ base: 1, md: 2 }}>
             <FormControl>
-              <FormLabel fontWeight="semibold" color={useColorModeValue('gray.700', 'gray.200')}>
+              <FormLabel fontWeight="semibold" color={labelColor}>
                 Photo URL <Text as="span" color="gray.500" fontSize="sm">(optional)</Text>
               </FormLabel>
               <Input
                 value={formData.preedphoto || ''}
                 onChange={(e) => setFormData({ ...formData, preedphoto: e.target.value })}
                 placeholder="Enter photo URL for the breed"
-                bg={useColorModeValue('white', 'gray.700')}
+                bg={inputBgColor}
                 border="2px solid"
-                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                borderColor={inputBorderColor}
                 _focus={{ borderColor: 'teal.500', boxShadow: 'none' }}
+              />
+            </FormControl>
+          </GridItem>
+
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+            <FormControl>
+              <FormLabel fontWeight="semibold" color={labelColor}>
+                Description <Text as="span" color="gray.500" fontSize="sm">(optional)</Text>
+              </FormLabel>
+              <Textarea
+                value={formData.description || ''}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Enter breed description, characteristics, or special notes"
+                rows={4}
+                bg={inputBgColor}
+                border="2px solid"
+                borderColor={inputBorderColor}
+                _focus={{ borderColor: 'teal.500', boxShadow: 'none' }}
+                resize="vertical"
               />
             </FormControl>
           </GridItem>
@@ -1060,16 +1166,16 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
       <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
         <ModalContent 
-          bg={useColorModeValue('white', 'gray.800')}
+          bg={modalBgColor}
           borderRadius="xl"
           boxShadow="2xl"
           border="1px solid"
-          borderColor={useColorModeValue('gray.200', 'gray.700')}
+          borderColor={modalBorderColor}
         >
           <ModalHeader 
             pb={6}
             borderBottom="1px solid"
-            borderColor={useColorModeValue('gray.200', 'gray.700')}
+            borderColor={modalBorderColor}
           >
             <Flex align="center" gap={3}>
               <Icon 
@@ -1089,10 +1195,10 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                 }
               />
               <Box>
-                <Heading size="lg" color={useColorModeValue('gray.800', 'white')}>
+                <Heading size="lg" color={modalHeadingColor}>
                   {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Management
                 </Heading>
-                <Text fontSize="sm" color={useColorModeValue('gray.500', 'gray.400')} mt={1}>
+                <Text fontSize="sm" color={textColor} mt={1}>
                   {isEditing 
                     ? `${selectedItem ? 'Edit existing' : 'Create new'} ${activeTab.slice(0, -1)} record`
                     : `Manage ${activeTab} records, add new entries, and update existing data`
@@ -1103,8 +1209,8 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
           </ModalHeader>
           <ModalCloseButton 
             size="lg"
-            color={useColorModeValue('gray.400', 'gray.300')}
-            _hover={{ color: useColorModeValue('gray.600', 'gray.100') }}
+            color={closeIconColor}
+            _hover={{ color: closeIconHoverColor }}
           />
           <ModalBody p={8}>
             {isEditing ? (
@@ -1115,7 +1221,7 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                 {activeTab === 'batches' && renderBatchForm()}
                 {activeTab === 'breeds' && renderBreedForm()}
                 
-                <Flex justify="end" pt={6} borderTop="1px solid" borderColor={useColorModeValue('gray.200', 'gray.700')}>
+                <Flex justify="end" pt={6} borderTop="1px solid" borderColor={modalBorderColor}>
                   <HStack spacing={4}>
                     <Button 
                       variant="outline" 
