@@ -286,38 +286,8 @@ const AdminSidebar = () => {
     {
       icon: SettingsIcon,
       label: 'Reports & Analytics',
-      children: [
-        {
-          icon: ViewIcon,
-          label: 'Farm Performance',
-          href: '/admin/reports/farm-performance',
-          tooltip: 'Farm performance analytics',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Revenue Reports',
-          href: '/admin/reports/revenue',
-          tooltip: 'Revenue and financial reports',
-        },
-        {
-          icon: ViewIcon,
-          label: 'User Analytics',
-          href: '/admin/reports/users',
-          tooltip: 'User engagement analytics',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Device Status',
-          href: '/admin/reports/devices',
-          tooltip: 'Device health and status reports',
-        },
-        {
-          icon: DownloadIcon,
-          label: 'Export Data',
-          onClick: handleExportData,
-          tooltip: 'Export system data',
-        },
-      ],
+      href: '/admin/reports',
+      tooltip: 'Comprehensive analytics, performance reports, and data insights across all farm operations',
     },
   ];
 

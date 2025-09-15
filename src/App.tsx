@@ -28,7 +28,7 @@ import DiseaseExceptionsPage from './pages/admin/knowledge/DiseaseExceptionsPage
 import AnomaliesPage from './pages/admin/knowledge/AnomaliesPage';
 import MedicationsPage from './pages/admin/knowledge/MedicationsPage';
 import SettingsPage from './pages/admin/SettingsPage';
-import ReportsPage from './pages/admin/ReportsPage';
+import ReportsAnalytics from './pages/admin/ReportsAnalytics';
 import DjangoAdmin from './pages/admin/DjangoAdmin';
 import SystemAdministration from './pages/admin/SystemAdministration';
 import SubscriptionsBilling from './pages/admin/SubscriptionsBilling';
@@ -181,7 +181,7 @@ function App() {
           <Route path="subscriptions-billing" element={<SubscriptionsBilling />} />
           <Route path="system-administration" element={<SystemAdministration />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="reports" element={<ReportsPage />} />
+          <Route path="reports" element={<ReportsAnalytics />} />
           <Route path="django-admin" element={<DjangoAdmin />} />
         </Route>
         
