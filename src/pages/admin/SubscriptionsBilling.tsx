@@ -4,7 +4,7 @@ import SubscriptionManagement from './SubscriptionManagement';
 import SubscriptionTypesPage from './subscriptions/SubscriptionTypesPage';
 import ResourcesPage from './subscriptions/ResourcesPage';
 import PaymentsPage from './subscriptions/PaymentsPage';
-import ReportsPage from './ReportsPage';
+import BillingReportsPage from './subscriptions/BillingReportsPage';
 
 export default function SubscriptionsBilling() {
   return (
@@ -32,7 +32,7 @@ export default function SubscriptionsBilling() {
             <PaymentsPage />
           </TabPanel>
           <TabPanel>
-            <ReportsPage />
+            <BillingReportsPage />
           </TabPanel>
         </TabPanels>
       </Tabs>

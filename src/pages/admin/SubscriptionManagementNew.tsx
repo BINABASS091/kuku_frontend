@@ -102,7 +102,7 @@ export default function SubscriptionManagement() {
   const fetchStats = async () => {
     try {
       setIsLoadingStats(true);
-      const response = await api.get('/subscriptions/stats/');
+      const response = await api.get('v1/subscriptions/stats/');
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching subscription stats:', error);
@@ -120,7 +120,7 @@ export default function SubscriptionManagement() {
 
   const fetchSubscriptionTypes = async () => {
     try {
-      const response = await api.get('/subscription-types/');
+      const response = await api.get('v1/subscription-types/');
       const types = response.data.results || response.data || [];
       setSubscriptionTypes(Array.isArray(types) ? types : []);
     } catch (error) {
@@ -130,7 +130,7 @@ export default function SubscriptionManagement() {
 
   const fetchFarmers = async () => {
     try {
-      const response = await api.get('/farmers/');
+      const response = await api.get('v1/farmers/');
       const farmersData = response.data.results || response.data || [];
       setFarmers(Array.isArray(farmersData) ? farmersData : []);
     } catch (error) {
@@ -234,7 +234,7 @@ export default function SubscriptionManagement() {
           <CardBody>
             <MasterDataManager<FarmerSubscription>
               title="Farmer Subscriptions"
-              endpoint="farmer-subscriptions/"
+              endpoint="v1/farmer-subscriptions/"
               columns={[
                 { 
                   key: 'farmerID', 
