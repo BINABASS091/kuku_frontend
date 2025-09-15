@@ -274,39 +274,8 @@ const AdminSidebar = () => {
     {
       icon: SettingsIcon,
       label: 'Subscriptions & Billing',
-      children: [
-        {
-          icon: ViewIcon,
-          label: 'All Subscriptions',
-          href: '/admin/subscriptions',
-          badge: stats.activeSubscriptions,
-          tooltip: 'Manage all farmer subscriptions',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Subscription Types',
-          href: '/admin/subscription-types',
-          tooltip: 'Configure subscription plans',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Resources',
-          href: '/admin/resources',
-          tooltip: 'Manage subscription resources',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Payments',
-          href: '/admin/payments',
-          tooltip: 'Track payment transactions',
-        },
-        {
-          icon: ViewIcon,
-          label: 'Billing Reports',
-          href: '/admin/billing-reports',
-          tooltip: 'Generate billing and revenue reports',
-        },
-      ],
+      href: '/admin/subscriptions-billing',
+      tooltip: 'Manage subscriptions, payments, resources, and billing reports in one place',
     },
     {
       icon: SettingsIcon,
