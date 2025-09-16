@@ -345,7 +345,39 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
         await apiService.update(selectedItem.id, formData);
       } else {
         // Create new item
-        await apiService.create(formData);
+        if (activeTab === 'users') {
+          // Special handling for user creation
+          const newUser = await apiService.create(formData);
+          
+          // If creating a FARMER user, also create a Farmer profile
+          if (formData.role === 'FARMER') {
+            try {
+              const farmerData = {
+                user: newUser.data.id,
+                farmerName: `${formData.first_name} ${formData.last_name}`,
+                address: formData.address || 'Not specified',
+                email: formData.email,
+                phone: formData.phone || 'Not provided'
+              };
+              
+              await farmerAPI.create(farmerData);
+              console.log('Farmer profile created successfully for user:', newUser.data.id);
+            } catch (farmerError) {
+              console.error('Failed to create farmer profile:', farmerError);
+              // Don't fail the entire operation, just log the error
+              toast({
+                title: 'Warning',
+                description: 'User created but farmer profile creation failed. Please create manually.',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+              });
+            }
+          }
+        } else {
+          // Regular creation for other entities
+          await apiService.create(formData);
+        }
       }
 
       toast({
@@ -525,6 +557,56 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                 />
               </FormControl>
             </GridItem>
+          )}
+
+          {/* Additional fields for FARMER users */}
+          {formData.role === 'FARMER' && (
+            <>
+              <GridItem>
+                <FormControl>
+                  <FormLabel fontWeight="semibold" color={labelColor}>
+                    Phone Number
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftElement>
+                      <Icon as={FiPhone} color="gray.400" />
+                    </InputLeftElement>
+                    <Input
+                      type="tel"
+                      value={formData.phone || ''}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="Enter phone number"
+                      bg={inputBgColor}
+                      border="2px solid"
+                      borderColor={inputBorderColor}
+                      _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </GridItem>
+
+              <GridItem>
+                <FormControl>
+                  <FormLabel fontWeight="semibold" color={labelColor}>
+                    Address
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftElement>
+                      <Icon as={FiMapPin} color="gray.400" />
+                    </InputLeftElement>
+                    <Input
+                      value={formData.address || ''}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="Enter address"
+                      bg={inputBgColor}
+                      border="2px solid"
+                      borderColor={inputBorderColor}
+                      _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </GridItem>
+            </>
           )}
         </Grid>
       </VStack>
