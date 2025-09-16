@@ -22,8 +22,9 @@ import api from '../../services/api';
 type FarmerSubscription = {
   id: number;
   farmerSubscriptionID: number;
-  farmerID?: {
+  farmer?: {
     id: number;
+    farmerName?: string;
     user?: {
       first_name?: string;
       last_name?: string;
@@ -31,7 +32,7 @@ type FarmerSubscription = {
       username?: string;
     };
   };
-  subscription_typeID?: {
+  subscription_type?: {
     id: number;
     subscriptionTypeID: number;
     name: string;
@@ -156,7 +157,7 @@ export default function SubscriptionManagement() {
       const fullName = `${firstName} ${lastName}`.trim();
       return fullName || farmer.user.username || farmer.user.email || 'Unknown Farmer';
     }
-    return `Farmer #${farmer.id}`;
+    return farmer.farmerName || `Farmer #${farmer.id}` || 'Unknown Farmer';
   };
 
   if (isLoadingStats) {
@@ -228,24 +229,24 @@ export default function SubscriptionManagement() {
               endpoint="farmer-subscriptions/"
               columns={[
                 { 
-                  key: 'farmerID', 
+                  key: 'farmer', 
                   header: 'Farmer', 
-                  render: (r) => getFarmerName(r.farmerID)
+                  render: (r) => getFarmerName(r.farmer)
                 },
                 { 
-                  key: 'subscription_typeID', 
+                  key: 'subscription_plan', 
                   header: 'Subscription Plan', 
-                  render: (r) => r.subscription_typeID?.name || 'No Plan'
+                  render: (r) => r.subscription_type?.name || 'No Plan'
                 },
                 { 
-                  key: 'subscription_typeID', 
+                  key: 'subscription_tier', 
                   header: 'Tier', 
-                  render: (r) => r.subscription_typeID?.tier || '-'
+                  render: (r) => r.subscription_type?.tier || '-'
                 },
                 { 
-                  key: 'subscription_typeID', 
+                  key: 'subscription_cost', 
                   header: 'Cost', 
-                  render: (r) => r.subscription_typeID ? formatCurrency(r.subscription_typeID.cost) : '-'
+                  render: (r) => r.subscription_type ? formatCurrency(r.subscription_type.cost) : '-'
                 },
                 { 
                   key: 'status', 
@@ -282,7 +283,7 @@ export default function SubscriptionManagement() {
               fields={[
                 { 
                   type: 'select', 
-                  name: 'farmerID', 
+                  name: 'farmer_id', 
                   label: 'Farmer', 
                   required: true,
                   options: farmers.map(farmer => ({
@@ -292,7 +293,7 @@ export default function SubscriptionManagement() {
                 },
                 { 
                   type: 'select', 
-                  name: 'subscription_typeID', 
+                  name: 'subscription_type_id', 
                   label: 'Subscription Type', 
                   required: true,
                   options: subscriptionTypes.map(type => ({
@@ -327,8 +328,8 @@ export default function SubscriptionManagement() {
               ]}
               normalizeIn={(v) => ({
                 ...v,
-                farmerID: Number(v.farmerID),
-                subscription_typeID: Number(v.subscription_typeID),
+                farmer_id: Number(v.farmer_id),
+                subscription_type_id: Number(v.subscription_type_id),
                 auto_renew: v.auto_renew === 'true' || v.auto_renew === true
               })}
             />

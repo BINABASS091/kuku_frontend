@@ -264,21 +264,21 @@ function MasterDataManager<T extends { id: number }>({ title, endpoint, api, col
             <Table variant="simple" w="100%" size="md">
               <Thead>
                 <Tr>
-                  {columns.map((col) => (
-                    <Th key={String(col.key)}>{col.header}</Th>
+                  {columns.map((col, index) => (
+                    <Th key={`header-${index}-${String(col.key)}`}>{col.header}</Th>
                   ))}
-                  <Th>Actions</Th>
+                  <Th key={`header-actions`}>Actions</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {filteredItems.map((row) => (
-                  <Tr key={row.id}>
-                    {columns.map((col) => (
-                      <Td key={`${row.id}-${String(col.key)}`}>
+                  <Tr key={`row-${row.id}`}>
+                    {columns.map((col, index) => (
+                      <Td key={`cell-${row.id}-${index}-${String(col.key)}`}>
                         {col.render ? col.render(row) : (row as any)[col.key]}
                       </Td>
                     ))}
-                    <Td whiteSpace="nowrap">
+                    <Td key={`actions-${row.id}`} whiteSpace="nowrap">
                       <HStack spacing={2}>
                         <IconButton aria-label="View" icon={<ViewIcon />} size="sm" variant="ghost" onClick={() => openEdit(row)} />
                         <IconButton aria-label="Edit" icon={<EditIcon />} size="sm" variant="ghost" colorScheme="blue" onClick={() => openEdit(row)} />

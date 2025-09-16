@@ -22,6 +22,7 @@ import ReadingsPage from './pages/admin/operations/ReadingsPage';
 import SubscriptionTypesPage from './pages/admin/subscriptions/SubscriptionTypesPage';
 import ResourcesPage from './pages/admin/subscriptions/ResourcesPage';
 import PaymentsPage from './pages/admin/subscriptions/PaymentsPage';
+import FarmerSubscriptionsPage from './pages/admin/subscriptions/FarmerSubscriptionsPage';
 import HealthConditionsPage from './pages/admin/knowledge/HealthConditionsPage';
 import RecommendationsPage from './pages/admin/knowledge/RecommendationsPage';
 import DiseaseExceptionsPage from './pages/admin/knowledge/DiseaseExceptionsPage';
@@ -170,6 +171,7 @@ function App() {
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="readings" element={<ReadingsPage />} />
           <Route path="subscriptions" element={<SubscriptionManagement />} />
+          <Route path="farmer-subscriptions" element={<FarmerSubscriptionsPage />} />
           <Route path="subscription-types" element={<SubscriptionTypesPage />} />
           <Route path="resources" element={<ResourcesPage />} />
           <Route path="payments" element={<PaymentsPage />} />

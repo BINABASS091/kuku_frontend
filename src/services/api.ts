@@ -708,6 +708,46 @@ export const masterDataAPI = {
     },
   },
 
+  farmerSubscriptions: {
+    list: async (params?: any) => {
+      const response = await api.get('/farmer-subscriptions/', { params });
+      return response.data;
+    },
+    create: async (data: any) => {
+      const response = await api.post('/farmer-subscriptions/', data);
+      return response.data;
+    },
+    update: async (id: number, data: any) => {
+      const response = await api.patch(`/farmer-subscriptions/${id}/`, data);
+      return response.data;
+    },
+    delete: async (id: number) => {
+      await api.delete(`/farmer-subscriptions/${id}/`);
+    },
+    getStats: async () => {
+      const response = await api.get('/subscriptions/stats/');
+      return response.data;
+    },
+  },
+
+  farmers: {
+    list: async (params?: any) => {
+      const response = await api.get('/farmers/', { params });
+      return response.data;
+    },
+    create: async (data: any) => {
+      const response = await api.post('/farmers/', data);
+      return response.data;
+    },
+    update: async (id: number, data: any) => {
+      const response = await api.patch(`/farmers/${id}/`, data);
+      return response.data;
+    },
+    delete: async (id: number) => {
+      await api.delete(`/farmers/${id}/`);
+    },
+  },
+
   // Sensor endpoints
   sensorTypes: {
     list: async (params?: any) => {
