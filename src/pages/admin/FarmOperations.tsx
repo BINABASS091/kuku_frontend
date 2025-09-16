@@ -73,13 +73,13 @@ import { farmAPI, farmerAPI, deviceAPI, batchAPI, breedAPI, activityAPI, activit
 // TypeScript Interfaces
 interface Farm {
   farmID: number;
-  name: string;
+  farmName: string;
   location: string;
-  size: string;
+  farmSize: string;
   farmerID: number;
   farmer_details: {
     id: number;
-    full_name: string;
+    farmerName: string;
     email: string;
     phone: string;
     username: string;
@@ -117,12 +117,17 @@ interface Device {
 }
 
 interface Farmer {
-  id: number;
-  full_name: string;
+  farmerID: number;
+  farmerName: string;
   email: string;
   phone: string;
   user: {
+    id: number;
     username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    role: string;
   };
 }
 
@@ -366,9 +371,9 @@ const FarmOperations = () => {
   useEffect(() => {
     if (activeTab === 0) { // Farms tab
       const filtered = farms.filter(farm =>
-        farm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        farm.farmName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         farm.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        farm.farmer_details?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        farm.farmer_details?.farmerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         farm.farm_status.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredFarms(filtered);
@@ -469,9 +474,9 @@ const FarmOperations = () => {
     setSelectedFarm(farm);
     setFarmFormData({
       farmer: farm.farmerID,
-      name: farm.name,
+      name: farm.farmName,
       location: farm.location,
-      size: farm.size,
+      size: farm.farmSize,
     });
     onFarmModalOpen();
   };
@@ -482,9 +487,9 @@ const FarmOperations = () => {
     // Map frontend payload to backend expected format
     const payload = {
       farmerID: farmFormData.farmer,
-      name: farmFormData.name,
+      farmName: farmFormData.name,
       location: farmFormData.location,
-      size: parseInt(farmFormData.size) || 0,
+      farmSize: farmFormData.size,
     };
     
     console.log('Payload being sent:', payload);
@@ -523,7 +528,7 @@ const FarmOperations = () => {
   };
 
   const handleDeleteFarm = async (farm: Farm) => {
-    if (window.confirm(`Are you sure you want to delete ${farm.name}?`)) {
+    if (window.confirm(`Are you sure you want to delete ${farm.farmName}?`)) {
       try {
         await farmAPI.delete(farm.farmID);
         toast({
@@ -1202,14 +1207,14 @@ const FarmOperations = () => {
                             <Tr key={farm.farmID}>
                               <Td>
                                 <VStack align="start" spacing={1}>
-                                  <Text fontWeight="semibold">{farm.name}</Text>
+                                  <Text fontWeight="semibold">{farm.farmName}</Text>
                                   <Text fontSize="sm" color={textColor}>{farm.location}</Text>
-                                  <Text fontSize="xs" color={textColor}>{farm.size}</Text>
+                                  <Text fontSize="xs" color={textColor}>{farm.farmSize}</Text>
                                 </VStack>
                               </Td>
                               <Td>
                                 <VStack align="start" spacing={1}>
-                                  <Text fontSize="sm">{farm.farmer_details?.full_name}</Text>
+                                  <Text fontSize="sm">{farm.farmer_details?.farmerName}</Text>
                                   <Text fontSize="xs" color={textColor}>@{farm.farmer_details?.username}</Text>
                                 </VStack>
                               </Td>
@@ -1713,8 +1718,8 @@ const FarmOperations = () => {
                     placeholder="Select farmer"
                   >
                     {farmers.map(farmer => (
-                      <option key={farmer.id} value={farmer.id}>
-                        {farmer.full_name} (@{farmer.user?.username})
+                      <option key={farmer.farmerID} value={farmer.farmerID}>
+                        {farmer.farmerName} (@{farmer.user?.username})
                       </option>
                     ))}
                   </Select>
@@ -1781,7 +1786,7 @@ const FarmOperations = () => {
                   >
                     {farms.map(farm => (
                       <option key={farm.farmID} value={farm.farmID}>
-                        {farm.name} - {farm.location}
+                        {farm.farmName} - {farm.location}
                       </option>
                     ))}
                   </Select>
@@ -1871,7 +1876,7 @@ const FarmOperations = () => {
                   >
                     {farms.map((farm) => (
                       <option key={farm.farmID} value={farm.farmID}>
-                        {farm.name}
+                        {farm.farmName}
                       </option>
                     ))}
                   </Select>
