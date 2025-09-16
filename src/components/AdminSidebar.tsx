@@ -273,6 +273,12 @@ const AdminSidebar = () => {
     },
     {
       icon: SettingsIcon,
+      label: 'Breed Configuration',
+      href: '/admin/breed-configuration',
+      tooltip: 'Expert-level breed lifecycle configuration and management',
+    },
+    {
+      icon: SettingsIcon,
       label: 'Subscriptions & Billing',
       href: '/admin/subscriptions-billing',
       tooltip: 'Manage subscriptions, payments, resources, and billing reports in one place',

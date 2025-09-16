@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardAPI } from '../services/api';
+import type { SystemAlert } from '../types/models';
 
 // Additional types for dashboard
 export interface TopFarm {
@@ -23,16 +24,6 @@ export interface DashboardStats {
   activities: number;
   sensorReadings: number;
   alerts: number;
-}
-
-// System alert type
-export interface SystemAlert {
-  id: string;
-  type: 'info' | 'warning' | 'error';
-  message: string;
-  time: string;
-  count: number;
-  severity: 'low' | 'medium' | 'high';
 }
 
 // Recent activity type
@@ -108,20 +99,20 @@ export const useSystemAlerts = () => {
         // In a real implementation, you would fetch from an alerts/notifications endpoint
         return [
           {
-            id: '1',
+            id: 1,
             type: 'warning',
+            title: 'Temperature Alert',
             message: 'Temperature sensors offline in Farm B',
-            time: '10 minutes ago',
-            count: 3,
-            severity: 'medium'
+            timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 minutes ago
+            resolved: false
           },
           {
-            id: '2',
+            id: 2,
             type: 'info',
+            title: 'Subscription Renewal',
             message: 'Monthly subscription renewals due',
-            time: '2 hours ago',
-            count: 5,
-            severity: 'low'
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+            resolved: false
           },
         ];
       } catch (error) {

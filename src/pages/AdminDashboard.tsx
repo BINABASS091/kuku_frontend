@@ -11,7 +11,6 @@ import {
   Text,
   VStack,
   HStack,
-  Button,
   useColorModeValue,
   Card,
   CardBody,
@@ -31,7 +30,7 @@ import {
   FiGitBranch,
 } from 'react-icons/fi';
 import DataManagementModal from '../components/admin/DataManagementModal';
-import api, { dashboardAPI, userAPI, farmerAPI, farmAPI, deviceAPI } from '../services/api';
+import api, { userAPI, farmerAPI, farmAPI, deviceAPI } from '../services/api';
 
 interface DashboardStats {
   totalUsers: number;

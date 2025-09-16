@@ -374,11 +374,11 @@ const DeviceManagement = () => {
       farm: farmId,
       device_type: deviceTypeId,
       name: device.name,
-      serial_number: device.serial_number,
-      mac_address: device.mac_address,
-      ip_address: device.ip_address,
+      serial_number: device.serial_number || '',
+      mac_address: device.mac_address || '',
+      ip_address: device.ip_address || '',
       status: typeof device.status === 'boolean' ? (device.status ? 'ACTIVE' : 'INACTIVE') : (device.status as string),
-      firmware_version: device.firmware_version,
+      firmware_version: device.firmware_version || '',
       configuration: device.configuration || {
         sampling_interval: 300,
         data_transmission_interval: 3600,
@@ -759,7 +759,7 @@ const DeviceManagement = () => {
                             Readings: {device.total_readings || 0}
                           </Text>
                           <Text fontSize="xs" color={textColor}>
-                            Last seen: {getTimeSinceLastSeen(device.last_seen)}
+                            Last seen: {getTimeSinceLastSeen(device.last_seen || null)}
                           </Text>
                         </VStack>
                       </Td>

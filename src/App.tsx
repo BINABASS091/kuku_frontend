@@ -33,6 +33,7 @@ import ReportsAnalytics from './pages/admin/ReportsAnalytics';
 import DjangoAdmin from './pages/admin/DjangoAdmin';
 import SystemAdministration from './pages/admin/SystemAdministration';
 import SubscriptionsBilling from './pages/admin/SubscriptionsBilling';
+import BreedConfigurationManager from './components/admin/BreedConfigurationManager';
 
 // This component is used to wrap protected routes
 const ProtectedLayout = () => {
@@ -177,6 +178,7 @@ function App() {
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="health-conditions" element={<HealthConditionsPage />} />
           <Route path="recommendations" element={<RecommendationsPage />} />
+          <Route path="breed-configuration" element={<BreedConfigurationManager />} />
           <Route path="disease-exceptions" element={<DiseaseExceptionsPage />} />
           <Route path="anomalies" element={<AnomaliesPage />} />
           <Route path="medications" element={<MedicationsPage />} />
