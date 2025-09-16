@@ -272,27 +272,33 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
   const confirmDelete = async () => {
     try {
       let apiService;
+      let itemId;
       switch (activeTab) {
         case 'users':
           apiService = userAPI;
+          itemId = selectedItem.id;
           break;
         case 'farmers':
           apiService = farmerAPI;
+          itemId = selectedItem.id;
           break;
         case 'farms':
           apiService = farmAPI;
+          itemId = selectedItem.farmID;
           break;
         case 'batches':
           apiService = batchAPI;
+          itemId = selectedItem.batchID;
           break;
         case 'breeds':
           apiService = breedAPI;
+          itemId = selectedItem.breedID;
           break;
         default:
           throw new Error('Unknown tab');
       }
 
-      await apiService.delete(selectedItem.id);
+      await apiService.delete(itemId);
       
       toast({
         title: 'Success',
@@ -342,7 +348,27 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
       if (selectedItem) {
         // Update existing item
-        await apiService.update(selectedItem.id, formData);
+        let itemId;
+        switch (activeTab) {
+          case 'users':
+            itemId = selectedItem.id;
+            break;
+          case 'farmers':
+            itemId = selectedItem.id;
+            break;
+          case 'farms':
+            itemId = selectedItem.farmID;
+            break;
+          case 'batches':
+            itemId = selectedItem.batchID;
+            break;
+          case 'breeds':
+            itemId = selectedItem.breedID;
+            break;
+          default:
+            throw new Error('Unknown tab');
+        }
+        await apiService.update(itemId, formData);
       } else {
         // Create new item
         if (activeTab === 'users') {
@@ -1166,8 +1192,29 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
             </Tr>
           </Thead>
           <Tbody>
-            {data.map((item) => (
-              <Tr key={item.id || item.farmID || item.batchID || item.breedID}>
+            {data.map((item) => {
+              // Generate the correct key based on the data type
+              let itemKey;
+              switch (activeTab) {
+                case 'users':
+                case 'farmers':
+                  itemKey = item.id;
+                  break;
+                case 'farms':
+                  itemKey = item.farmID;
+                  break;
+                case 'batches':
+                  itemKey = item.batchID;
+                  break;
+                case 'breeds':
+                  itemKey = item.breedID;
+                  break;
+                default:
+                  itemKey = item.id || item.farmID || item.batchID || item.breedID;
+              }
+              
+              return (
+                <Tr key={itemKey}>
                 {activeTab === 'users' && (
                   <>
                     <Td fontWeight="medium">{item.username}</Td>
@@ -1242,7 +1289,8 @@ const DataManagementModal: React.FC<DataManagementModalProps> = ({
                   </HStack>
                 </Td>
               </Tr>
-            ))}
+              );
+            })}
           </Tbody>
         </Table>
       </TableContainer>

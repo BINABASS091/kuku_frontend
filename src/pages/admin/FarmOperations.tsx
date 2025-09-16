@@ -386,9 +386,9 @@ const FarmOperations = () => {
       setFilteredDevices(filtered);
     } else if (activeTab === 2) { // Batches tab
       const filtered = batches.filter(batch =>
-        batch.batch_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        batch.farm_details?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        batch.breed_details?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        batch.batchID?.toString().includes(searchTerm.toLowerCase()) ||
+        batch.farm_details?.farmName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        batch.breed_details?.breedName?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBatches(filtered);
     } else if (activeTab === 3) { // Activities tab
@@ -1409,15 +1409,15 @@ const FarmOperations = () => {
                           ) : (
                             filteredBatches.map((batch) => (
                               <Tr key={batch.batchID}>
-                                <Td fontWeight="medium">{batch.batch_name}</Td>
-                                <Td>{batch.farm_details?.name || 'N/A'}</Td>
-                                <Td>{batch.breed_details?.name || 'N/A'}</Td>
-                                <Td>{batch.quantity}</Td>
-                                <Td>{batch.start_date ? new Date(batch.start_date).toLocaleDateString() : 'N/A'}</Td>
-                                <Td>{batch.expected_end_date ? new Date(batch.expected_end_date).toLocaleDateString() : 'N/A'}</Td>
+                                <Td fontWeight="medium">{`BATCH/${batch.batchID}`}</Td>
+                                <Td>{batch.farm_details?.farmName || 'N/A'}</Td>
+                                <Td>{batch.breed_details?.breedName || 'N/A'}</Td>
+                                <Td>{batch.quanitity}</Td>
+                                <Td>{batch.arriveDate ? new Date(batch.arriveDate).toLocaleDateString() : 'N/A'}</Td>
+                                <Td>{batch.harvestAge ? `${batch.harvestAge} days` : 'N/A'}</Td>
                                 <Td>
                                   <Badge colorScheme={getStatusColor(batch.batch_status)}>
-                                    {batch.batch_status}
+                                    {batch.batch_status === 1 ? 'Active' : 'Inactive'}
                                   </Badge>
                                 </Td>
                                 <Td>
