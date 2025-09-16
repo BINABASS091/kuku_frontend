@@ -176,12 +176,12 @@ const FarmOperations = () => {
   const [batchFormData, setBatchFormData] = useState({
     farm: '',
     breed: '',
-    batch_name: '',
     quantity: 0,
     start_date: '',
-    expected_end_date: '',
     batch_status: 'Active',
-    notes: '',
+    initAge: 0,
+    harvestAge: 0,
+    initWeight: 0,
   });
 
   const [activityFormData, setActivityFormData] = useState({
@@ -657,12 +657,12 @@ const FarmOperations = () => {
     setBatchFormData({
       farm: '',
       breed: '',
-      batch_name: '',
       quantity: 0,
       start_date: '',
-      expected_end_date: '',
       batch_status: 'Active',
-      notes: ''
+      initAge: 0,
+      harvestAge: 0,
+      initWeight: 0,
     });
     setSelectedBatch(null);
     setIsBatchModalOpen(true);
@@ -670,14 +670,14 @@ const FarmOperations = () => {
 
   const handleEditBatch = (batch: any) => {
     setBatchFormData({
-      farm: batch.farm?.toString() || '',
-      breed: batch.breed?.toString() || '',
-      batch_name: batch.batch_name || '',
-      quantity: batch.quantity || 0,
-      start_date: batch.start_date || '',
-      expected_end_date: batch.expected_end_date || '',
-      batch_status: batch.batch_status || 'Active',
-      notes: batch.notes || ''
+      farm: batch.farmID?.toString() || '',
+      breed: batch.breedID?.toString() || '',
+      quantity: batch.quanitity || 0, // Note: backend has typo "quanitity"
+      start_date: batch.arriveDate || '',
+      batch_status: batch.batch_status === 1 ? 'Active' : 'Inactive',
+      initAge: batch.initAge || 0,
+      harvestAge: batch.harvestAge || 0,
+      initWeight: batch.initWeight || 0,
     });
     setSelectedBatch(batch);
     setIsBatchModalOpen(true);
@@ -687,16 +687,16 @@ const FarmOperations = () => {
     e.preventDefault();
     
     try {
-      // Convert form data to proper types for API
+      // Convert form data to proper types for API - match backend field names
       const payload = {
-        farm: parseInt(batchFormData.farm),
-        breed: parseInt(batchFormData.breed),
-        batch_name: batchFormData.batch_name,
-        quantity: batchFormData.quantity,
-        start_date: batchFormData.start_date,
-        expected_end_date: batchFormData.expected_end_date || null,
-        batch_status: batchFormData.batch_status,
-        notes: batchFormData.notes,
+        farmID: parseInt(batchFormData.farm),
+        breedID: parseInt(batchFormData.breed),
+        arriveDate: batchFormData.start_date,
+        quanitity: batchFormData.quantity, // Note: backend has typo "quanitity"
+        initAge: batchFormData.initAge,
+        harvestAge: batchFormData.harvestAge,
+        initWeight: batchFormData.initWeight,
+        batch_status: batchFormData.batch_status === 'Active' ? 1 : batchFormData.batch_status === 'Archived' ? 9 : 0,
       };
       
       console.log('Batch payload being sent:', payload);
@@ -1891,19 +1891,10 @@ const FarmOperations = () => {
                   >
                     {breeds.map((breed) => (
                       <option key={breed.breedID} value={breed.breedID}>
-                        {breed.name}
+                        {breed.breedName}
                       </option>
                     ))}
                   </Select>
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Batch Name</FormLabel>
-                  <Input 
-                    value={batchFormData.batch_name}
-                    onChange={(e) => setBatchFormData({...batchFormData, batch_name: e.target.value})}
-                    placeholder="Enter batch name"
-                  />
                 </FormControl>
 
                 <FormControl isRequired>
@@ -1923,7 +1914,7 @@ const FarmOperations = () => {
 
                 <HStack spacing={4} width="100%">
                   <FormControl isRequired>
-                    <FormLabel>Start Date</FormLabel>
+                    <FormLabel>Arrival Date</FormLabel>
                     <Input 
                       type="date"
                       value={batchFormData.start_date}
@@ -1932,12 +1923,50 @@ const FarmOperations = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Expected End Date</FormLabel>
-                    <Input 
-                      type="date"
-                      value={batchFormData.expected_end_date}
-                      onChange={(e) => setBatchFormData({...batchFormData, expected_end_date: e.target.value})}
-                    />
+                    <FormLabel>Initial Age (days)</FormLabel>
+                    <NumberInput 
+                      value={batchFormData.initAge}
+                      onChange={(valueString) => setBatchFormData({...batchFormData, initAge: parseInt(valueString) || 0})}
+                      min={0}
+                    >
+                      <NumberInputField placeholder="Enter initial age" />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                </HStack>
+
+                <HStack spacing={4} width="100%">
+                  <FormControl>
+                    <FormLabel>Harvest Age (days)</FormLabel>
+                    <NumberInput 
+                      value={batchFormData.harvestAge}
+                      onChange={(valueString) => setBatchFormData({...batchFormData, harvestAge: parseInt(valueString) || 0})}
+                      min={0}
+                    >
+                      <NumberInputField placeholder="Enter harvest age" />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Initial Weight (grams)</FormLabel>
+                    <NumberInput 
+                      value={batchFormData.initWeight}
+                      onChange={(valueString) => setBatchFormData({...batchFormData, initWeight: parseInt(valueString) || 0})}
+                      min={0}
+                    >
+                      <NumberInputField placeholder="Enter initial weight" />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
                   </FormControl>
                 </HStack>
 
@@ -1948,19 +1977,9 @@ const FarmOperations = () => {
                     onChange={(e) => setBatchFormData({...batchFormData, batch_status: e.target.value})}
                   >
                     <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Terminated">Terminated</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Archived">Archived</option>
                   </Select>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Notes</FormLabel>
-                  <Textarea 
-                    value={batchFormData.notes}
-                    onChange={(e) => setBatchFormData({...batchFormData, notes: e.target.value})}
-                    placeholder="Enter any additional notes..."
-                    rows={3}
-                  />
                 </FormControl>
 
                 <HStack spacing={4} width="100%" justify="flex-end">
@@ -2250,7 +2269,7 @@ const FarmOperations = () => {
                   >
                     {farms.map((farm) => (
                       <option key={farm.farmID} value={farm.farmID}>
-                        {farm.name}
+                        {farm.farmName}
                       </option>
                     ))}
                   </Select>

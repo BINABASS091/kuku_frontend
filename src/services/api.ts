@@ -62,21 +62,22 @@ api.interceptors.response.use(
 
 export const authAPI = {
   login: async (credentials: { username: string; password: string }) => {
-    const response = await api.post('/accounts/login/', credentials);
+    const response = await api.post('/token/', credentials);
     return response.data;
   },
 
   logout: async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
-      await api.post('/accounts/logout/', { refresh: refreshToken });
+      // Note: backend doesn't have logout endpoint, just clear tokens
+      console.log('Logging out...');
     }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   },
 
   getCurrentUser: async () => {
-    const response = await api.get('/accounts/me/');
+    const response = await api.get('/users/me/');
     return response.data;
   },
 
