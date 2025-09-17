@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import FarmerDashboard from './pages/FarmerDashboard';
+import FarmerOnboarding from './components/farmer/FarmerOnboarding';
+import FarmerProfile from './pages/FarmerProfile';
 import NotFound from './pages/NotFound';
 import Home from './pages/Home.tsx';
 import UserManagement from './pages/admin/UserManagement';
@@ -142,15 +144,21 @@ function App() {
             path="dashboard" 
             element={<DashboardRedirect />}
           />
-          <Route 
-            path="farmer" 
-            element={
-              <ProtectedRoute allowedRoles={['farmer']}>
-                <FarmerDashboard />
-              </ProtectedRoute>
-            } 
-          />
         </Route>
+
+        {/* Farmer routes - use FarmerLayout */}
+        <Route 
+          path="farmer/*" 
+          element={
+            <ProtectedRoute allowedRoles={['farmer']}>
+              <Routes>
+                <Route index element={<FarmerDashboard />} />
+                <Route path="onboarding" element={<FarmerOnboarding />} />
+                <Route path="profile" element={<FarmerProfile />} />
+              </Routes>
+            </ProtectedRoute>
+          } 
+        />
 
         {/* Admin routes - use AdminLayout only to avoid duplicate headers */}
         <Route 
