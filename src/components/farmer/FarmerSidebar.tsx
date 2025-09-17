@@ -22,7 +22,7 @@ import {
   FiSettings,
   FiUser,
   FiDollarSign,
-  FiBarChart3,
+  FiBarChart2,
   FiCalendar,
   FiHeart,
   FiMapPin,
@@ -48,9 +48,9 @@ interface FarmerSidebarProps {
 
 const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', onClick }: SidebarItemProps) => {
   const { isOpen, onToggle } = useDisclosure();
-  const hasChildren = children && children.length > 0;
+  const hasChildren = !!(children && children.length);
   const location = useLocation();
-  
+
   const hoverBg = useColorModeValue('green.50', 'green.900');
   const activeBg = useColorModeValue('green.100', 'green.800');
   const textColor = useColorModeValue('gray.700', 'gray.200');
@@ -61,12 +61,8 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
   const isCurrentActive = href ? location.pathname === href : false;
 
   const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
-    if (hasChildren) {
-      onToggle();
-    }
+    if (onClick) onClick();
+    if (hasChildren) onToggle();
   };
 
   if (hasChildren) {
@@ -86,10 +82,7 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
           fontWeight="medium"
           color={textColor}
           borderRadius="lg"
-          _hover={{ 
-            bg: hoverBg,
-            transform: 'translateX(2px)',
-          }}
+          _hover={{ bg: hoverBg, transform: 'translateX(2px)' }}
           _active={{ bg: hoverBg }}
           transition="all 0.2s"
         >
@@ -104,7 +97,7 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
         </Button>
         <Collapse in={isOpen} animateOpacity>
           <VStack spacing={0} align="stretch" pl={6} mt={1}>
-            {children.map((child, index) => (
+            {children!.map((child, index) => (
               <SidebarItem key={index} {...child} />
             ))}
           </VStack>
@@ -113,10 +106,10 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
     );
   }
 
-  const buttonContent = (
+  return (
     <Button
-      as={href ? Link : 'button'}
-      to={href}
+      as={href ? (Link as any) : 'button'}
+      to={href as any}
       variant="ghost"
       justifyContent="flex-start"
       leftIcon={<Icon as={icon} color={isCurrentActive ? activeIconColor : iconColor} />}
@@ -129,10 +122,7 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
       color={isCurrentActive ? activeTextColor : textColor}
       bg={isCurrentActive ? activeBg : 'transparent'}
       borderRadius="lg"
-      _hover={{ 
-        bg: hoverBg,
-        transform: 'translateX(2px)',
-      }}
+      _hover={{ bg: hoverBg, transform: 'translateX(2px)' }}
       transition="all 0.2s"
       onClick={handleClick}
     >
@@ -146,8 +136,6 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
       </HStack>
     </Button>
   );
-
-  return buttonContent;
 };
 
 const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
@@ -207,7 +195,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
           onClick: handleNavigation,
         },
         {
-          icon: FiBarChart3,
+          icon: FiBarChart2,
           label: 'Performance',
           href: '/farmer/batches/performance',
           onClick: handleNavigation,
@@ -255,7 +243,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
       onClick: handleNavigation,
       children: [
         {
-          icon: FiBarChart3,
+          icon: FiBarChart2,
           label: 'Production',
           href: '/farmer/analytics/production',
           onClick: handleNavigation,

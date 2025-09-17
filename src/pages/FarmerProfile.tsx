@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   VStack,
@@ -33,9 +34,8 @@ import {
   FiTrendingUp,
   FiEdit3,
 } from 'react-icons/fi';
-import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import FarmerLayout from '../../layouts/FarmerLayout';
+import FarmerLayout from '../layouts/FarmerLayout';
 
 interface FarmerProfileData {
   id: number;
@@ -439,3 +439,5 @@ const FarmerProfile = () => {
 };
 
 export default FarmerProfile;
+
+// Farmer.objects.create(user=user, farmerName='Farmer One', ...)
