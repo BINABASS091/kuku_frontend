@@ -6,6 +6,7 @@ import FarmerRecordActivityPage from './pages/FarmerRecordActivityPage';
 import FarmerAddBatchPage from './pages/FarmerAddBatchPage';
 import FarmerBatchesPage from './pages/FarmerBatchesPage';
 import FarmerProductionPage from './pages/FarmerProductionPage';
+import FarmerAnalyticsPage from './pages/FarmerAnalyticsPage';
 import FarmerHealthPage from './pages/FarmerHealthPage';
 import FarmerSubscriptionPage from './pages/FarmerSubscriptionPage';
 import { Box, useColorModeValue } from '@chakra-ui/react';
@@ -179,10 +180,10 @@ function App() {
                 <Route path="batches" element={<FarmerBatchesPage />} />
                 <Route path="batches/new" element={<FarmerAddBatchPage />} />
                 <Route path="production" element={<FarmerProductionPage />} />
-                <Route path="analytics" element={<FarmerProductionPage />} />
-                <Route path="analytics/production" element={<FarmerProductionPage />} />
-                <Route path="analytics/financial" element={<FarmerProductionPage />} />
-                <Route path="analytics/growth" element={<FarmerProductionPage />} />
+                <Route path="analytics" element={<FarmerAnalyticsPage />} />
+                <Route path="analytics/production" element={<FarmerAnalyticsPage />} />
+                <Route path="analytics/financial" element={<FarmerAnalyticsPage />} />
+                <Route path="analytics/growth" element={<FarmerAnalyticsPage />} />
                 <Route path="health" element={<FarmerHealthPage />} />
                 <Route path="health/alerts" element={<FarmerHealthPage />} />
                 <Route path="health/reports" element={<FarmerHealthPage />} />

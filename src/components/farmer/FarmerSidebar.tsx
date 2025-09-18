@@ -16,20 +16,16 @@ import {
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   FiHome,
-  FiLayers,
-  FiActivity,
-  FiTrendingUp,
-  FiSettings,
-  FiUser,
-  FiDollarSign,
-  FiBarChart2,
   FiCalendar,
+  FiTrendingUp,
   FiHeart,
-  FiMapPin,
   FiStar,
+  FiDollarSign,
+  FiMapPin,
+  FiLayers
 } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 interface SidebarItemProps {
@@ -145,7 +141,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
   const { user } = useAuth();
 
   // Mock farmer stats - in real app, these would come from API
-  const [farmerStats, setFarmerStats] = useState({
+  const [farmerStats] = useState({
     activeBatches: 3,
     totalBirds: 250,
     tasksToday: 5,
@@ -202,27 +198,8 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     {
       icon: FiTrendingUp,
       label: 'Analytics',
+      href: '/farmer/analytics',
       onClick: handleNavigation,
-      children: [
-        {
-          icon: FiBarChart2,
-          label: 'Production',
-          href: '/farmer/analytics/production',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiDollarSign,
-          label: 'Financial',
-          href: '/farmer/analytics/financial',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiTrendingUp,
-          label: 'Growth Trends',
-          href: '/farmer/analytics/growth',
-          onClick: handleNavigation,
-        },
-      ],
     },
     {
       icon: FiStar,
@@ -272,12 +249,12 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
           <VStack spacing={3}>
             <Avatar
               size="md"
-              name={user?.first_name || user?.username}
-              src={user?.profile_image}
+              name={user?.name}
+              src={undefined}
             />
             <VStack spacing={0}>
               <Text fontSize="sm" fontWeight="semibold" color={useColorModeValue('green.700', 'green.200')}>
-                {user?.first_name || user?.username}
+                {user?.name}
               </Text>
               <Text fontSize="xs" color={textColor}>
                 Poultry Farmer
