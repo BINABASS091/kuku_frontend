@@ -7,6 +7,7 @@ import FarmerAddBatchPage from './pages/FarmerAddBatchPage';
 import FarmerBatchesPage from './pages/FarmerBatchesPage';
 import FarmerProductionPage from './pages/FarmerProductionPage';
 import FarmerAnalyticsPage from './pages/FarmerAnalyticsPage';
+import FarmerBreedGuidancePage from './pages/FarmerBreedGuidancePage';
 import FarmerHealthPage from './pages/FarmerHealthPage';
 import FarmerSubscriptionPage from './pages/FarmerSubscriptionPage';
 import { Box, useColorModeValue } from '@chakra-ui/react';
@@ -187,6 +188,7 @@ function App() {
                 <Route path="health" element={<FarmerHealthPage />} />
                 <Route path="health/alerts" element={<FarmerHealthPage />} />
                 <Route path="health/reports" element={<FarmerHealthPage />} />
+                <Route path="guidance" element={<FarmerBreedGuidancePage />} />
                 <Route path="subscription" element={<FarmerSubscriptionPage />} />
               </Routes>
             </ProtectedRoute>
