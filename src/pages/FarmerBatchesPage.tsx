@@ -18,7 +18,6 @@ import {
   Tr,
   Th,
   Td,
-  Progress,
   useColorModeValue,
   Tabs,
   TabList,
@@ -38,7 +37,6 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  Avatar,
   Flex,
   Divider,
   Alert,
@@ -55,24 +53,15 @@ import {
   MenuItem,
   FormControl,
   FormLabel,
+  Textarea,
   useToast,
 } from '@chakra-ui/react';
 import {
-  FiLayers,
-  FiActivity,
-  FiBarChart2,
   FiPlus,
   FiEdit,
   FiTrash2,
   FiEye,
   FiSearch,
-  FiFilter,
-  FiDownload,
-  FiCalendar,
-  FiUsers,
-  FiTrendingUp,
-  FiTrendingDown,
-  FiChevronDown,
   FiMoreVertical,
 } from 'react-icons/fi';
 import {
@@ -84,19 +73,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
-import { format, addDays, subDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
-import { useAuth } from '../context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { batchAPI, activityAPI, farmAPI, breedAPI } from '../services/api';
+import { batchAPI, activityAPI, farmAPI, breedAPI, activityTypeAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface Batch {
@@ -138,12 +122,12 @@ interface PerformanceData {
 }
 
 const FarmerBatchesPage: React.FC = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isAddBatchOpen, onOpen: onAddBatchOpen, onClose: onAddBatchClose } = useDisclosure();
+  const { isOpen: isActivityModalOpen, onOpen: onActivityModalOpen, onClose: onActivityModalClose } = useDisclosure();
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -159,6 +143,16 @@ const FarmerBatchesPage: React.FC = () => {
     initWeight: '',
   });
 
+  // Activity form state
+  const [activityForm, setActivityForm] = useState({
+    batchID: '',
+    activityTypeID: '',
+    batchActivityName: '',
+    batchActivityDate: '',
+    batchActivityDetails: '',
+    batchAcitivtyCost: '',
+  });
+
   // Color mode values
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -167,7 +161,6 @@ const FarmerBatchesPage: React.FC = () => {
   // Fetch batches from API
   const {
     data: batches,
-    isLoading: batchesLoading,
     isError: batchesError,
   } = useQuery(['farmer-batches'], async () => {
     const response = await batchAPI.list();
@@ -177,7 +170,6 @@ const FarmerBatchesPage: React.FC = () => {
   // Fetch activities from API
   const {
     data: activities,
-    isLoading: activitiesLoading,
     isError: activitiesError,
   } = useQuery(['farmer-batch-activities'], async () => {
     const response = await activityAPI.list();
@@ -193,6 +185,12 @@ const FarmerBatchesPage: React.FC = () => {
   // Fetch breeds for batch creation
   const { data: breeds } = useQuery(['breeds'], async () => {
     const response = await breedAPI.list();
+    return response.results || response;
+  });
+
+  // Fetch activity types for activity creation
+  const { data: activityTypes } = useQuery(['activity-types'], async () => {
+    const response = await activityTypeAPI.list();
     return response.results || response;
   });
 
@@ -302,7 +300,7 @@ const FarmerBatchesPage: React.FC = () => {
   const displayActivities = activitiesError ? mockActivities : (activities || []);
 
   // Add safety for activities with proper unique keys
-  const safeActivities = displayActivities.map((activity, index) => ({
+  const safeActivities = displayActivities.map((activity: any, index: number) => ({
     ...activity,
     id: activity?.id || `activity-${index}`,
   }));
@@ -351,8 +349,50 @@ const FarmerBatchesPage: React.FC = () => {
     },
   });
 
+  // Add activity mutation
+  const addActivityMutation = useMutation({
+    mutationFn: async (activityData: any) => {
+      return await activityAPI.create({
+        batchID: activityData.batchID,
+        breedActivityID: activityData.activityTypeID,
+        batchActivityName: activityData.batchActivityName,
+        batchActivityDate: activityData.batchActivityDate,
+        batchActivityDetails: activityData.batchActivityDetails,
+        batchAcitivtyCost: Number(activityData.batchAcitivtyCost),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Activity recorded successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      setActivityForm({
+        batchID: '',
+        activityTypeID: '',
+        batchActivityName: '',
+        batchActivityDate: '',
+        batchActivityDetails: '',
+        batchAcitivtyCost: '',
+      });
+      queryClient.invalidateQueries(['farmer-batch-activities']);
+      onActivityModalClose();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to record activity',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+
   // Ensure all batches have required properties with defaults
-  const safeBatches = displayBatches.map(batch => ({
+  const safeBatches = displayBatches.map((batch: any) => ({
     id: batch?.id || '',
     name: batch?.name || 'Unnamed Batch',
     breed: batch?.breed || 'Unknown Breed',
@@ -370,7 +410,7 @@ const FarmerBatchesPage: React.FC = () => {
   }));
 
   // Filter functions
-  const filteredBatches = safeBatches.filter(batch => {
+  const filteredBatches = safeBatches.filter((batch: any) => {
     const matchesSearch = (batch?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (batch?.breed || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || batch?.status === statusFilter;
@@ -440,6 +480,15 @@ const FarmerBatchesPage: React.FC = () => {
     addBatchMutation.mutate(batchForm);
   };
 
+  const handleActivityFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setActivityForm({ ...activityForm, [e.target.name]: e.target.value });
+  };
+
+  const handleActivitySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addActivityMutation.mutate(activityForm);
+  };
+
   return (
     <FarmerLayout>
       <VStack spacing={6} align="stretch">
@@ -460,7 +509,7 @@ const FarmerBatchesPage: React.FC = () => {
               <Stat>
                 <StatLabel color={textColor}>Active Batches</StatLabel>
                 <StatNumber color="green.500">
-                  {safeBatches.filter(b => b.status === 'active').length}
+                  {safeBatches.filter((b: any) => b.status === 'active').length}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="increase" />
@@ -475,7 +524,7 @@ const FarmerBatchesPage: React.FC = () => {
               <Stat>
                 <StatLabel color={textColor}>Total Birds</StatLabel>
                 <StatNumber color="blue.500">
-                  {safeBatches.reduce((sum, batch) => sum + batch.activeBirds, 0).toLocaleString()}
+                  {safeBatches.reduce((sum: number, batch: any) => sum + batch.activeBirds, 0).toLocaleString()}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="increase" />
@@ -490,7 +539,7 @@ const FarmerBatchesPage: React.FC = () => {
               <Stat>
                 <StatLabel color={textColor}>Avg Mortality</StatLabel>
                 <StatNumber color="orange.500">
-                  {safeBatches.length > 0 ? (safeBatches.reduce((sum, batch) => sum + batch.mortalityRate, 0) / safeBatches.length).toFixed(1) : '0.0'}%
+                  {safeBatches.length > 0 ? (safeBatches.reduce((sum: number, batch: any) => sum + batch.mortalityRate, 0) / safeBatches.length).toFixed(1) : '0.0'}%
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="decrease" />
@@ -505,7 +554,7 @@ const FarmerBatchesPage: React.FC = () => {
               <Stat>
                 <StatLabel color={textColor}>Feed Conversion</StatLabel>
                 <StatNumber color="purple.500">
-                  {safeBatches.length > 0 ? (safeBatches.reduce((sum, batch) => sum + batch.feedConversion, 0) / safeBatches.length).toFixed(1) : '0.0'}
+                  {safeBatches.length > 0 ? (safeBatches.reduce((sum: number, batch: any) => sum + batch.feedConversion, 0) / safeBatches.length).toFixed(1) : '0.0'}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="decrease" />
@@ -565,7 +614,7 @@ const FarmerBatchesPage: React.FC = () => {
 
                 {/* Batches Grid */}
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                  {filteredBatches.map((batch) => (
+                  {filteredBatches.map((batch: any) => (
                     <Card
                       key={batch.id}
                       bg={cardBg}
@@ -685,7 +734,7 @@ const FarmerBatchesPage: React.FC = () => {
                   <Button
                     leftIcon={<FiPlus />}
                     colorScheme="blue"
-                    onClick={() => navigate('/farmer/tasks/new')}
+                    onClick={onActivityModalOpen}
                   >
                     Record Activity
                   </Button>
@@ -703,7 +752,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {safeActivities.map((activity) => (
+                                         {safeActivities.map((activity: any) => (
                       <Tr key={activity.id}>
                         <Td>
                           <Text fontWeight="medium">{activity.batchName}</Text>
@@ -1063,6 +1112,108 @@ const FarmerBatchesPage: React.FC = () => {
                 loadingText="Creating..."
               >
                 Create Batch
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Record Activity Modal */}
+        <Modal isOpen={isActivityModalOpen} onClose={onActivityModalClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Record Activity</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <form onSubmit={handleActivitySubmit}>
+                <VStack spacing={4}>
+                  <FormControl isRequired>
+                    <FormLabel>Batch</FormLabel>
+                    <Select
+                      name="batchID"
+                      value={activityForm.batchID}
+                      onChange={handleActivityFormChange}
+                      placeholder="Select batch"
+                    >
+                      {batches?.map((batch: any) => (
+                        <option key={batch.batchID || batch.id} value={batch.batchID || batch.id}>
+                          {batch.name || `Batch ${batch.batchID || batch.id}`}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Activity Type</FormLabel>
+                    <Select
+                      name="activityTypeID"
+                      value={activityForm.activityTypeID}
+                      onChange={handleActivityFormChange}
+                      placeholder="Select activity type"
+                    >
+                      {activityTypes?.map((type: any) => (
+                        <option key={type.breedActivityID || type.id} value={type.breedActivityID || type.id}>
+                          {type.activityName || type.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Activity Name</FormLabel>
+                    <Input
+                      name="batchActivityName"
+                      value={activityForm.batchActivityName}
+                      onChange={handleActivityFormChange}
+                      placeholder="Enter activity name"
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Date</FormLabel>
+                    <Input
+                      type="date"
+                      name="batchActivityDate"
+                      value={activityForm.batchActivityDate}
+                      onChange={handleActivityFormChange}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Details</FormLabel>
+                    <Textarea
+                      name="batchActivityDetails"
+                      value={activityForm.batchActivityDetails}
+                      onChange={handleActivityFormChange}
+                      placeholder="Enter activity details (optional)"
+                      rows={3}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Cost (₦)</FormLabel>
+                    <Input
+                      type="number"
+                      name="batchAcitivtyCost"
+                      value={activityForm.batchAcitivtyCost}
+                      onChange={handleActivityFormChange}
+                      placeholder="0.00"
+                      step="0.01"
+                    />
+                  </FormControl>
+                </VStack>
+              </form>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onActivityModalClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={handleActivitySubmit}
+                isLoading={addActivityMutation.isLoading}
+                loadingText="Recording..."
+              >
+                Record Activity
               </Button>
             </ModalFooter>
           </ModalContent>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Heading, Text, VStack, Spinner, Badge, HStack, Icon, Circle } from '@chakra-ui/react';
+import { Box, Heading, Text, VStack, Spinner, HStack, Icon, Circle } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { activityAPI } from '../services/api';
 import { FiActivity, FiHeart, FiTrendingUp, FiCheckCircle, FiClock } from 'react-icons/fi';

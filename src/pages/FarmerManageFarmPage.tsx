@@ -67,7 +67,7 @@ const FarmerManageFarmPage: React.FC = () => {
   // Fetch farm details
   const { data: farm, isLoading: farmLoading, isError: farmError, error: farmErrorData } = useQuery(
     ['farmDetails', farmId], 
-    () => farmAPI.retrieve(farmId!), 
+    () => farmAPI.retrieve(parseInt(farmId!, 10)), 
     { enabled: !!farmId }
   );
 
@@ -104,7 +104,7 @@ const FarmerManageFarmPage: React.FC = () => {
 
   // Update farm mutation
   const updateMutation = useMutation({
-    mutationFn: (data: any) => farmAPI.update(farmId!, data),
+    mutationFn: (data: any) => farmAPI.update(parseInt(farmId!, 10), data),
     onSuccess: () => {
       toast({
         title: 'Farm Updated',
@@ -130,7 +130,7 @@ const FarmerManageFarmPage: React.FC = () => {
 
   // Delete farm mutation
   const deleteMutation = useMutation({
-    mutationFn: () => farmAPI.delete(farmId!),
+    mutationFn: () => farmAPI.delete(parseInt(farmId!, 10)),
     onSuccess: () => {
       toast({
         title: 'Farm Deleted',

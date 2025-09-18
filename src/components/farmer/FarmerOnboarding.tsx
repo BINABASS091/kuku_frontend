@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
   VStack,
@@ -20,7 +20,6 @@ import {
   CardBody,
   CardHeader,
   Progress,
-  Badge,
   Icon,
   useColorModeValue,
   useToast,
@@ -44,7 +43,6 @@ import {
   FiMapPin,
   FiLayers,
   FiSettings,
-  FiCheckCircle,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';

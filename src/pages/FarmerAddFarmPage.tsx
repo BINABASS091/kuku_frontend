@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Box,
   Heading,
-  Text,
   FormControl,
   FormLabel,
   Input,
@@ -32,7 +31,7 @@ const FarmerAddFarmPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
-    (data) => {
+    (data: typeof form) => {
       console.log('DEBUG: Creating farm with data:', data);
       return farmAPI.create({
         farmName: data.name,

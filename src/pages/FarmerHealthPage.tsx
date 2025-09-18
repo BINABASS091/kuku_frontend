@@ -18,10 +18,6 @@ import {
   Badge,
   Icon,
   Flex,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
   Table,
   Thead,
   Tbody,
@@ -29,15 +25,12 @@ import {
   Th,
   Td,
   Button,
-  Progress,
   Circle,
-  Stack,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
-  Tooltip,
   Menu,
   MenuButton,
   MenuList,
@@ -52,9 +45,7 @@ import {
   useDisclosure,
   FormControl,
   FormLabel,
-  Input,
   Select,
-  Textarea,
 } from '@chakra-ui/react';
 import {
   FiHeart,
@@ -68,36 +59,24 @@ import {
   FiEye,
   FiPlus,
   FiSettings,
-  FiCalendar,
   FiDownload,
-  FiFilter,
-  FiSearch,
   FiBell,
   FiEdit,
-  FiTrash2,
 } from 'react-icons/fi';
 import {
   LineChart,
   Line,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
-  ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { useQuery } from '@tanstack/react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
 import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
-import { useAuth } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Mock data - in real app, this would come from API
 const healthData = [
@@ -238,7 +217,6 @@ const vaccinationSchedule = [
 ];
 
 const FarmerHealthPage: React.FC = () => {
-  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose } = useDisclosure();

@@ -20,16 +20,15 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
-  Button,
   Heading,
   Badge,
   useToast,
 } from '@chakra-ui/react';
-import { HamburgerIcon, MoonIcon, SunIcon, BellIcon, SettingsIcon } from '@chakra-ui/icons';
-import { FiHome, FiLayers, FiActivity, FiTrendingUp, FiUser, FiSettings, FiLogOut } from 'react-icons/fi';
-import { useState, useEffect } from 'react';
+import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from '@chakra-ui/icons';
+import { FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import FarmerSidebar from '../components/farmer/FarmerSidebar';
 
 interface FarmerLayoutProps {
@@ -40,7 +39,6 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -51,7 +49,7 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
   const textColor = useColorModeValue('gray.800', 'white');
 
   // Mock notification count - in real app, fetch from API
-  const [notificationCount, setNotificationCount] = useState(3);
+  const [notificationCount] = useState(3);
 
   const handleLogout = () => {
     logout();
@@ -137,7 +135,7 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
                     Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}!
                   </Heading>
                   <Text fontSize="sm" color="gray.500">
-                    Welcome back, {user?.first_name || user?.username}
+                    Welcome back, {user?.name || 'Farmer'}
                   </Text>
                 </VStack>
               </HStack>
@@ -185,12 +183,11 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
                     <HStack spacing={2} cursor="pointer">
                       <Avatar
                         size="sm"
-                        name={user?.first_name || user?.username}
-                        src={user?.profile_image}
+                        name={user?.name || 'Farmer'}
                       />
                       <VStack display={{ base: 'none', md: 'flex' }} spacing={0} align="start">
                         <Text fontSize="sm" fontWeight="medium">
-                          {user?.first_name || user?.username}
+                          {user?.name || 'Farmer'}
                         </Text>
                         <Text fontSize="xs" color="gray.500">
                           Farmer

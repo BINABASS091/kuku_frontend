@@ -52,13 +52,7 @@ interface MasterDataStats {
 }
 
 // Type definitions for our data
-type BreedType = {
-  id: number;
-  breed_typeID: number;
-  breedType: string;
-  breeds_count: number;
-  total_activities: number;
-};
+// Removed unused BreedType
 
 type Breed = {
   id: number;

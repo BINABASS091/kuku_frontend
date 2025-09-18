@@ -11,11 +11,6 @@ import {
   Tooltip, 
   useToast, 
   useColorModeValue,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
 } from '@chakra-ui/react';
 import { ViewIcon, SettingsIcon, RepeatIcon, DownloadIcon, ExternalLinkIcon, InfoIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';

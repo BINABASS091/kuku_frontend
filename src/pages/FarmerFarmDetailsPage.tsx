@@ -8,7 +8,6 @@ import {
   AlertIcon,
   Text,
   Grid,
-  GridItem,
   VStack,
   HStack,
   Badge,

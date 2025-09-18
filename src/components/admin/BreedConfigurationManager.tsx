@@ -3,10 +3,8 @@ import {
   Box,
   VStack,
   HStack,
-  Text,
   Button,
   Select,
-  Input,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -45,11 +43,6 @@ import {
   useDisclosure,
   Divider,
   Badge,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Grid,
   GridItem,
   Card,
@@ -64,14 +57,10 @@ import {
 import {
   FiPlus,
   FiEdit2,
-  FiTrash2,
   FiSave,
   FiRefreshCw,
   FiDownload,
   FiUpload,
-  FiCopy,
-  FiSettings,
-  FiAlertTriangle,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../services/api';

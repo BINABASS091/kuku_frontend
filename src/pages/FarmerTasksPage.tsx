@@ -42,6 +42,7 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchFarmerTasks } from '../services/farmerTasks';
+import FarmerLayout from '../layouts/FarmerLayout';
 import {
   FiPlus,
   FiCalendar,
@@ -89,7 +90,6 @@ const FarmerTasksPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   // Theme colors
-  const bg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.700', 'gray.300');
@@ -401,9 +401,10 @@ const FarmerTasksPage: React.FC = () => {
   }
 
   return (
-    <Box p={6} bg={bg} minH="100vh">
-      {/* Header */}
-      <Flex justify="space-between" align="center" mb={6}>
+    <FarmerLayout>
+      <Box p={6}>
+        {/* Header */}
+        <Flex justify="space-between" align="center" mb={6}>
         <VStack align="start" spacing={0}>
           <Heading size="lg" color={textColor}>Daily Tasks</Heading>
           <Text color={textColor}>Manage your farm activities and schedules</Text>
@@ -908,6 +909,7 @@ const FarmerTasksPage: React.FC = () => {
         </ModalContent>
       </Modal>
     </Box>
+    </FarmerLayout>
   );
 };
 

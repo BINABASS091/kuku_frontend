@@ -15,7 +15,7 @@ const SafeChartContainer: React.FC<SafeChartContainerProps> = ({
   height = "100%",
   fallbackHeight = 300
 }) => {
-  const [isReady, setIsReady] = useState(false);
+  const [dimensions, setDimensions] = useState<{width: number, height: number} | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,18 +23,20 @@ const SafeChartContainer: React.FC<SafeChartContainerProps> = ({
       if (containerRef.current) {
         const { width, height: containerHeight } = containerRef.current.getBoundingClientRect();
         if (width > 0 && containerHeight > 0) {
-          setIsReady(true);
+          setDimensions({ width, height: containerHeight });
         }
       }
     };
 
     // Check immediately
-    checkDimensions();
-
-    // Set up a timeout as fallback
     const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 100);
+      checkDimensions();
+    }, 50);
+
+    // Set up a longer fallback
+    const fallbackTimer = setTimeout(() => {
+      setDimensions({ width: 400, height: fallbackHeight });
+    }, 200);
 
     // Also check on window resize
     const handleResize = () => {
@@ -46,9 +48,17 @@ const SafeChartContainer: React.FC<SafeChartContainerProps> = ({
     // Clean up
     return () => {
       clearTimeout(timer);
+      clearTimeout(fallbackTimer);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [fallbackHeight]);
+
+  // Clone the child and add explicit width/height props
+  const childWithDimensions = dimensions ? React.cloneElement(children, {
+    width: Math.max(dimensions.width - 20, 200),
+    height: Math.max(dimensions.height - 20, 200),
+    ...children.props
+  }) : null;
 
   return (
     <Box 
@@ -56,10 +66,11 @@ const SafeChartContainer: React.FC<SafeChartContainerProps> = ({
       h={height} 
       minH={minHeight}
       w="100%"
+      position="relative"
     >
-      {isReady ? (
+      {dimensions && childWithDimensions ? (
         <ResponsiveContainer width="100%" height="100%" minHeight={minHeight}>
-          {children}
+          {childWithDimensions}
         </ResponsiveContainer>
       ) : (
         <Skeleton height={fallbackHeight} width="100%" borderRadius="md" />

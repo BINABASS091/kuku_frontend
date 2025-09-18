@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
-  Grid,
-  GridItem,
   Heading,
   Text,
   Card,
@@ -14,13 +12,11 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  Progress,
   VStack,
   HStack,
   Badge,
   Icon,
   Button,
-  Flex,
   Circle,
   useToast,
   useColorModeValue,
@@ -46,17 +42,13 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Switch,
   Divider,
 } from '@chakra-ui/react';
 import {
   FiTrendingUp,
-  FiTrendingDown,
   FiActivity,
   FiHeart,
   FiDollarSign,
-  FiCalendar,
-  FiAlertTriangle,
   FiCheckCircle,
   FiClock,
   FiEye,
@@ -73,8 +65,7 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
   const {
     data: todayTasks,
     isLoading: tasksLoading,
-    isError: tasksError,
-    error: tasksErrorObj
+    isError: tasksError
   } = useQuery(['farmer-today-tasks'], async () => {
     const now = new Date();
     const today = now.toISOString().slice(0, 10); // 'YYYY-MM-DD'
@@ -194,16 +185,6 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
   );
 }
 
-interface Task {
-  id: number;
-  title: string;
-  time: string;
-  type: 'feeding' | 'health' | 'cleaning' | 'monitoring';
-  priority: 'high' | 'medium' | 'low';
-  completed: boolean;
-  batchName?: string;
-}
-
 interface Alert {
   id: number;
   type: 'warning' | 'error' | 'info';
@@ -211,14 +192,6 @@ interface Alert {
   message: string;
   timestamp: string;
   farmName?: string;
-}
-
-interface RecentActivity {
-  id: number;
-  action: string;
-  timestamp: string;
-  batchName: string;
-  type: 'feeding' | 'health' | 'production' | 'maintenance';
 }
 
 const FarmerDashboard = () => {
@@ -340,8 +313,7 @@ const FarmerDashboard = () => {
   const {
     data: farmStats,
     isLoading: statsLoading,
-    isError: statsError,
-    error: statsErrorObj
+    isError: statsError
   } = useQuery(['farmer-farm-stats'], async () => {
     const farms = await farmAPI.list();
     const farm = farms.results?.[0] || farms[0];
@@ -364,8 +336,7 @@ const FarmerDashboard = () => {
     const {
       data: alerts,
       isLoading: alertsLoading,
-      isError: alertsError,
-      error: alertsErrorObj
+      isError: alertsError
     } = useQuery(['farmer-alerts'], async () => {
       // Use your real alerts API here; fallback to activityAPI.list for demo
       // If you have a dedicated alertsAPI, use that instead
@@ -431,8 +402,7 @@ const FarmerDashboard = () => {
     const {
       data: activities,
       isLoading: activitiesLoading,
-      isError: activitiesError,
-      error: activitiesErrorObj
+      isError: activitiesError
     } = useQuery(['farmer-recent-activities'], async () => {
       // Only fetch the latest 5 activities for dashboard preview
       const res = await activityAPI.list({ ordering: '-created_at', limit: 5 });
@@ -522,7 +492,7 @@ const FarmerDashboard = () => {
         {/* Welcome Section */}
         <Box>
           <Heading size="lg" mb={2}>
-            Welcome back, {user?.first_name || user?.username || 'Farmer'}! 👋
+            Welcome back, {user?.name || 'Farmer'}! 👋
           </Heading>
           <Text color={textColor}>
             Here's what's happening with your farm today
@@ -535,7 +505,7 @@ const FarmerDashboard = () => {
         ) : statsError ? (
           <Alert status="error">
             <AlertIcon />
-            {statsErrorObj?.message || 'Failed to load stats'}
+            Failed to load stats
           </Alert>
         ) : (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>

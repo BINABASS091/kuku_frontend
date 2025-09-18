@@ -65,7 +65,7 @@ const FarmerProfile = () => {
   const navigate = useNavigate();
 
   // Mock data - replace with actual API call
-  const [farmerData, setFarmerData] = useState<FarmerProfileData>({
+  const [farmerData] = useState<FarmerProfileData>({
     id: 1,
     user: {
       first_name: user?.name?.split(' ')[0] || 'John',

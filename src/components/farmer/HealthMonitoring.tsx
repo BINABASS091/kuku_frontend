@@ -10,9 +10,7 @@ import {
   HStack,
   Text,
   Badge,
-  Progress,
   useColorModeValue,
-  Icon,
   Button,
   Alert,
   AlertIcon,
@@ -34,7 +32,6 @@ import {
   Tab,
   TabPanel,
   Circle,
-  Flex,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -49,7 +46,6 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import {
-  FiHeart,
   FiAlertTriangle,
   FiCalendar,
   FiActivity,

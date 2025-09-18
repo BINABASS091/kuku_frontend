@@ -54,7 +54,7 @@ import {
   FiUsers,
   FiCalendar
 } from 'react-icons/fi';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, BarChart, Bar } from 'recharts';
 import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
 

@@ -11,16 +11,12 @@ import {
   Badge,
   Button,
   Flex,
-  Stack,
   useColorModeValue,
   Icon,
   Grid,
   GridItem,
   HStack,
   VStack,
-  Stat,
-  StatLabel,
-  StatNumber,
   Tooltip,
   useToast,
   Modal,
@@ -36,7 +32,7 @@ import {
   Input,
   Select,
 } from '@chakra-ui/react';
-import { FiMapPin, FiLayers, FiCheckCircle, FiUsers, FiActivity, FiSettings, FiEye, FiPlus, FiBarChart, FiTrendingUp, FiAlertTriangle, FiClock, FiDatabase, FiTarget } from 'react-icons/fi';
+import { FiMapPin, FiLayers, FiActivity, FiSettings, FiEye, FiPlus, FiBarChart, FiTrendingUp, FiAlertTriangle, FiClock } from 'react-icons/fi';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { farmAPI } from '../services/api';
 import FarmerLayout from '../layouts/FarmerLayout';
@@ -255,19 +251,19 @@ const MyFarmsPage: React.FC = () => {
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="blue.600">
-                      {farms.reduce((sum, farm) => sum + (farm.total_devices || 0), 0)}
+                      {farms.reduce((sum: number, farm: any) => sum + (farm.total_devices || 0), 0)}
                     </Text>
                     <Text fontSize="xs" color="gray.500">Total Devices</Text>
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="green.600">
-                      {farms.reduce((sum, farm) => sum + (farm.active_batches || 0), 0)}
+                      {farms.reduce((sum: number, farm: any) => sum + (farm.active_batches || 0), 0)}
                     </Text>
                     <Text fontSize="xs" color="gray.500">Active Batches</Text>
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="purple.600">
-                      {farms.reduce((sum, farm) => sum + (farm.total_birds || 0), 0)}
+                      {farms.reduce((sum: number, farm: any) => sum + (farm.total_birds || 0), 0)}
                     </Text>
                     <Text fontSize="xs" color="gray.500">Total Birds</Text>
                   </Box>

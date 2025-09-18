@@ -68,7 +68,7 @@ import {
   EmailIcon,
   CalendarIcon,
 } from '@chakra-ui/icons';
-import api, { farmerAPI, userAPI } from '../../services/api';
+import { farmerAPI, userAPI } from '../../services/api';
 
 interface Farmer {
   id: number;
@@ -412,9 +412,9 @@ const FarmerManagement = () => {
     totalFarmers: farmers.length,
     verifiedFarmers: farmers.filter(f => f.is_verified).length,
     activeFarmers: farmers.filter(f => f.user.is_active).length,
-    totalFarms: farmers.reduce((sum, f) => sum + f.total_farms, 0),
-    totalBatches: farmers.reduce((sum, f) => sum + f.total_batches, 0),
-    totalDevices: farmers.reduce((sum, f) => sum + f.total_devices, 0),
+    totalFarms: farmers.reduce((sum, f) => sum + (f.total_farms || 0), 0),
+    totalBatches: farmers.reduce((sum, f) => sum + (f.total_batches || 0), 0),
+    totalDevices: farmers.reduce((sum, f) => sum + ((f as any).total_devices || 0), 0),
   };
 
   if (isLoading) {

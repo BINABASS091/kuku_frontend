@@ -23,7 +23,6 @@ import {
   Select,
   FormControl,
   FormLabel,
-  FormErrorMessage,
   Textarea,
   useToast,
   AlertDialog,
@@ -48,7 +47,7 @@ import {
   Heading,
 } from '@chakra-ui/react';
 import { AddIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
-import { FiUser, FiUsers, FiMail, FiPhone, FiMapPin, FiHome, FiLayers, FiHash } from 'react-icons/fi';
+import { FiUser, FiUsers, FiMail, FiPhone, FiMapPin, FiHome, FiLayers } from 'react-icons/fi';
 import api, { userAPI, farmerAPI, farmAPI, batchAPI, breedAPI } from '../../services/api';
 
 interface User {
