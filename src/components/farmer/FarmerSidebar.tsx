@@ -194,29 +194,10 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     {
       icon: FiHeart,
       label: 'Health Monitoring',
+      href: '/farmer/health',
+      badge: 2,
+      badgeColor: 'red',
       onClick: handleNavigation,
-      children: [
-        {
-          icon: FiHeart,
-          label: 'Health Overview',
-          href: '/farmer/health',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiActivity,
-          label: 'Alerts',
-          href: '/farmer/health/alerts',
-          badge: 2,
-          badgeColor: 'red',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiTrendingUp,
-          label: 'Reports',
-          href: '/farmer/health/reports',
-          onClick: handleNavigation,
-        },
-      ],
     },
     {
       icon: FiTrendingUp,
