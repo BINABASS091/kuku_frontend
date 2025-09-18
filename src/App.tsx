@@ -10,6 +10,7 @@ import FarmerDashboard from './pages/FarmerDashboard';
 import FarmerOnboarding from './components/farmer/FarmerOnboarding';
 import FarmerProfile from './pages/FarmerProfile';
 import NotFound from './pages/NotFound';
+import FarmerTasksPage from './pages/FarmerTasksPage';
 import Home from './pages/Home.tsx';
 import UserManagement from './pages/admin/UserManagement';
 import FarmerManagement from './pages/admin/FarmerManagement';
@@ -155,6 +156,7 @@ function App() {
                 <Route index element={<FarmerDashboard />} />
                 <Route path="onboarding" element={<FarmerOnboarding />} />
                 <Route path="profile" element={<FarmerProfile />} />
+                <Route path="tasks" element={<FarmerTasksPage />} />
               </Routes>
             </ProtectedRoute>
           } 
