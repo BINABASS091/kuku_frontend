@@ -56,6 +56,7 @@ import {
 } from 'react-icons/fi';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, BarChart, Bar } from 'recharts';
 import FarmerLayout from '../layouts/FarmerLayout';
+import SafeChartContainer from '../components/common/SafeChartContainer';
 
 const FarmerBreedGuidancePage: React.FC = () => {
   const textColor = useColorModeValue('gray.600', 'gray.300');
@@ -450,7 +451,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                   </CardHeader>
                   <CardBody>
                     <Box h="400px">
-                      <ResponsiveContainer width="100%" height="100%" minHeight={400}>
+                      <SafeChartContainer minHeight={400}>
                         <AreaChart data={growthData}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="week" label={{ value: 'Week', position: 'insideBottom', offset: -5 }} />
@@ -465,7 +466,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                             name="Weight (g)" 
                           />
                         </AreaChart>
-                      </ResponsiveContainer>
+                      </SafeChartContainer>
                     </Box>
                   </CardBody>
                 </Card>
@@ -516,7 +517,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+                        <SafeChartContainer minHeight={300}>
                           <LineChart data={growthData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="week" />
@@ -525,7 +526,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                             <Line type="monotone" dataKey="weight" stroke="#48BB78" strokeWidth={3} name="Weight (g)" />
                             <Line type="monotone" dataKey="feed" stroke="#38B2AC" strokeWidth={3} name="Feed (g/day)" />
                           </LineChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
@@ -536,7 +537,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+                        <SafeChartContainer minHeight={300}>
                           <BarChart data={growthData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="week" />
@@ -544,7 +545,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                             <Tooltip />
                             <Bar dataKey="temperature" fill="#ED8936" name="Temperature (°C)" />
                           </BarChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>

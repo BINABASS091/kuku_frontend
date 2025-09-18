@@ -90,6 +90,7 @@ import {
 } from 'recharts';
 import { format, addDays, subDays } from 'date-fns';
 import FarmerLayout from '../layouts/FarmerLayout';
+import SafeChartContainer from '../components/common/SafeChartContainer';
 import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { batchAPI, activityAPI } from '../services/api';
@@ -677,7 +678,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                        <SafeChartContainer minHeight={250}>
                           <LineChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -691,7 +692,7 @@ const FarmerBatchesPage: React.FC = () => {
                               name="Eggs"
                             />
                           </LineChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
@@ -702,7 +703,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                        <SafeChartContainer minHeight={250}>
                           <BarChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -710,7 +711,7 @@ const FarmerBatchesPage: React.FC = () => {
                             <Tooltip />
                             <Bar dataKey="feedConsumption" fill="#10B981" name="Feed (kg)" />
                           </BarChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
@@ -721,7 +722,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                        <SafeChartContainer minHeight={250}>
                           <AreaChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -736,7 +737,7 @@ const FarmerBatchesPage: React.FC = () => {
                               name="Mortality"
                             />
                           </AreaChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
@@ -747,7 +748,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                        <SafeChartContainer minHeight={250}>
                           <LineChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -761,7 +762,7 @@ const FarmerBatchesPage: React.FC = () => {
                               name="Weight (g)"
                             />
                           </LineChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>

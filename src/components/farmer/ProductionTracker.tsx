@@ -44,6 +44,7 @@ import {
   Cell,
 } from 'recharts';
 import { format, subDays } from 'date-fns';
+import SafeChartContainer from '../common/SafeChartContainer';
 
 interface ProductionData {
   date: string;
@@ -174,7 +175,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           </CardHeader>
           <CardBody>
             <Box h="300px">
-              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+              <SafeChartContainer minHeight={300}>
                 <LineChart data={productionData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -188,7 +189,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
                     dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
-              </ResponsiveContainer>
+              </SafeChartContainer>
             </Box>
           </CardBody>
         </Card>
@@ -199,7 +200,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           </CardHeader>
           <CardBody>
             <Box h="300px">
-              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+              <SafeChartContainer minHeight={300}>
                 <BarChart data={feedData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -208,7 +209,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
                   <Bar dataKey="consumed" fill="#3B82F6" name="Consumed" />
                   <Bar dataKey="planned" fill="#E5E7EB" name="Planned" />
                 </BarChart>
-              </ResponsiveContainer>
+              </SafeChartContainer>
             </Box>
           </CardBody>
         </Card>
@@ -279,7 +280,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           <CardBody>
             <Flex direction="column" h="200px">
               <Box flex="1">
-                <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                <SafeChartContainer minHeight={200}>
                   <PieChart>
                     <Pie
                       data={performanceData}
@@ -296,7 +297,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
                     </Pie>
                     <Tooltip />
                   </PieChart>
-                </ResponsiveContainer>
+                </SafeChartContainer>
               </Box>
               <VStack spacing={2} mt={4}>
                 {performanceData.map((item, index) => (

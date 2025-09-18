@@ -17,28 +17,28 @@ import {
   HStack,
   Icon,
   Badge,
-  Progress,
-  Button,
-  Flex,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription
 } from '@chakra-ui/react';
-import { 
-  FiBarChart2, 
-  FiDollarSign, 
-  FiTrendingUp, 
-  FiPackage,
+import {
+  FiTrendingUp,
+  FiDollarSign,
+  FiPieChart,
+  FiBarChart,
   FiActivity,
-  FiCpu,
   FiTarget,
-  FiCalendar,
   FiPercent
 } from 'react-icons/fi';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 import FarmerLayout from '../layouts/FarmerLayout';
+import SafeChartContainer from '../components/common/SafeChartContainer';
 
 const FarmerAnalyticsPage: React.FC = () => {
   const textColor = useColorModeValue('gray.600', 'gray.300');
@@ -82,65 +82,73 @@ const FarmerAnalyticsPage: React.FC = () => {
     { name: 'Poor', value: 5, color: '#E53E3E' }
   ];
 
+  const profitTrendData = [
+    { month: 'Jan', profit: 1100, target: 1200 },
+    { month: 'Feb', profit: 1250, target: 1200 },
+    { month: 'Mar', profit: 1280, target: 1300 },
+    { month: 'Apr', profit: 1170, target: 1250 },
+    { month: 'May', profit: 1400, target: 1400 },
+    { month: 'Jun', profit: 1600, target: 1500 }
+  ];
+
+  const weightProgressData = [
+    { week: 'Week 1', actual: 0.05, target: 0.06 },
+    { week: 'Week 2', actual: 0.12, target: 0.13 },
+    { week: 'Week 3', actual: 0.25, target: 0.26 },
+    { week: 'Week 4', actual: 0.45, target: 0.44 },
+    { week: 'Week 5', actual: 0.75, target: 0.72 },
+    { week: 'Week 6', actual: 1.2, target: 1.1 }
+  ];
+
   return (
     <FarmerLayout>
       <VStack spacing={6} align="stretch">
-        {/* Page Header */}
         <Box>
-          <Heading size="lg" mb={2}>
-            Analytics Dashboard 📊
-          </Heading>
+          <Heading size="lg" mb={2}>Analytics Dashboard</Heading>
           <Text color={textColor}>
-            Comprehensive analytics for production, financial, and growth performance
+            Comprehensive insights into your farm's performance and trends
           </Text>
         </Box>
 
-        {/* Analytics Tabs */}
-        <Tabs colorScheme="green" variant="enclosed-colored">
+        <Tabs variant="soft-rounded" colorScheme="green">
           <TabList>
             <Tab>
-              <HStack>
-                <Icon as={FiActivity} />
-                <Text>Production</Text>
-              </HStack>
+              <Icon as={FiBarChart} mr={2} />
+              Production Analytics
             </Tab>
             <Tab>
-              <HStack>
-                <Icon as={FiDollarSign} />
-                <Text>Financial</Text>
-              </HStack>
+              <Icon as={FiDollarSign} mr={2} />
+              Financial Analytics
             </Tab>
             <Tab>
-              <HStack>
-                <Icon as={FiTrendingUp} />
-                <Text>Growth Trends</Text>
-              </HStack>
+              <Icon as={FiTrendingUp} mr={2} />
+              Growth Trends
             </Tab>
           </TabList>
 
           <TabPanels>
             {/* Production Analytics Tab */}
-            <TabPanel px={0}>
+            <TabPanel>
               <VStack spacing={6} align="stretch">
-                {/* Production Stats Cards */}
-                <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Key Metrics Cards */}
+                <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Total Eggs</StatLabel>
-                        <StatNumber color="green.500">8,600</StatNumber>
+                        <StatLabel>Total Eggs This Month</StatLabel>
+                        <StatNumber color="green.500">1,650</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          12.5% from last month
+                          8.5% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Active Chickens</StatLabel>
+                        <StatLabel>Active Chickens</StatLabel>
                         <StatNumber color="blue.500">980</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
@@ -150,511 +158,374 @@ const FarmerAnalyticsPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Feed Consumed</StatLabel>
-                        <StatNumber color="orange.500">2,150kg</StatNumber>
+                        <StatLabel>Feed Consumption (kg)</StatLabel>
+                        <StatNumber color="orange.500">400</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          5.1% from last month
+                          5.3% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Efficiency Rate</StatLabel>
-                        <StatNumber color="purple.500">87.5%</StatNumber>
+                        <StatLabel>Production Efficiency</StatLabel>
+                        <StatNumber color="purple.500">94.2%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          2.3% from last month
+                          2.1% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
                 </SimpleGrid>
 
-                {/* Production Charts */}
-                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Monthly Production Trends</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                          <BarChart data={productionData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="eggs" fill="#48BB78" name="Eggs" />
-                            <Bar dataKey="chickens" fill="#38B2AC" name="Chickens" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </Box>
-                    </CardBody>
-                  </Card>
-
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Performance Distribution</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Flex direction="column" h="300px">
-                        <Box flex="1">
-                          <ResponsiveContainer width="100%" height="100%" minHeight={200}>
-                            <PieChart>
-                              <Pie
-                                data={performanceData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={40}
-                                outerRadius={80}
-                                paddingAngle={5}
-                                dataKey="value"
-                              >
-                                {performanceData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Pie>
-                              <Tooltip />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </Box>
-                        <VStack spacing={2} mt={4}>
-                          {performanceData.map((item, index) => (
-                            <HStack key={index} justify="space-between" w="full">
-                              <HStack>
-                                <Box w={3} h={3} bg={item.color} borderRadius="sm" />
-                                <Text fontSize="sm" color={textColor}>{item.name}</Text>
-                              </HStack>
-                              <Text fontSize="sm" fontWeight="medium">{item.value}%</Text>
-                            </HStack>
-                          ))}
-                        </VStack>
-                      </Flex>
-                    </CardBody>
-                  </Card>
-                </SimpleGrid>
-
-                {/* Production Actions */}
-                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Production Chart */}
+                <Card bg={cardBg} borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Production Actions</Heading>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Monthly Production Overview</Heading>
+                        <Text color={textColor} mt={1}>
+                          Track your farm's production metrics over time
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="green" variant="subtle">
+                        <Icon as={FiBarChart} mr={1} />
+                        6 Months
+                      </Badge>
+                    </HStack>
                   </CardHeader>
                   <CardBody>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      <Button leftIcon={<FiActivity />} colorScheme="green" variant="outline">
-                        Record Production
-                      </Button>
-                      <Button leftIcon={<FiPackage />} colorScheme="blue" variant="outline">
-                        Log Feed Usage
-                      </Button>
-                      <Button leftIcon={<FiBarChart2 />} colorScheme="purple" variant="outline">
-                        View Reports
-                      </Button>
-                      <Button leftIcon={<FiTarget />} colorScheme="orange" variant="outline">
-                        Set Targets
-                      </Button>
-                    </SimpleGrid>
+                    <Box h="400px">
+                      <SafeChartContainer minHeight={400}>
+                        <BarChart data={productionData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="eggs" fill="#48BB78" name="Eggs" />
+                          <Bar dataKey="chickens" fill="#38B2AC" name="Chickens" />
+                          <Bar dataKey="feed" fill="#ED8936" name="Feed (kg)" />
+                        </BarChart>
+                      </SafeChartContainer>
+                    </Box>
                   </CardBody>
                 </Card>
+
+                {/* Performance Distribution */}
+                <Card bg={cardBg} borderColor={borderColor}>
+                  <CardHeader>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Performance Distribution</Heading>
+                        <Text color={textColor} mt={1}>
+                          Breakdown of your flock's performance categories
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="blue" variant="subtle">
+                        <Icon as={FiPieChart} mr={1} />
+                        Current Month
+                      </Badge>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <Box h="350px">
+                      <SafeChartContainer minHeight={350}>
+                        <PieChart>
+                          <Pie
+                            data={performanceData}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={120}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name, value }) => `${name}: ${value}%`}
+                          >
+                            {performanceData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </SafeChartContainer>
+                    </Box>
+                  </CardBody>
+                </Card>
+
+                {/* Production Alerts */}
+                <Alert status="info" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Production Insight!</AlertTitle>
+                    <AlertDescription>
+                      Your egg production has increased by 8.5% this month. Consider optimizing feed distribution to maintain this growth.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
               </VStack>
             </TabPanel>
 
             {/* Financial Analytics Tab */}
-            <TabPanel px={0}>
+            <TabPanel>
               <VStack spacing={6} align="stretch">
-                {/* Financial Stats Cards */}
-                <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Financial Metrics */}
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Total Revenue</StatLabel>
-                        <StatNumber color="green.500">$21,550</StatNumber>
+                        <StatLabel>Monthly Revenue</StatLabel>
+                        <StatNumber color="green.500">$4,100</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          15.3% from last month
+                          7.9% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Total Costs</StatLabel>
-                        <StatNumber color="red.500">$13,750</StatNumber>
+                        <StatLabel>Operating Costs</StatLabel>
+                        <StatNumber color="red.500">$2,500</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          8.7% from last month
+                          4.2% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Net Profit</StatLabel>
-                        <StatNumber color="blue.500">$7,800</StatNumber>
+                        <StatLabel>Net Profit</StatLabel>
+                        <StatNumber color="blue.500">$1,600</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          28.6% from last month
-                        </StatHelpText>
-                      </Stat>
-                    </CardBody>
-                  </Card>
-
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardBody>
-                      <Stat>
-                        <StatLabel color={textColor}>Profit Margin</StatLabel>
-                        <StatNumber color="purple.500">36.2%</StatNumber>
-                        <StatHelpText>
-                          <StatArrow type="increase" />
-                          4.1% from last month
+                          14.3% from last month
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
                 </SimpleGrid>
 
-                {/* Financial Charts */}
-                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Revenue vs Costs Trend</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                          <LineChart data={financialData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Line type="monotone" dataKey="revenue" stroke="#48BB78" strokeWidth={3} name="Revenue" />
-                            <Line type="monotone" dataKey="costs" stroke="#E53E3E" strokeWidth={3} name="Costs" />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </Box>
-                    </CardBody>
-                  </Card>
-
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Profit Growth</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                          <AreaChart data={financialData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Area type="monotone" dataKey="profit" stroke="#38B2AC" fill="#38B2AC" fillOpacity={0.6} name="Profit" />
-                          </AreaChart>
-                        </ResponsiveContainer>
-                      </Box>
-                    </CardBody>
-                  </Card>
-                </SimpleGrid>
-
-                {/* Financial Breakdown */}
-                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Financial Trends Chart */}
+                <Card bg={cardBg} borderColor={borderColor}>
                   <CardHeader>
-                    <HStack justify="space-between">
-                      <Heading size="md">Financial Breakdown</Heading>
-                      <Badge colorScheme="green" variant="subtle">June 2024</Badge>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Financial Trends</Heading>
+                        <Text color={textColor} mt={1}>
+                          Revenue, costs, and profit analysis over time
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="purple" variant="subtle">
+                        <Icon as={FiDollarSign} mr={1} />
+                        6 Months
+                      </Badge>
                     </HStack>
                   </CardHeader>
                   <CardBody>
-                    <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-                      <VStack align="stretch" spacing={4}>
-                        <Text fontWeight="bold" color="green.500">Revenue Sources</Text>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Egg Sales</Text>
-                          <Text fontWeight="bold">$3,800</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Chicken Sales</Text>
-                          <Text fontWeight="bold">$300</Text>
-                        </HStack>
-                        <HStack justify="space-between" pt={2} borderTopWidth="1px" borderColor={borderColor}>
-                          <Text fontWeight="bold" color={textColor}>Total</Text>
-                          <Text fontWeight="bold" color="green.500">$4,100</Text>
-                        </HStack>
-                      </VStack>
-
-                      <VStack align="stretch" spacing={4}>
-                        <Text fontWeight="bold" color="red.500">Cost Breakdown</Text>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Feed</Text>
-                          <Text fontWeight="bold">$1,800</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Healthcare</Text>
-                          <Text fontWeight="bold">$400</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Labor</Text>
-                          <Text fontWeight="bold">$300</Text>
-                        </HStack>
-                        <HStack justify="space-between" pt={2} borderTopWidth="1px" borderColor={borderColor}>
-                          <Text fontWeight="bold" color={textColor}>Total</Text>
-                          <Text fontWeight="bold" color="red.500">$2,500</Text>
-                        </HStack>
-                      </VStack>
-
-                      <VStack align="stretch" spacing={4}>
-                        <Text fontWeight="bold" color="blue.500">Profitability</Text>
-                        <Box>
-                          <Text fontSize="sm" color={textColor} mb={2}>
-                            Profit Margin: 39.0%
-                          </Text>
-                          <Progress
-                            value={39}
-                            colorScheme="blue"
-                            size="lg"
-                            borderRadius="md"
-                          />
-                        </Box>
-                        <Box>
-                          <Text fontSize="sm" color={textColor} mb={2}>
-                            ROI: 24.5%
-                          </Text>
-                          <Progress
-                            value={24.5}
-                            colorScheme="green"
-                            size="lg"
-                            borderRadius="md"
-                          />
-                        </Box>
-                      </VStack>
-                    </SimpleGrid>
+                    <Box h="350px">
+                      <SafeChartContainer minHeight={350}>
+                        <LineChart data={financialData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="revenue" stroke="#48BB78" strokeWidth={3} name="Revenue" />
+                          <Line type="monotone" dataKey="costs" stroke="#E53E3E" strokeWidth={3} name="Costs" />
+                          <Line type="monotone" dataKey="profit" stroke="#3182CE" strokeWidth={3} name="Profit" />
+                        </LineChart>
+                      </SafeChartContainer>
+                    </Box>
                   </CardBody>
                 </Card>
 
-                {/* Financial Actions */}
-                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Profit vs Target */}
+                <Card bg={cardBg} borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Financial Actions</Heading>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Profit vs Target</Heading>
+                        <Text color={textColor} mt={1}>
+                          Compare actual profit against monthly targets
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="green" variant="subtle">
+                        <Icon as={FiTarget} mr={1} />
+                        Performance
+                      </Badge>
+                    </HStack>
                   </CardHeader>
                   <CardBody>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      <Button leftIcon={<FiDollarSign />} colorScheme="green" variant="outline">
-                        Record Sale
-                      </Button>
-                      <Button leftIcon={<FiPackage />} colorScheme="red" variant="outline">
-                        Log Expense
-                      </Button>
-                      <Button leftIcon={<FiBarChart2 />} colorScheme="blue" variant="outline">
-                        Generate Report
-                      </Button>
-                      <Button leftIcon={<FiPercent />} colorScheme="purple" variant="outline">
-                        Set Budget
-                      </Button>
-                    </SimpleGrid>
+                    <Box h="300px">
+                      <SafeChartContainer minHeight={300}>
+                        <AreaChart data={profitTrendData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Area type="monotone" dataKey="target" stackId="1" stroke="#CBD5E0" fill="#CBD5E0" name="Target" />
+                          <Area type="monotone" dataKey="profit" stackId="2" stroke="#48BB78" fill="#48BB78" name="Actual Profit" />
+                        </AreaChart>
+                      </SafeChartContainer>
+                    </Box>
                   </CardBody>
                 </Card>
+
+                {/* Financial Alert */}
+                <Alert status="success" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Excellent Financial Performance!</AlertTitle>
+                    <AlertDescription>
+                      You've exceeded your profit target by 6.7% this month. Your ROI is trending upward.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
               </VStack>
             </TabPanel>
 
             {/* Growth Trends Tab */}
-            <TabPanel px={0}>
+            <TabPanel>
               <VStack spacing={6} align="stretch">
-                {/* Growth Stats Cards */}
-                <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Growth Metrics */}
+                <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Avg Weight</StatLabel>
-                        <StatNumber color="green.500">1.2kg</StatNumber>
+                        <StatLabel>Avg Weight (kg)</StatLabel>
+                        <StatNumber color="purple.500">1.2</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Week 6 target
+                          Week 6 performance
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Mortality Rate</StatLabel>
-                        <StatNumber color="orange.500">0.8%</StatNumber>
+                        <StatLabel>Mortality Rate</StatLabel>
+                        <StatNumber color="red.500">0.8%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="decrease" />
-                          Below target (2%)
+                          Improved by 1.3%
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Feed Conversion</StatLabel>
-                        <StatNumber color="blue.500">2.2</StatNumber>
+                        <StatLabel>Feed Conversion</StatLabel>
+                        <StatNumber color="orange.500">2.2</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          FCR ratio
+                          Within target range
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel color={textColor}>Growth Rate</StatLabel>
-                        <StatNumber color="purple.500">95.2%</StatNumber>
+                        <StatLabel>Growth Rate</StatLabel>
+                        <StatNumber color="green.500">108.6%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Of expected
+                          Above target by 8.6%
                         </StatHelpText>
                       </Stat>
                     </CardBody>
                   </Card>
                 </SimpleGrid>
 
-                {/* Growth Charts */}
-                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Weight Growth Progression</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                          <AreaChart data={growthData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="week" />
-                            <YAxis />
-                            <Tooltip />
-                            <Area type="monotone" dataKey="weight" stroke="#48BB78" fill="#48BB78" fillOpacity={0.6} name="Weight (kg)" />
-                          </AreaChart>
-                        </ResponsiveContainer>
-                      </Box>
-                    </CardBody>
-                  </Card>
-
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                    <CardHeader>
-                      <Heading size="md">Mortality & FCR Trends</Heading>
-                    </CardHeader>
-                    <CardBody>
-                      <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
-                          <LineChart data={growthData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="week" />
-                            <YAxis />
-                            <Tooltip />
-                            <Line type="monotone" dataKey="mortality" stroke="#E53E3E" strokeWidth={3} name="Mortality %" />
-                            <Line type="monotone" dataKey="feed_conversion" stroke="#38B2AC" strokeWidth={3} name="Feed Conversion Ratio" />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </Box>
-                    </CardBody>
-                  </Card>
-                </SimpleGrid>
-
-                {/* Growth Performance Indicators */}
-                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Growth Chart */}
+                <Card bg={cardBg} borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Key Performance Indicators</Heading>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Weight Progress Tracking</Heading>
+                        <Text color={textColor} mt={1}>
+                          Monitor weekly weight gain against target benchmarks
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="green" variant="subtle">
+                        <Icon as={FiActivity} mr={1} />
+                        6 Weeks
+                      </Badge>
+                    </HStack>
                   </CardHeader>
                   <CardBody>
-                    <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-                      <VStack align="stretch" spacing={4}>
-                        <HStack>
-                          <Icon as={FiTrendingUp} color="green.500" />
-                          <Text fontWeight="bold" color={textColor}>Growth Metrics</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Daily Weight Gain</Text>
-                          <Text fontWeight="bold" color="green.500">28.5g</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Target Achievement</Text>
-                          <Text fontWeight="bold" color="green.500">95.2%</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Uniformity</Text>
-                          <Text fontWeight="bold" color="blue.500">87.3%</Text>
-                        </HStack>
-                      </VStack>
-
-                      <VStack align="stretch" spacing={4}>
-                        <HStack>
-                          <Icon as={FiActivity} color="orange.500" />
-                          <Text fontWeight="bold" color={textColor}>Health Metrics</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Mortality Rate</Text>
-                          <Text fontWeight="bold" color="orange.500">0.8%</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Disease Incidence</Text>
-                          <Text fontWeight="bold" color="green.500">0.2%</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Vaccination Coverage</Text>
-                          <Text fontWeight="bold" color="green.500">100%</Text>
-                        </HStack>
-                      </VStack>
-
-                      <VStack align="stretch" spacing={4}>
-                        <HStack>
-                          <Icon as={FiCpu} color="purple.500" />
-                          <Text fontWeight="bold" color={textColor}>Efficiency Metrics</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Feed Efficiency</Text>
-                          <Text fontWeight="bold" color="purple.500">2.2 FCR</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Water Consumption</Text>
-                          <Text fontWeight="bold" color="blue.500">4.8L/day</Text>
-                        </HStack>
-                        <HStack justify="space-between">
-                          <Text color={textColor}>Space Utilization</Text>
-                          <Text fontWeight="bold" color="green.500">92.5%</Text>
-                        </HStack>
-                      </VStack>
-                    </SimpleGrid>
+                    <Box h="350px">
+                      <SafeChartContainer minHeight={350}>
+                        <AreaChart data={weightProgressData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="week" />
+                          <YAxis />
+                          <Tooltip />
+                          <Area type="monotone" dataKey="target" stackId="1" stroke="#E2E8F0" fill="#E2E8F0" name="Target Weight" />
+                          <Area type="monotone" dataKey="actual" stackId="2" stroke="#38B2AC" fill="#38B2AC" name="Actual Weight" />
+                        </AreaChart>
+                      </SafeChartContainer>
+                    </Box>
                   </CardBody>
                 </Card>
 
-                {/* Growth Actions */}
-                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                {/* Performance Indicators */}
+                <Card bg={cardBg} borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Growth Management Actions</Heading>
+                    <HStack justify="space-between" align="center">
+                      <Box>
+                        <Heading size="md">Key Performance Indicators</Heading>
+                        <Text color={textColor} mt={1}>
+                          Track mortality rates and feed conversion efficiency
+                        </Text>
+                      </Box>
+                      <Badge colorScheme="blue" variant="subtle">
+                        <Icon as={FiPercent} mr={1} />
+                        Weekly Trends
+                      </Badge>
+                    </HStack>
                   </CardHeader>
                   <CardBody>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      <Button leftIcon={<FiActivity />} colorScheme="green" variant="outline">
-                        Weight Check
-                      </Button>
-                      <Button leftIcon={<FiCpu />} colorScheme="blue" variant="outline">
-                        Feed Analysis
-                      </Button>
-                      <Button leftIcon={<FiTarget />} colorScheme="purple" variant="outline">
-                        Set Targets
-                      </Button>
-                      <Button leftIcon={<FiCalendar />} colorScheme="orange" variant="outline">
-                        Schedule Check
-                      </Button>
-                    </SimpleGrid>
+                    <Box h="300px">
+                      <SafeChartContainer minHeight={300}>
+                        <LineChart data={growthData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="week" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="mortality" stroke="#E53E3E" strokeWidth={3} name="Mortality %" />
+                          <Line type="monotone" dataKey="feed_conversion" stroke="#38B2AC" strokeWidth={3} name="Feed Conversion Ratio" />
+                        </LineChart>
+                      </SafeChartContainer>
+                    </Box>
                   </CardBody>
                 </Card>
+
+                {/* Growth Alert */}
+                <Alert status="warning" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Growth Monitoring Alert</AlertTitle>
+                    <AlertDescription>
+                      Your flock is exceeding weight targets. Consider adjusting feed portions to maintain optimal growth rates.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
               </VStack>
             </TabPanel>
           </TabPanels>

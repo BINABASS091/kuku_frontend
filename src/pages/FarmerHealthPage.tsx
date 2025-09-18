@@ -96,6 +96,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FarmerLayout from '../layouts/FarmerLayout';
+import SafeChartContainer from '../components/common/SafeChartContainer';
 import { useAuth } from '../context/AuthContext';
 
 // Mock data - in real app, this would come from API
@@ -430,7 +431,7 @@ const FarmerHealthPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+                        <SafeChartContainer minHeight={300}>
                           <LineChart data={healthData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -452,7 +453,7 @@ const FarmerHealthPage: React.FC = () => {
                               name="Morbidity %" 
                             />
                           </LineChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
@@ -463,7 +464,7 @@ const FarmerHealthPage: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+                        <SafeChartContainer minHeight={300}>
                           <AreaChart data={healthData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -489,7 +490,7 @@ const FarmerHealthPage: React.FC = () => {
                               name="Temperature (°C)" 
                             />
                           </AreaChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </CardBody>
                   </Card>
