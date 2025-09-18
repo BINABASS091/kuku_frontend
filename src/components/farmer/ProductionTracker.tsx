@@ -174,7 +174,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           </CardHeader>
           <CardBody>
             <Box h="300px">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                 <LineChart data={productionData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -199,7 +199,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           </CardHeader>
           <CardBody>
             <Box h="300px">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={300}>
                 <BarChart data={feedData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -279,7 +279,7 @@ const ProductionTracker: React.FC<ProductionTrackerProps> = ({ farmId, batchId }
           <CardBody>
             <Flex direction="column" h="200px">
               <Box flex="1">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minHeight={200}>
                   <PieChart>
                     <Pie
                       data={performanceData}

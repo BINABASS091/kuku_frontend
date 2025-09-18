@@ -410,7 +410,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                         <AreaChart data={usageData}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
@@ -445,7 +445,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   <CardBody>
                     <Flex h="250px" align="center" justify="center">
                       <Box w="200px" h="200px">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={200}>
                           <PieChart>
                             <Pie
                               data={pieData}

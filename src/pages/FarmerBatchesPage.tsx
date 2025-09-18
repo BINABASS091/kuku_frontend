@@ -671,13 +671,13 @@ const FarmerBatchesPage: React.FC = () => {
                 
                 {performanceData && performanceData.length > 0 ? (
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="egg-production" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Egg Production Trends</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                           <LineChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -696,13 +696,13 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="feed-consumption" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Feed Consumption</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                           <BarChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -715,13 +715,13 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="mortality-tracking" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Mortality Tracking</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                           <AreaChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
@@ -741,13 +741,13 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="average-weight" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Average Weight</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minHeight={250}>
                           <LineChart data={performanceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
