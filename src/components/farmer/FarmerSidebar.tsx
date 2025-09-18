@@ -178,29 +178,10 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     {
       icon: FiLayers,
       label: 'Batches',
+      href: '/farmer/batches',
+      badge: farmerStats.activeBatches,
+      badgeColor: 'green',
       onClick: handleNavigation,
-      children: [
-        {
-          icon: FiLayers,
-          label: 'Active Batches',
-          href: '/farmer/batches/active',
-          badge: farmerStats.activeBatches,
-          badgeColor: 'green',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiActivity,
-          label: 'Batch Activities',
-          href: '/farmer/batches/activities',
-          onClick: handleNavigation,
-        },
-        {
-          icon: FiBarChart2,
-          label: 'Performance',
-          href: '/farmer/batches/performance',
-          onClick: handleNavigation,
-        },
-      ],
     },
     {
       icon: FiCalendar,

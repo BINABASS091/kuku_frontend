@@ -12,6 +12,7 @@ import {
   Alert,
   AlertIcon,
   useToast,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { farmAPI } from '../services/api';
@@ -31,19 +32,24 @@ const FarmerAddFarmPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
-    (data) => farmAPI.create({
-      farmName: data.name,
-      location: data.location,
-      farmSize: data.farmSize,
-      status: data.status,
-    }),
+    (data) => {
+      console.log('DEBUG: Creating farm with data:', data);
+      return farmAPI.create({
+        farmName: data.name,
+        location: data.location,
+        farmSize: data.farmSize,
+        status: data.status,
+      });
+    },
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        console.log('DEBUG: Farm created successfully:', response);
         toast({ title: 'Farm created', status: 'success', duration: 3000, isClosable: true });
         queryClient.invalidateQueries(['myFarms']);
         navigate('/farmer/farms');
       },
       onError: (err: any) => {
+        console.error('DEBUG: Farm creation error:', err);
         setErrorMsg(err?.message || 'Failed to create farm.');
       },
     }
@@ -61,40 +67,93 @@ const FarmerAddFarmPage: React.FC = () => {
 
   return (
     <FarmerLayout>
-      <Box maxW="lg" mx="auto" mt={8} p={8} bg="white" borderRadius="xl" boxShadow="md">
-        <Heading size="lg" mb={6}>Add New Farm</Heading>
+      {/* Use color mode values for background and text */}
+      <Box maxW="4xl" mx="auto">
+        <Heading size="lg" mb={6} color={useColorModeValue('gray.700', 'white')}>Add New Farm</Heading>
+
         {errorMsg && (
-          <Alert status="error" mb={4}>
+          <Alert status="error" mb={6} borderRadius="md">
             <AlertIcon />
             {errorMsg}
           </Alert>
         )}
-        <form onSubmit={handleSubmit}>
-          <Stack spacing={5}>
-            <FormControl isRequired>
-              <FormLabel>Farm Name</FormLabel>
-              <Input name="name" value={form.name} onChange={handleChange} placeholder="Farm Name" />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Farm Size</FormLabel>
-              <Input name="farmSize" value={form.farmSize} onChange={handleChange} placeholder="Farm Size (e.g. 2 acres)" />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Location</FormLabel>
-              <Input name="location" value={form.location} onChange={handleChange} placeholder="Location" />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Status</FormLabel>
-              <Select name="status" value={form.status} onChange={handleChange}>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </Select>
-            </FormControl>
-            <Button type="submit" colorScheme="teal" isLoading={mutation.isLoading}>
-              Create Farm
-            </Button>
-          </Stack>
-        </form>
+
+        <Box
+          bg={useColorModeValue('white', 'gray.800')}
+          p={8}
+          borderRadius="lg"
+          shadow="sm"
+          border="1px solid"
+          borderColor={useColorModeValue('gray.200', 'gray.700')}
+        >
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={6}>
+              <FormControl isRequired>
+                <FormLabel color={useColorModeValue('gray.700', 'gray.100')}>Farm Name <Box as="span" color="red.400">*</Box></FormLabel>
+                <Input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Enter farm name"
+                  size="lg"
+                  color={useColorModeValue('gray.800', 'white')}
+                  bg={useColorModeValue('white', 'gray.900')}
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel color={useColorModeValue('gray.700', 'gray.100')}>Farm Size <Box as="span" color="red.400">*</Box></FormLabel>
+                <Input
+                  name="farmSize"
+                  value={form.farmSize}
+                  onChange={handleChange}
+                  placeholder="e.g., 2 acres, 5000 sq ft"
+                  size="lg"
+                  color={useColorModeValue('gray.800', 'white')}
+                  bg={useColorModeValue('white', 'gray.900')}
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel color={useColorModeValue('gray.700', 'gray.100')}>Location <Box as="span" color="red.400">*</Box></FormLabel>
+                <Input
+                  name="location"
+                  value={form.location}
+                  onChange={handleChange}
+                  placeholder="Enter farm location"
+                  size="lg"
+                  color={useColorModeValue('gray.800', 'white')}
+                  bg={useColorModeValue('white', 'gray.900')}
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel color={useColorModeValue('gray.700', 'gray.100')}>Status <Box as="span" color="red.400">*</Box></FormLabel>
+                <Select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                  size="lg"
+                  color={useColorModeValue('gray.800', 'white')}
+                  bg={useColorModeValue('white', 'gray.900')}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </Select>
+              </FormControl>
+
+              <Button
+                type="submit"
+                colorScheme="teal"
+                size="lg"
+                isLoading={mutation.isLoading}
+                loadingText="Creating Farm..."
+              >
+                Create Farm
+              </Button>
+            </Stack>
+          </form>
+        </Box>
       </Box>
     </FarmerLayout>
   );

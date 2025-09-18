@@ -36,12 +36,25 @@ const MyFarmsPage: React.FC = () => {
   const toast = useToast();
   
   // Fetch only farms for the logged-in farmer
-  const { data, isLoading, isError, error } = useQuery(['myFarms'], () => farmAPI.list());
+  const { data, isLoading, isError, error } = useQuery(['myFarms'], () => farmAPI.list(), {
+    onSuccess: (data) => {
+      console.log('DEBUG: Farms API response:', data);
+      console.log('DEBUG: Number of farms:', data?.results?.length || data?.length || 0);
+    },
+    onError: (error) => {
+      console.error('DEBUG: Farms API error:', error);
+    }
+  });
   const farms = data?.results || data || [];
 
+  // All color mode values at top level to avoid hook order violations
   const cardBg = useColorModeValue('white', 'gray.800');
   const cardShadow = useColorModeValue('md', 'dark-lg');
   const statBg = useColorModeValue('gray.50', 'gray.700');
+  const blueHoverBg = useColorModeValue('blue.50', 'blue.900');
+  const greenHoverBg = useColorModeValue('green.50', 'green.900');
+  const purpleHoverBg = useColorModeValue('purple.50', 'purple.900');
+  const orangeHoverBg = useColorModeValue('orange.50', 'orange.900');
 
   // Helper function to get status color
   const getStatusColor = (status: string) => {
@@ -264,7 +277,7 @@ const MyFarmsPage: React.FC = () => {
                           textAlign="center"
                           cursor="pointer"
                           onClick={() => handleQuickAction('health', farm)}
-                          _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
+                          _hover={{ bg: blueHoverBg }}
                           transition="background 0.2s"
                         >
                           <Text fontSize="xs" color="gray.500" mb={1}>DEVICES</Text>
@@ -288,7 +301,7 @@ const MyFarmsPage: React.FC = () => {
                           textAlign="center"
                           cursor="pointer"
                           onClick={() => handleQuickAction('batches', farm)}
-                          _hover={{ bg: useColorModeValue('green.50', 'green.900') }}
+                          _hover={{ bg: greenHoverBg }}
                           transition="background 0.2s"
                         >
                           <Text fontSize="xs" color="gray.500" mb={1}>BATCHES</Text>
@@ -312,7 +325,7 @@ const MyFarmsPage: React.FC = () => {
                           textAlign="center"
                           cursor="pointer"
                           onClick={() => handleQuickAction('analytics', farm)}
-                          _hover={{ bg: useColorModeValue('purple.50', 'purple.900') }}
+                          _hover={{ bg: purpleHoverBg }}
                           transition="background 0.2s"
                         >
                           <Text fontSize="xs" color="gray.500" mb={1}>TOTAL BIRDS</Text>
@@ -336,7 +349,7 @@ const MyFarmsPage: React.FC = () => {
                           textAlign="center"
                           cursor="pointer"
                           onClick={() => navigate(`/farmer/farms/${farm.farmID}/team`)}
-                          _hover={{ bg: useColorModeValue('orange.50', 'orange.900') }}
+                          _hover={{ bg: orangeHoverBg }}
                           transition="background 0.2s"
                         >
                           <Text fontSize="xs" color="gray.500" mb={1}>TEAM</Text>

@@ -523,7 +523,7 @@ const FarmerDashboard = () => {
                 leftIcon={<FiTrendingUp />}
                 colorScheme="purple"
                 variant="outline"
-                onClick={() => navigate('/farmer/analytics')}
+                onClick={() => navigate('/farmer/production')}
               >
                 View Reports
               </Button>
