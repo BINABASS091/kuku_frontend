@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -36,7 +36,7 @@ import {
   Spinner,
   Center,
 } from '@chakra-ui/react';
-import { DownloadIcon, RepeatIcon, ViewIcon, WarningIcon } from '@chakra-ui/icons';
+import { DownloadIcon, RepeatIcon } from '@chakra-ui/icons';
 
 interface DeviceMetrics {
   total_devices: number;

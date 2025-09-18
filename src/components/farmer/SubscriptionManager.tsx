@@ -45,19 +45,19 @@ import {
   List,
   ListItem,
   ListIcon,
-  Divider,
 } from '@chakra-ui/react';
 import {
   FiCheck,
   FiX,
   FiTrendingUp,
-  FiDollarSign,
   FiPackage,
   FiCalendar,
   FiCreditCard,
   FiDownload,
   FiArrowUp,
   FiSettings,
+  FiActivity,
+  FiBarChart,
 } from 'react-icons/fi';
 import {
   AreaChart,
@@ -66,14 +66,11 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
-  BarChart,
-  Bar,
 } from 'recharts';
-import { format, addMonths, subMonths } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import SafeChartContainer from '../common/SafeChartContainer';
 
 interface SubscriptionPlan {
@@ -83,8 +80,8 @@ interface SubscriptionPlan {
   price: number;
   billingCycle: 'monthly' | 'yearly';
   features: string[];
-  maxHardware: number;
-  maxSoftware: number;
+  maxBirds: number;
+  maxSensors: number;
   analyticsIncluded: boolean;
   supportLevel: string;
   popular?: boolean;
@@ -101,17 +98,17 @@ interface PaymentRecord {
 
 interface UsageData {
   month: string;
-  hardware: number;
-  software: number;
-  apiCalls: number;
-  storage: number;
+  birds: number;
+  sensors: number;
+  reports: number;
+  alerts: number;
 }
 
 interface SubscriptionManagerProps {
   farmerId?: string;
 }
 
-const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) => {
+const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const textColor = useColorModeValue('gray.600', 'gray.300');
@@ -121,7 +118,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
   // Mock data - replace with real API calls
   const currentSubscription = {
     id: 'sub_123',
-    plan: 'Normal Plan',
+    plan: 'Professional Farm',
     tier: 'NORMAL' as const,
     status: 'active',
     nextBilling: '2024-02-15',
@@ -129,64 +126,79 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
     billingCycle: 'monthly' as const,
     startDate: '2024-01-15',
     autoRenew: true,
+    birdsCount: 1450,
+    maxBirds: 2000,
+    farmsManaged: 1,
+    maxFarms: 1,
   };
 
   const subscriptionPlans: SubscriptionPlan[] = [
     {
-      id: 'individual',
-      name: 'Individual',
+      id: 'starter',
+      name: 'Starter Farm',
       tier: 'INDIVIDUAL',
-      price: 29,
+      price: 19,
       billingCycle: 'monthly',
       features: [
-        'Up to 2 hardware nodes',
-        'Basic monitoring',
-        'Email support',
+        'Up to 500 birds monitoring',
+        'Basic health tracking',
+        'Daily production reports',
+        'Email notifications',
         'Mobile app access',
-        'Basic reporting',
+        'Standard support (24h response)',
+        'Basic analytics dashboard',
       ],
-      maxHardware: 2,
-      maxSoftware: 3,
+      maxBirds: 500,
+      maxSensors: 2,
       analyticsIncluded: false,
-      supportLevel: 'Email',
+      supportLevel: 'Email Support',
     },
     {
-      id: 'normal',
-      name: 'Normal',
+      id: 'professional',
+      name: 'Professional Farm',
       tier: 'NORMAL',
       price: 49,
       billingCycle: 'monthly',
       features: [
-        'Up to 5 hardware nodes',
-        'Advanced monitoring',
-        'Priority support',
-        'API access',
-        'Advanced analytics',
-        'Custom reports',
+        'Up to 2,000 birds monitoring',
+        'Advanced health analytics',
+        'Automated alerts & notifications',
+        'Batch management tools',
+        'Financial tracking & reports',
+        'Vaccination scheduling',
+        'Feed optimization insights',
+        'Priority support (12h response)',
+        'API access for integrations',
+        'Custom report generation',
       ],
-      maxHardware: 5,
-      maxSoftware: 8,
+      maxBirds: 2000,
+      maxSensors: 5,
       analyticsIncluded: true,
       supportLevel: 'Phone & Email',
       popular: true,
     },
     {
-      id: 'premium',
-      name: 'Premium',
+      id: 'enterprise',
+      name: 'Enterprise Farm',
       tier: 'PREMIUM',
       price: 99,
       billingCycle: 'monthly',
       features: [
-        'Unlimited hardware nodes',
-        'Real-time monitoring',
-        '24/7 dedicated support',
-        'Full API access',
-        'AI-powered insights',
-        'White-label options',
-        'Custom integrations',
+        'Unlimited birds monitoring',
+        'AI-powered health predictions',
+        'Multi-farm management',
+        'Real-time environmental monitoring',
+        'Advanced breeding guidance',
+        'Automated feed dispensing control',
+        'Marketplace integration',
+        'White-label mobile app',
+        '24/7 dedicated support (2h response)',
+        'On-site technical visits',
+        'Custom integrations & training',
+        'Advanced analytics & forecasting',
       ],
-      maxHardware: 999,
-      maxSoftware: 999,
+      maxBirds: 999999,
+      maxSensors: 999,
       analyticsIncluded: true,
       supportLevel: '24/7 Dedicated',
     },
@@ -223,28 +235,31 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
     const date = subMonths(new Date(), 5 - i);
     return {
       month: format(date, 'MMM'),
-      hardware: Math.floor(Math.random() * 5) + 1,
-      software: Math.floor(Math.random() * 8) + 2,
-      apiCalls: Math.floor(Math.random() * 10000) + 5000,
-      storage: Math.floor(Math.random() * 50) + 20,
+      birds: Math.floor(Math.random() * 400) + 1000,
+      sensors: Math.floor(Math.random() * 3) + 2,
+      reports: Math.floor(Math.random() * 20) + 15,
+      alerts: Math.floor(Math.random() * 8) + 2,
     };
   });
 
   const usageStats = {
-    currentHardware: 3,
-    maxHardware: 5,
-    currentSoftware: 5,
-    maxSoftware: 8,
-    apiCallsThisMonth: 8500,
-    apiCallsLimit: 50000,
-    storageUsed: 35,
+    currentBirds: 1450,
+    maxBirds: 2000,
+    currentSensors: 4,
+    maxSensors: 5,
+    monthlyReports: 28,
+    reportsLimit: 50,
+    storageUsed: 32,
     storageLimit: 100,
+    alertsThisMonth: 15,
+    apiCallsThisMonth: 12500,
+    apiCallsLimit: 50000,
   };
 
   const pieData = [
-    { name: 'Hardware', value: usageStats.currentHardware, color: '#3B82F6' },
-    { name: 'Software', value: usageStats.currentSoftware, color: '#10B981' },
-    { name: 'Available', value: usageStats.maxHardware - usageStats.currentHardware + usageStats.maxSoftware - usageStats.currentSoftware, color: '#E5E7EB' },
+    { name: 'Birds Monitored', value: usageStats.currentBirds, color: '#3B82F6' },
+    { name: 'Sensors Active', value: usageStats.currentSensors * 100, color: '#10B981' },
+    { name: 'Available Capacity', value: (usageStats.maxBirds - usageStats.currentBirds) / 10, color: '#E5E7EB' },
   ];
 
   const getStatusColor = (status: string) => {
@@ -293,17 +308,17 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                 </VStack>
                 
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color={textColor}>Next Billing</Text>
+                  <Text fontSize="sm" color={textColor}>Birds Monitored</Text>
                   <Text fontSize="lg" fontWeight="medium">
-                    {format(new Date(currentSubscription.nextBilling), 'MMM dd, yyyy')}
+                    {currentSubscription.birdsCount.toLocaleString()} / {currentSubscription.maxBirds.toLocaleString()}
                   </Text>
                 </VStack>
                 
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color={textColor}>Status</Text>
-                  <Badge colorScheme="green" variant="subtle" fontSize="md" px={3} py={1}>
-                    ACTIVE
-                  </Badge>
+                  <Text fontSize="sm" color={textColor}>Next Billing</Text>
+                  <Text fontSize="lg" fontWeight="medium">
+                    {format(new Date(currentSubscription.nextBilling), 'MMM dd, yyyy')}
+                  </Text>
                 </VStack>
               </SimpleGrid>
             </VStack>
@@ -322,10 +337,22 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList>
-          <Tab>Usage & Limits</Tab>
-          <Tab>Available Plans</Tab>
-          <Tab>Payment History</Tab>
-          <Tab>Settings</Tab>
+          <Tab>
+            <Icon as={FiBarChart} mr={2} />
+            Usage & Limits
+          </Tab>
+          <Tab>
+            <Icon as={FiPackage} mr={2} />
+            Available Plans
+          </Tab>
+          <Tab>
+            <Icon as={FiCreditCard} mr={2} />
+            Payment History
+          </Tab>
+          <Tab>
+            <Icon as={FiSettings} mr={2} />
+            Settings
+          </Tab>
         </TabList>
 
         <TabPanels>
@@ -337,16 +364,19 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Hardware Nodes</StatLabel>
+                      <StatLabel color={textColor}>Birds Monitored</StatLabel>
                       <StatNumber color="blue.500">
-                        {usageStats.currentHardware} / {usageStats.maxHardware}
+                        {usageStats.currentBirds.toLocaleString()} / {usageStats.maxBirds.toLocaleString()}
                       </StatNumber>
                       <Progress
-                        value={(usageStats.currentHardware / usageStats.maxHardware) * 100}
+                        value={(usageStats.currentBirds / usageStats.maxBirds) * 100}
                         colorScheme="blue"
                         size="sm"
                         mt={2}
                       />
+                      <StatHelpText>
+                        {((usageStats.currentBirds / usageStats.maxBirds) * 100).toFixed(1)}% capacity
+                      </StatHelpText>
                     </Stat>
                   </CardBody>
                 </Card>
@@ -354,16 +384,19 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Software Services</StatLabel>
+                      <StatLabel color={textColor}>Smart Sensors</StatLabel>
                       <StatNumber color="green.500">
-                        {usageStats.currentSoftware} / {usageStats.maxSoftware}
+                        {usageStats.currentSensors} / {usageStats.maxSensors}
                       </StatNumber>
                       <Progress
-                        value={(usageStats.currentSoftware / usageStats.maxSoftware) * 100}
+                        value={(usageStats.currentSensors / usageStats.maxSensors) * 100}
                         colorScheme="green"
                         size="sm"
                         mt={2}
                       />
+                      <StatHelpText>
+                        Active monitoring devices
+                      </StatHelpText>
                     </Stat>
                   </CardBody>
                 </Card>
@@ -371,16 +404,19 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>API Calls</StatLabel>
+                      <StatLabel color={textColor}>Monthly Reports</StatLabel>
                       <StatNumber color="purple.500">
-                        {usageStats.apiCallsThisMonth.toLocaleString()}
+                        {usageStats.monthlyReports} / {usageStats.reportsLimit}
                       </StatNumber>
                       <Progress
-                        value={(usageStats.apiCallsThisMonth / usageStats.apiCallsLimit) * 100}
+                        value={(usageStats.monthlyReports / usageStats.reportsLimit) * 100}
                         colorScheme="purple"
                         size="sm"
                         mt={2}
                       />
+                      <StatHelpText>
+                        Generated this month
+                      </StatHelpText>
                     </Stat>
                   </CardBody>
                 </Card>
@@ -388,9 +424,9 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Storage</StatLabel>
+                      <StatLabel color={textColor}>Data Storage</StatLabel>
                       <StatNumber color="orange.500">
-                        {usageStats.storageUsed} GB
+                        {usageStats.storageUsed}GB / {usageStats.storageLimit}GB
                       </StatNumber>
                       <Progress
                         value={(usageStats.storageUsed / usageStats.storageLimit) * 100}
@@ -398,16 +434,57 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                         size="sm"
                         mt={2}
                       />
+                      <StatHelpText>
+                        Farm data & analytics
+                      </StatHelpText>
                     </Stat>
                   </CardBody>
                 </Card>
               </SimpleGrid>
 
+              {/* Quick Actions */}
+              <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                <CardHeader>
+                  <Heading size="md">Quick Actions</Heading>
+                </CardHeader>
+                <CardBody>
+                  <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
+                    <VStack spacing={2}>
+                      <Icon as={FiTrendingUp} boxSize={6} color="blue.500" />
+                      <Text fontSize="sm" textAlign="center">View Analytics</Text>
+                      <Button size="sm" variant="outline" colorScheme="blue">
+                        Open Dashboard
+                      </Button>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Icon as={FiDownload} boxSize={6} color="green.500" />
+                      <Text fontSize="sm" textAlign="center">Export Data</Text>
+                      <Button size="sm" variant="outline" colorScheme="green">
+                        Generate Report
+                      </Button>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Icon as={FiActivity} boxSize={6} color="purple.500" />
+                      <Text fontSize="sm" textAlign="center">Add Sensors</Text>
+                      <Button size="sm" variant="outline" colorScheme="purple">
+                        Setup Device
+                      </Button>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Icon as={FiCreditCard} boxSize={6} color="orange.500" />
+                      <Text fontSize="sm" textAlign="center">Billing Info</Text>
+                      <Button size="sm" variant="outline" colorScheme="orange">
+                        Update Payment
+                      </Button>
+                    </VStack>
+                  </SimpleGrid>
+                </CardBody>
+              </Card>
               {/* Usage Charts */}
               <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Usage Trends</Heading>
+                    <Heading size="md">Farm Activity Trends</Heading>
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
@@ -419,19 +496,27 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                           <Tooltip />
                           <Area
                             type="monotone"
-                            dataKey="hardware"
+                            dataKey="birds"
                             stackId="1"
                             stroke="#3B82F6"
                             fill="#3B82F6"
-                            name="Hardware"
+                            name="Birds Monitored"
                           />
                           <Area
                             type="monotone"
-                            dataKey="software"
-                            stackId="1"
+                            dataKey="sensors"
+                            stackId="2"
                             stroke="#10B981"
                             fill="#10B981"
-                            name="Software"
+                            name="Sensors Active"
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="reports"
+                            stackId="3"
+                            stroke="#F59E0B"
+                            fill="#F59E0B"
+                            name="Reports Generated"
                           />
                         </AreaChart>
                       </SafeChartContainer>
@@ -475,7 +560,10 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
           {/* Available Plans Tab */}
           <TabPanel>
             <VStack spacing={4} align="stretch">
-              <Heading size="md">Choose Your Plan</Heading>
+              <Heading size="md">Choose Your Farm Plan</Heading>
+              <Text color={textColor}>
+                Select the perfect plan for your farm size and requirements. All plans include mobile app access and basic support.
+              </Text>
               
               <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
                 {subscriptionPlans.map((plan) => (
@@ -513,19 +601,22 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                             </Text>
                             <Text color={textColor}>/{plan.billingCycle}</Text>
                           </HStack>
+                          <Text fontSize="sm" color={textColor}>
+                            Up to {plan.maxBirds === 999999 ? 'Unlimited' : plan.maxBirds.toLocaleString()} birds
+                          </Text>
                         </VStack>
 
                         <List spacing={3}>
                           {plan.features.map((feature, index) => (
                             <ListItem key={index}>
                               <ListIcon as={FiCheck} color="green.500" />
-                              {feature}
+                              <Text fontSize="sm">{feature}</Text>
                             </ListItem>
                           ))}
                         </List>
 
                         <Button
-                          colorScheme={plan.popular ? 'blue' : 'gray'}
+                          colorScheme={plan.popular ? 'green' : 'gray'}
                           variant={currentSubscription.tier === plan.tier ? 'outline' : 'solid'}
                           w="full"
                           onClick={() => handleUpgrade(plan)}
@@ -538,6 +629,51 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   </Card>
                 ))}
               </SimpleGrid>
+
+              {/* Plan Comparison */}
+              <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                <CardHeader>
+                  <Heading size="md">Feature Comparison</Heading>
+                </CardHeader>
+                <CardBody>
+                  <Table variant="simple" size="sm">
+                    <Thead>
+                      <Tr>
+                        <Th>Feature</Th>
+                        <Th textAlign="center">Starter</Th>
+                        <Th textAlign="center">Professional</Th>
+                        <Th textAlign="center">Enterprise</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td>Birds Capacity</Td>
+                        <Td textAlign="center">500</Td>
+                        <Td textAlign="center">2,000</Td>
+                        <Td textAlign="center">Unlimited</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>Smart Sensors</Td>
+                        <Td textAlign="center">2</Td>
+                        <Td textAlign="center">5</Td>
+                        <Td textAlign="center">Unlimited</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>AI Analytics</Td>
+                        <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
+                        <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
+                        <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
+                      </Tr>
+                      <Tr>
+                        <Td>24/7 Support</Td>
+                        <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
+                        <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
+                        <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </CardBody>
+              </Card>
             </VStack>
           </TabPanel>
 
@@ -576,7 +712,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                       </Td>
                       <Td>
                         {payment.invoiceUrl && (
-                          <Button size="sm" variant="ghost" leftIcon={<FiDownload />}>
+                          <Button size="xs" variant="outline" leftIcon={<FiDownload />}>
                             Download
                           </Button>
                         )}
@@ -585,6 +721,16 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   ))}
                 </Tbody>
               </Table>
+
+              <Alert status="info" borderRadius="md">
+                <AlertIcon />
+                <Box>
+                  <AlertTitle>Automatic Payments Enabled</AlertTitle>
+                  <AlertDescription>
+                    Your subscription will automatically renew on {format(new Date(currentSubscription.nextBilling), 'MMMM dd, yyyy')}.
+                  </AlertDescription>
+                </Box>
+              </Alert>
             </VStack>
           </TabPanel>
 
@@ -593,56 +739,52 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
             <VStack spacing={6} align="stretch">
               <Heading size="md">Subscription Settings</Heading>
 
-              <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-                <CardBody>
-                  <VStack spacing={4} align="stretch">
-                    <HStack justify="space-between">
-                      <VStack align="start" spacing={0}>
-                        <Text fontWeight="medium">Auto-renewal</Text>
-                        <Text fontSize="sm" color={textColor}>
-                          Automatically renew your subscription
-                        </Text>
-                      </VStack>
-                      <Badge colorScheme="green">ENABLED</Badge>
-                    </HStack>
-                    
-                    <Divider />
-                    
-                    <HStack justify="space-between">
-                      <VStack align="start" spacing={0}>
-                        <Text fontWeight="medium">Payment Method</Text>
-                        <Text fontSize="sm" color={textColor}>
-                          **** **** **** 1234 (Visa)
-                        </Text>
-                      </VStack>
-                      <Button size="sm" variant="outline">
-                        Update
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <CardHeader>
+                    <Heading size="sm">Billing Information</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack spacing={3} align="stretch">
+                      <Button leftIcon={<FiCreditCard />} variant="outline">
+                        Update Payment Method
                       </Button>
-                    </HStack>
-                    
-                    <Divider />
-                    
-                    <HStack justify="space-between">
-                      <VStack align="start" spacing={0}>
-                        <Text fontWeight="medium">Billing Address</Text>
-                        <Text fontSize="sm" color={textColor}>
-                          123 Farm Road, Agriculture City
-                        </Text>
-                      </VStack>
-                      <Button size="sm" variant="outline">
-                        Update
+                      <Button leftIcon={<FiCalendar />} variant="outline">
+                        Change Billing Cycle
                       </Button>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-              </Card>
+                      <Button leftIcon={<FiDownload />} variant="outline">
+                        Download Invoices
+                      </Button>
+                    </VStack>
+                  </CardBody>
+                </Card>
 
-              <Alert status="info" borderRadius="md">
+                <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <CardHeader>
+                    <Heading size="sm">Subscription Controls</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack spacing={3} align="stretch">
+                      <Button leftIcon={<FiArrowUp />} colorScheme="blue">
+                        Upgrade Plan
+                      </Button>
+                      <Button leftIcon={<FiSettings />} variant="outline">
+                        Manage Features
+                      </Button>
+                      <Button leftIcon={<FiX />} colorScheme="red" variant="outline">
+                        Cancel Subscription
+                      </Button>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              </SimpleGrid>
+
+              <Alert status="warning" borderRadius="md">
                 <AlertIcon />
                 <Box>
-                  <AlertTitle>Need help choosing a plan?</AlertTitle>
+                  <AlertTitle>Need Help?</AlertTitle>
                   <AlertDescription>
-                    Contact our sales team for personalized recommendations based on your farm size and requirements.
+                    Contact our support team for assistance with billing, upgrades, or technical issues. We're here to help your farm succeed!
                   </AlertDescription>
                 </Box>
               </Alert>
@@ -651,7 +793,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
         </TabPanels>
       </Tabs>
 
-      {/* Plan Upgrade Modal */}
+      {/* Upgrade Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalOverlay />
         <ModalContent>
@@ -665,13 +807,14 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   <Box>
                     <AlertTitle>Plan Upgrade</AlertTitle>
                     <AlertDescription>
-                      You'll be charged ${selectedPlan.price} immediately and your next billing cycle will adjust accordingly.
+                      You're upgrading to the {selectedPlan.name} plan for ${selectedPlan.price}/{selectedPlan.billingCycle}.
+                      Your new features will be available immediately.
                     </AlertDescription>
                   </Box>
                 </Alert>
-
-                <VStack spacing={2} align="start">
-                  <Text fontWeight="bold">What's included:</Text>
+                
+                <Box>
+                  <Heading size="sm" mb={2}>What you'll get:</Heading>
                   <List spacing={2}>
                     {selectedPlan.features.map((feature, index) => (
                       <ListItem key={index}>
@@ -680,7 +823,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                       </ListItem>
                     ))}
                   </List>
-                </VStack>
+                </Box>
               </VStack>
             )}
           </ModalBody>
@@ -688,8 +831,8 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
             <Button variant="ghost" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="blue" leftIcon={<FiCreditCard />}>
-              Upgrade Now
+            <Button colorScheme="blue">
+              Confirm Upgrade
             </Button>
           </ModalFooter>
         </ModalContent>

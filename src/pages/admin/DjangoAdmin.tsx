@@ -31,12 +31,12 @@ import {
   ListItem,
   ListIcon,
 } from '@chakra-ui/react';
-import { ExternalLinkIcon, SettingsIcon, ViewIcon, CheckCircleIcon, WarningIcon, LockIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, SettingsIcon, ViewIcon, CheckCircleIcon, LockIcon } from '@chakra-ui/icons';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
 
 const DjangoAdmin: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -153,8 +153,8 @@ const DjangoAdmin: React.FC = () => {
                     <HStack justify="space-between">
                       <Heading size="md">Django Admin Portal</Heading>
                       <HStack spacing={2}>
-                        <Badge colorScheme={user?.is_superuser ? 'green' : 'orange'}>
-                          {user?.is_superuser ? 'Super User' : 'Staff User'}
+                        <Badge colorScheme={user?.role === 'admin' ? 'green' : 'orange'}>
+                          {user?.role === 'admin' ? 'Admin User' : 'Staff User'}
                         </Badge>
                         {isCheckingSession ? (
                           <Badge colorScheme="gray">
@@ -171,7 +171,7 @@ const DjangoAdmin: React.FC = () => {
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={4} align="stretch">
-                      {user?.is_staff ? (
+                      {user?.role === 'admin' ? (
                         <>
                           {!isAdminLoggedIn && (
                             <Alert status="info">

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { keyframes } from '@emotion/react';
 import {
   Box,
   Button,
@@ -20,13 +19,6 @@ import {
 import { ViewIcon, ViewOffIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-
-// Animation keyframes
-const float = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-`;
 
 const Register = () => {
   const [formData, setFormData] = useState({

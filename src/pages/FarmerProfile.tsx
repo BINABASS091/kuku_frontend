@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import {
   Box,
@@ -15,9 +15,6 @@ import {
   SimpleGrid,
   useColorModeValue,
   Icon,
-  List,
-  ListItem,
-  ListIcon,
   Progress,
   Alert,
   AlertIcon,
@@ -28,9 +25,6 @@ import {
   FiUser,
   FiMapPin,
   FiLayers,
-  FiClock,
-  FiCheck,
-  FiAlertCircle,
   FiTrendingUp,
   FiEdit3,
 } from 'react-icons/fi';
@@ -74,8 +68,8 @@ const FarmerProfile = () => {
   const [farmerData, setFarmerData] = useState<FarmerProfileData>({
     id: 1,
     user: {
-      first_name: user?.first_name || 'John',
-      last_name: user?.last_name || 'Doe',
+      first_name: user?.name?.split(' ')[0] || 'John',
+      last_name: user?.name?.split(' ').slice(1).join(' ') || 'Doe',
       email: user?.email || 'john.doe@example.com',
     },
     phone: '+254 712 345 678',

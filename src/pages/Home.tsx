@@ -1,14 +1,6 @@
 import { Box, Heading, Text, Button, VStack, Container, Flex, useColorModeValue } from '@chakra-ui/react';
-import { keyframes } from '@emotion/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
-// Animation keyframes
-const float = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-`;
 
 const Home = () => {
   const bgGradient = useColorModeValue(

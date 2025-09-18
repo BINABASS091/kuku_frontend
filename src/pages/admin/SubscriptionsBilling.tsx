@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Box, Heading } from '@chakra-ui/react';
 import SubscriptionManagement from './SubscriptionManagement';
 import SubscriptionTypesPage from './subscriptions/SubscriptionTypesPage';

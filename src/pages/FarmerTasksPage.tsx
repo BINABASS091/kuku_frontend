@@ -21,9 +21,10 @@ import {
   Tab,
   TabPanel,
   Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   Checkbox,
-  Progress,
   Flex,
   useColorModeValue,
   useDisclosure,
@@ -37,10 +38,7 @@ import {
   FormLabel,
   Textarea,
   Switch,
-  Divider,
   Avatar,
-  Tag,
-  TagLabel,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchFarmerTasks } from '../services/farmerTasks';
@@ -51,11 +49,8 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiRepeat,
-  FiFilter,
   FiSearch,
   FiEdit3,
-  FiTrash2,
-  FiFlag,
   FiMapPin,
   FiUsers,
   FiTrendingUp,
@@ -82,7 +77,7 @@ interface Task {
 }
 
 const FarmerTasksPage: React.FC = () => {
-  const { data: tasksData, isLoading, isError, error } = useQuery(['farmerTasks'], fetchFarmerTasks);
+  const { isLoading, isError, error } = useQuery(['farmerTasks'], fetchFarmerTasks);
   const { isOpen: isNewTaskOpen, onOpen: onNewTaskOpen, onClose: onNewTaskClose } = useDisclosure();
   const { isOpen: isEditTaskOpen, onOpen: onEditTaskOpen, onClose: onEditTaskClose } = useDisclosure();
   
@@ -564,12 +559,16 @@ const FarmerTasksPage: React.FC = () => {
           <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
             <FormControl>
               <FormLabel fontSize="sm">Search</FormLabel>
-              <Input
-                placeholder="Search tasks..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                leftElement={<FiSearch />}
-              />
+              <InputGroup>
+                <InputLeftElement>
+                  <FiSearch />
+                </InputLeftElement>
+                <Input
+                  placeholder="Search tasks..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </InputGroup>
             </FormControl>
             
             <FormControl>
