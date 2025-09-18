@@ -69,7 +69,8 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
-import { format, addDays } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns';
+import SafeChartContainer from '../common/SafeChartContainer';
 
 interface HealthAlert {
   id: number;
@@ -378,7 +379,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
-                      <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                      <SafeChartContainer minHeight={250}>
                         <LineChart data={healthMetrics}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
@@ -399,7 +400,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                             name="Morbidity %"
                           />
                         </LineChart>
-                      </ResponsiveContainer>
+                      </SafeChartContainer>
                     </Box>
                   </CardBody>
                 </Card>
@@ -410,7 +411,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
-                      <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                      <SafeChartContainer minHeight={250}>
                         <AreaChart data={healthMetrics}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
@@ -425,7 +426,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                             name="Weight (g)"
                           />
                         </AreaChart>
-                      </ResponsiveContainer>
+                      </SafeChartContainer>
                     </Box>
                   </CardBody>
                 </Card>

@@ -74,6 +74,7 @@ import {
   Bar,
 } from 'recharts';
 import { format, addMonths, subMonths } from 'date-fns';
+import SafeChartContainer from '../common/SafeChartContainer';
 
 interface SubscriptionPlan {
   id: string;
@@ -410,7 +411,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
-                      <ResponsiveContainer width="100%" height="100%" minHeight={250}>
+                      <SafeChartContainer minHeight={250}>
                         <AreaChart data={usageData}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
@@ -433,7 +434,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                             name="Software"
                           />
                         </AreaChart>
-                      </ResponsiveContainer>
+                      </SafeChartContainer>
                     </Box>
                   </CardBody>
                 </Card>
@@ -445,7 +446,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                   <CardBody>
                     <Flex h="250px" align="center" justify="center">
                       <Box w="200px" h="200px">
-                        <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                        <SafeChartContainer minHeight={200}>
                           <PieChart>
                             <Pie
                               data={pieData}
@@ -462,7 +463,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({ farmerId }) =
                             </Pie>
                             <Tooltip />
                           </PieChart>
-                        </ResponsiveContainer>
+                        </SafeChartContainer>
                       </Box>
                     </Flex>
                   </CardBody>
