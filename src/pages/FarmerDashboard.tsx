@@ -309,10 +309,9 @@ const FarmerDashboard = () => {
       isError: activitiesError,
       error: activitiesErrorObj
     } = useQuery(['farmer-recent-activities'], async () => {
-      // Use your real activities API here; fallback to batchAPI.list for demo
-      // If you have a dedicated activitiesAPI, use that instead
+      // Only fetch the latest 5 activities for dashboard preview
       const res = await activityAPI.list({ ordering: '-created_at', limit: 5 });
-      return res.results || res;
+      return res.results ? res.results.slice(0, 5) : (Array.isArray(res) ? res.slice(0, 5) : []);
     });
 
     // Helper for activity type color/icon
@@ -474,17 +473,14 @@ const FarmerDashboard = () => {
   {/* Tasks Section - Live API Data */}
   <TasksSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} navigate={navigate} />
 
+
   {/* Alerts Section - Live API Data */}
   <AlertsSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
   {/* Recent Activities Section - Live API Data */}
   <RecentActivitiesSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
-  {/* Recent Activities Section - Live API Data */}
-  <RecentActivitiesSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
-        {/* Alerts Section - TODO: Wire up to API */}
-        <AlertsSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
         {/* Tasks & Activities Section - TODO: Wire up to API */}
         {/*

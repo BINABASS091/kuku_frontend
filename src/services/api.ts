@@ -209,6 +209,11 @@ export const farmAPI = {
   delete: async (farmID: number) => {
     await api.delete(`/farms/${farmID}/`);
   },
+
+  retrieve: async (farmID: string | number) => {
+    const response = await api.get(`/farms/${farmID}/`);
+    return response.data;
+  },
 };
 
 export const batchAPI = {

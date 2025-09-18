@@ -1,3 +1,10 @@
+import FarmerMyFarmsPage from './pages/FarmerMyFarmsPage';
+import FarmerFarmDetailsPage from './pages/FarmerFarmDetailsPage';
+import FarmerManageFarmPage from './pages/FarmerManageFarmPage';
+import FarmerAddFarmPage from './pages/FarmerAddFarmPage';
+import FarmerRecordActivityPage from './pages/FarmerRecordActivityPage';
+import FarmerAddBatchPage from './pages/FarmerAddBatchPage';
+                <Route path="batches/new" element={<FarmerAddBatchPage />} />
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth, type UserRole } from './context/AuthContext';
@@ -11,6 +18,8 @@ import FarmerOnboarding from './components/farmer/FarmerOnboarding';
 import FarmerProfile from './pages/FarmerProfile';
 import NotFound from './pages/NotFound';
 import FarmerTasksPage from './pages/FarmerTasksPage';
+import FarmerAlertsPage from './pages/FarmerAlertsPage';
+import FarmerActivitiesPage from './pages/FarmerActivitiesPage';
 import Home from './pages/Home.tsx';
 import UserManagement from './pages/admin/UserManagement';
 import FarmerManagement from './pages/admin/FarmerManagement';
@@ -156,7 +165,15 @@ function App() {
                 <Route index element={<FarmerDashboard />} />
                 <Route path="onboarding" element={<FarmerOnboarding />} />
                 <Route path="profile" element={<FarmerProfile />} />
+                <Route path="farms" element={<FarmerMyFarmsPage />} />
+                <Route path="farms/add" element={<FarmerAddFarmPage />} />
+                <Route path="farms/:farmId" element={<FarmerFarmDetailsPage />} />
+                <Route path="farms/:farmId/manage" element={<FarmerManageFarmPage />} />
                 <Route path="tasks" element={<FarmerTasksPage />} />
+                <Route path="alerts" element={<FarmerAlertsPage />} />
+                <Route path="activities" element={<FarmerActivitiesPage />} />
+                <Route path="tasks/new" element={<FarmerRecordActivityPage />} />
+                <Route path="batches/new" element={<FarmerAddBatchPage />} />
               </Routes>
             </ProtectedRoute>
           } 
