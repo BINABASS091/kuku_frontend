@@ -432,7 +432,7 @@ const FarmerHealthPage: React.FC = () => {
                     <CardBody>
                       <Box h="300px">
                         <SafeChartContainer minHeight={300}>
-                          <LineChart data={healthData}>
+                          <LineChart data={healthData} width={400} height={300}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis />
@@ -465,7 +465,7 @@ const FarmerHealthPage: React.FC = () => {
                     <CardBody>
                       <Box h="300px">
                         <SafeChartContainer minHeight={300}>
-                          <AreaChart data={healthData}>
+                          <AreaChart data={healthData} width={400} height={300}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis yAxisId="left" />

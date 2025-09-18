@@ -36,8 +36,18 @@ const SafeChartContainer: React.FC<SafeChartContainerProps> = ({
       setIsReady(true);
     }, 100);
 
+    // Also check on window resize
+    const handleResize = () => {
+      checkDimensions();
+    };
+
+    window.addEventListener('resize', handleResize);
+
     // Clean up
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (

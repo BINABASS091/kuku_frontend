@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Heading,
@@ -23,9 +23,21 @@ import {
   StatNumber,
   Tooltip,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
 } from '@chakra-ui/react';
 import { FiMapPin, FiLayers, FiCheckCircle, FiUsers, FiActivity, FiSettings, FiEye, FiPlus, FiBarChart, FiTrendingUp, FiAlertTriangle, FiClock, FiDatabase, FiTarget } from 'react-icons/fi';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { farmAPI } from '../services/api';
 import FarmerLayout from '../layouts/FarmerLayout';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +46,61 @@ import { useNavigate } from 'react-router-dom';
 const MyFarmsPage: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const queryClient = useQueryClient();
+  
+  // Modal state management
+  const { isOpen: isAddFarmModalOpen, onOpen: onAddFarmModalOpen, onClose: onAddFarmModalClose } = useDisclosure();
+  
+  // Form state for Add Farm modal
+  const [farmForm, setFarmForm] = useState({
+    name: '',
+    location: '',
+    farmSize: '',
+    status: 'active',
+  });
+
+  // Add Farm mutation
+  const addFarmMutation = useMutation(
+    (data: any) => {
+      console.log('DEBUG: Creating farm with data:', data);
+      return farmAPI.create({
+        farmName: data.name,
+        location: data.location,
+        farmSize: data.farmSize,
+        status: data.status,
+      });
+    },
+    {
+      onSuccess: (response) => {
+        console.log('DEBUG: Farm created successfully:', response);
+        toast({
+          title: 'Farm Created',
+          description: 'New farm has been successfully created.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+        setFarmForm({ name: '', location: '', farmSize: '', status: 'active' });
+        queryClient.invalidateQueries(['myFarms']);
+        onAddFarmModalClose();
+      },
+      onError: (err: any) => {
+        console.error('DEBUG: Farm creation error:', err);
+        toast({
+          title: 'Error',
+          description: err?.message || 'Failed to create farm. Please try again.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      },
+    }
+  );
+
+  // Handle form submission
+  const handleFarmSubmit = () => {
+    addFarmMutation.mutate(farmForm);
+  };
   
   // Fetch only farms for the logged-in farmer
   const { data, isLoading, isError, error } = useQuery(['myFarms'], () => farmAPI.list(), {
@@ -131,7 +198,7 @@ const MyFarmsPage: React.FC = () => {
       <Button 
         colorScheme="teal" 
         leftIcon={<FiPlus />} 
-        onClick={() => navigate('/farmer/farms/add')}
+        onClick={onAddFarmModalOpen}
       >
         Add Your First Farm
       </Button>
@@ -151,7 +218,7 @@ const MyFarmsPage: React.FC = () => {
             variant="solid" 
             size="md" 
             leftIcon={<FiPlus />}
-            onClick={() => navigate('/farmer/farms/add')}
+            onClick={onAddFarmModalOpen}
             shadow="md"
           >
             Add New Farm
@@ -512,6 +579,71 @@ const MyFarmsPage: React.FC = () => {
           </>
         )}
       </Box>
+
+      {/* Add New Farm Modal */}
+      <Modal isOpen={isAddFarmModalOpen} onClose={onAddFarmModalClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add New Farm</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Farm Name</FormLabel>
+                <Input
+                  value={farmForm.name}
+                  onChange={(e) => setFarmForm({ ...farmForm, name: e.target.value })}
+                  placeholder="Enter farm name"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Location</FormLabel>
+                <Input
+                  value={farmForm.location}
+                  onChange={(e) => setFarmForm({ ...farmForm, location: e.target.value })}
+                  placeholder="Enter farm location (e.g., Kiambu County, Kenya)"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Farm Size</FormLabel>
+                <Input
+                  value={farmForm.farmSize}
+                  onChange={(e) => setFarmForm({ ...farmForm, farmSize: e.target.value })}
+                  placeholder="e.g., 2 acres, 5000 sq ft, 10 hectares"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  value={farmForm.status}
+                  onChange={(e) => setFarmForm({ ...farmForm, status: e.target.value })}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="setup_required">Setup Required</option>
+                  <option value="maintenance">Under Maintenance</option>
+                </Select>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onAddFarmModalClose}>
+              Cancel
+            </Button>
+            <Button 
+              colorScheme="teal" 
+              onClick={handleFarmSubmit}
+              isLoading={addFarmMutation.isLoading}
+              loadingText="Creating Farm..."
+            >
+              Create Farm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </FarmerLayout>
   );
 };

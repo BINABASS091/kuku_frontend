@@ -53,6 +53,9 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  FormControl,
+  FormLabel,
+  useToast,
 } from '@chakra-ui/react';
 import {
   FiLayers,
@@ -92,8 +95,8 @@ import { format, addDays, subDays } from 'date-fns';
 import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
 import { useAuth } from '../context/AuthContext';
-import { useQuery } from '@tanstack/react-query';
-import { batchAPI, activityAPI } from '../services/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { batchAPI, activityAPI, farmAPI, breedAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface Batch {
@@ -137,10 +140,24 @@ interface PerformanceData {
 const FarmerBatchesPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
+  const queryClient = useQueryClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isAddBatchOpen, onOpen: onAddBatchOpen, onClose: onAddBatchClose } = useDisclosure();
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+
+  // Add batch form state
+  const [batchForm, setBatchForm] = useState({
+    farmID: '',
+    breedID: '',
+    arriveDate: '',
+    initAge: '',
+    harvestAge: '',
+    quanitity: '',
+    initWeight: '',
+  });
 
   // Color mode values
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -164,6 +181,18 @@ const FarmerBatchesPage: React.FC = () => {
     isError: activitiesError,
   } = useQuery(['farmer-batch-activities'], async () => {
     const response = await activityAPI.list();
+    return response.results || response;
+  });
+
+  // Fetch farms for batch creation
+  const { data: farms } = useQuery(['farmer-farms'], async () => {
+    const response = await farmAPI.list();
+    return response.results || response;
+  });
+
+  // Fetch breeds for batch creation
+  const { data: breeds } = useQuery(['breeds'], async () => {
+    const response = await breedAPI.list();
     return response.results || response;
   });
 
@@ -272,6 +301,56 @@ const FarmerBatchesPage: React.FC = () => {
   const displayBatches = batchesError ? mockBatches : (batches || []);
   const displayActivities = activitiesError ? mockActivities : (activities || []);
 
+  // Add safety for activities with proper unique keys
+  const safeActivities = displayActivities.map((activity, index) => ({
+    ...activity,
+    id: activity?.id || `activity-${index}`,
+  }));
+
+  // Add batch mutation
+  const addBatchMutation = useMutation({
+    mutationFn: async (batchData: any) => {
+      return await batchAPI.create({
+        farmID: batchData.farmID,
+        breedID: batchData.breedID,
+        arriveDate: batchData.arriveDate,
+        initAge: Number(batchData.initAge),
+        harvestAge: Number(batchData.harvestAge),
+        quanitity: Number(batchData.quanitity),
+        initWeight: Number(batchData.initWeight),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Batch created successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      setBatchForm({
+        farmID: '',
+        breedID: '',
+        arriveDate: '',
+        initAge: '',
+        harvestAge: '',
+        quanitity: '',
+        initWeight: '',
+      });
+      queryClient.invalidateQueries(['farmer-batches']);
+      onAddBatchClose();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to create batch',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+
   // Ensure all batches have required properties with defaults
   const safeBatches = displayBatches.map(batch => ({
     id: batch?.id || '',
@@ -350,6 +429,15 @@ const FarmerBatchesPage: React.FC = () => {
   const handleDeleteBatch = (batchId: string) => {
     // Implement delete functionality
     console.log('Delete batch:', batchId);
+  };
+
+  const handleBatchFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setBatchForm({ ...batchForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAddBatchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addBatchMutation.mutate(batchForm);
   };
 
   return (
@@ -469,7 +557,7 @@ const FarmerBatchesPage: React.FC = () => {
                   <Button
                     leftIcon={<FiPlus />}
                     colorScheme="green"
-                    onClick={() => navigate('/farmer/batches/new')}
+                    onClick={onAddBatchOpen}
                   >
                     Add New Batch
                   </Button>
@@ -615,7 +703,7 @@ const FarmerBatchesPage: React.FC = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {displayActivities.map((activity) => (
+                    {safeActivities.map((activity) => (
                       <Tr key={activity.id}>
                         <Td>
                           <Text fontWeight="medium">{activity.batchName}</Text>
@@ -672,14 +760,14 @@ const FarmerBatchesPage: React.FC = () => {
                 
                 {performanceData && performanceData.length > 0 ? (
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-                  <Card key="egg-production" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="chart-egg-production" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Egg Production Trends</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
                         <SafeChartContainer minHeight={250}>
-                          <LineChart data={performanceData}>
+                          <LineChart data={performanceData} width={400} height={250}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis />
@@ -697,14 +785,14 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card key="feed-consumption" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="chart-feed-consumption" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Feed Consumption</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
                         <SafeChartContainer minHeight={250}>
-                          <BarChart data={performanceData}>
+                          <BarChart data={performanceData} width={400} height={250}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis />
@@ -716,14 +804,14 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card key="mortality-tracking" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="chart-mortality-tracking" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Mortality Tracking</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
                         <SafeChartContainer minHeight={250}>
-                          <AreaChart data={performanceData}>
+                          <AreaChart data={performanceData} width={400} height={250}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis />
@@ -742,14 +830,14 @@ const FarmerBatchesPage: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card key="average-weight" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
+                  <Card key="chart-average-weight" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
                       <Heading size="sm">Average Weight</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
                         <SafeChartContainer minHeight={250}>
-                          <LineChart data={performanceData}>
+                          <LineChart data={performanceData} width={400} height={250}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" />
                             <YAxis />
@@ -858,6 +946,123 @@ const FarmerBatchesPage: React.FC = () => {
               </Button>
               <Button colorScheme="blue" onClick={() => selectedBatch && handleEditBatch(selectedBatch.id)}>
                 Edit Batch
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Add New Batch Modal */}
+        <Modal isOpen={isAddBatchOpen} onClose={onAddBatchClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Add New Batch</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <form onSubmit={handleAddBatchSubmit}>
+                <VStack spacing={4} align="stretch">
+                  <FormControl isRequired>
+                    <FormLabel>Farm</FormLabel>
+                    <Select
+                      name="farmID"
+                      value={batchForm.farmID}
+                      onChange={handleBatchFormChange}
+                      placeholder="Select farm"
+                    >
+                      {(farms || []).map((farm: any) => (
+                        <option key={farm.farmID || farm.id} value={farm.farmID || farm.id}>
+                          {farm.farmName || farm.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Breed</FormLabel>
+                    <Select
+                      name="breedID"
+                      value={batchForm.breedID}
+                      onChange={handleBatchFormChange}
+                      placeholder="Select breed"
+                    >
+                      {(breeds || []).map((breed: any) => (
+                        <option key={breed.breedID || breed.id} value={breed.breedID || breed.id}>
+                          {breed.breedName || breed.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Arrive Date</FormLabel>
+                    <Input
+                      type="date"
+                      name="arriveDate"
+                      value={batchForm.arriveDate}
+                      onChange={handleBatchFormChange}
+                    />
+                  </FormControl>
+
+                  <SimpleGrid columns={2} spacing={4}>
+                    <FormControl isRequired>
+                      <FormLabel>Initial Age (days)</FormLabel>
+                      <Input
+                        type="number"
+                        name="initAge"
+                        value={batchForm.initAge}
+                        onChange={handleBatchFormChange}
+                        placeholder="Enter initial age"
+                      />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                      <FormLabel>Harvest Age (days)</FormLabel>
+                      <Input
+                        type="number"
+                        name="harvestAge"
+                        value={batchForm.harvestAge}
+                        onChange={handleBatchFormChange}
+                        placeholder="Enter harvest age"
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+
+                  <SimpleGrid columns={2} spacing={4}>
+                    <FormControl isRequired>
+                      <FormLabel>Quantity</FormLabel>
+                      <Input
+                        type="number"
+                        name="quanitity"
+                        value={batchForm.quanitity}
+                        onChange={handleBatchFormChange}
+                        placeholder="Number of birds"
+                      />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                      <FormLabel>Initial Weight (g)</FormLabel>
+                      <Input
+                        type="number"
+                        name="initWeight"
+                        value={batchForm.initWeight}
+                        onChange={handleBatchFormChange}
+                        placeholder="Average weight in grams"
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+                </VStack>
+              </form>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onAddBatchClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={handleAddBatchSubmit}
+                isLoading={addBatchMutation.isLoading}
+                loadingText="Creating..."
+              >
+                Create Batch
               </Button>
             </ModalFooter>
           </ModalContent>

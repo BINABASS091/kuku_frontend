@@ -204,7 +204,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="400px">
                       <SafeChartContainer minHeight={400}>
-                        <BarChart data={productionData}>
+                        <BarChart data={productionData} width={400} height={400}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis />
@@ -237,7 +237,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="350px">
                       <SafeChartContainer minHeight={350}>
-                        <PieChart>
+                        <PieChart width={350} height={350}>
                           <Pie
                             data={performanceData}
                             cx="50%"
@@ -335,7 +335,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="350px">
                       <SafeChartContainer minHeight={350}>
-                        <LineChart data={financialData}>
+                        <LineChart data={financialData} width={400} height={350}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis />
@@ -368,7 +368,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="300px">
                       <SafeChartContainer minHeight={300}>
-                        <AreaChart data={profitTrendData}>
+                        <AreaChart data={profitTrendData} width={400} height={300}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis />
@@ -471,7 +471,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="350px">
                       <SafeChartContainer minHeight={350}>
-                        <AreaChart data={weightProgressData}>
+                        <AreaChart data={weightProgressData} width={400} height={350}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="week" />
                           <YAxis />
@@ -503,7 +503,7 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardBody>
                     <Box h="300px">
                       <SafeChartContainer minHeight={300}>
-                        <LineChart data={growthData}>
+                        <LineChart data={growthData} width={400} height={300}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="week" />
                           <YAxis />

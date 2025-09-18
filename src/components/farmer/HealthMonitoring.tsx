@@ -380,7 +380,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                   <CardBody>
                     <Box h="250px">
                       <SafeChartContainer minHeight={250}>
-                        <LineChart data={healthMetrics}>
+                        <LineChart data={healthMetrics} width={400} height={250}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
                           <YAxis />
@@ -412,7 +412,7 @@ const HealthMonitoring: React.FC<HealthMonitoringProps> = ({ farmId, batchId }) 
                   <CardBody>
                     <Box h="250px">
                       <SafeChartContainer minHeight={250}>
-                        <AreaChart data={healthMetrics}>
+                        <AreaChart data={healthMetrics} width={400} height={250}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
                           <YAxis />

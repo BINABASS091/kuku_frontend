@@ -452,7 +452,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                   <CardBody>
                     <Box h="400px">
                       <SafeChartContainer minHeight={400}>
-                        <AreaChart data={growthData}>
+                        <AreaChart data={growthData} width={400} height={400}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="week" label={{ value: 'Week', position: 'insideBottom', offset: -5 }} />
                           <YAxis label={{ value: 'Weight (g)', angle: -90, position: 'insideLeft' }} />
@@ -518,7 +518,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                     <CardBody>
                       <Box h="300px">
                         <SafeChartContainer minHeight={300}>
-                          <LineChart data={growthData}>
+                          <LineChart data={growthData} width={400} height={300}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="week" />
                             <YAxis />
@@ -538,7 +538,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                     <CardBody>
                       <Box h="300px">
                         <SafeChartContainer minHeight={300}>
-                          <BarChart data={growthData}>
+                          <BarChart data={growthData} width={400} height={300}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="week" />
                             <YAxis />

@@ -489,7 +489,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                   <CardBody>
                     <Box h="250px">
                       <SafeChartContainer minHeight={250}>
-                        <AreaChart data={usageData}>
+                        <AreaChart data={usageData} width={400} height={250}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis />
@@ -532,7 +532,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                     <Flex h="250px" align="center" justify="center">
                       <Box w="200px" h="200px">
                         <SafeChartContainer minHeight={200}>
-                          <PieChart>
+                          <PieChart width={200} height={200}>
                             <Pie
                               data={pieData}
                               cx="50%"
