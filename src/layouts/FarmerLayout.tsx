@@ -27,6 +27,7 @@ import {
 import { HamburgerIcon, MoonIcon, SunIcon, BellIcon } from '@chakra-ui/icons';
 import { FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import FarmerSidebar from '../components/farmer/FarmerSidebar';
@@ -38,6 +39,7 @@ interface FarmerLayoutProps {
 const FarmerLayout = ({ children }: FarmerLayoutProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -197,14 +199,14 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
                   </MenuButton>
                   <MenuList>
                     <MenuItem icon={<FiUser />} onClick={handleProfileClick}>
-                      Profile
+                      {t('profile')}
                     </MenuItem>
                     <MenuItem icon={<FiSettings />} onClick={handleSettingsClick}>
-                      Settings
+                      {t('settings')}
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem icon={<FiLogOut />} onClick={handleLogout}>
-                      Logout
+                      {t('logout')}
                     </MenuItem>
                   </MenuList>
                 </Menu>

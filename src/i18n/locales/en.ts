@@ -105,5 +105,36 @@ export default {
   
   // Currency
   currencyCode: "USD",
-  currencySymbol: "$"
+  currencySymbol: "$",
+  
+  // Additional navigation and farm management
+  myFarms: "My Farms",
+  dailyTasks: "Daily Tasks",
+  healthMonitoring: "Health Monitoring",
+  analytics: "Analytics",
+  breedGuidance: "Breed Guidance",
+  
+  // Farm operations
+  viewFarm: "View Farm",
+  manageFarm: "Manage Farm",
+  addBatch: "Add Batch",
+  recordActivity: "Record Activity",
+  
+  // Status and alerts
+  healthy: "Healthy",
+  warning: "Warning",
+  critical: "Critical",
+  
+  // Time and dates
+  today: "Today",
+  yesterday: "Yesterday",
+  thisWeek: "This Week",
+  thisMonth: "This Month",
+  
+  // Common actions
+  refresh: "Refresh",
+  export: "Export",
+  import: "Import",
+  download: "Download",
+  upload: "Upload"
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   VStack,
@@ -93,6 +94,7 @@ interface BatchData {
 
 const FarmerProfile: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -148,7 +150,7 @@ const FarmerProfile: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['farmers'] });
       toast({
-        title: 'Profile updated successfully',
+        title: t('profileUpdatedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -157,8 +159,8 @@ const FarmerProfile: React.FC = () => {
     },
     onError: () => {
       toast({
-        title: 'Failed to update profile',
-        description: 'Please try again later',
+        title: t('failedToUpdateProfile'),
+        description: t('pleaseTryAgainLater'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -237,7 +239,7 @@ const FarmerProfile: React.FC = () => {
         <Center h="400px">
           <VStack spacing={4}>
             <Spinner size="xl" color="blue.500" />
-            <Text>Loading your profile...</Text>
+            <Text>{t('loadingYourProfile')}</Text>
           </VStack>
         </Center>
       </FarmerLayout>
@@ -250,7 +252,7 @@ const FarmerProfile: React.FC = () => {
         <Container maxW="container.xl" py={8}>
           <Alert status="error">
             <AlertIcon />
-            Failed to load profile data. Please refresh the page.
+            {t('failedToLoadProfileData')}
           </Alert>
         </Container>
       </FarmerLayout>
@@ -263,7 +265,7 @@ const FarmerProfile: React.FC = () => {
         <Container maxW="container.xl" py={8}>
           <Alert status="warning">
             <AlertIcon />
-            Farmer profile not found. Please contact support.
+            {t('farmerProfileNotFound')}
           </Alert>
         </Container>
       </FarmerLayout>
@@ -293,7 +295,7 @@ const FarmerProfile: React.FC = () => {
               left={0}
               bgGradient="linear(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)"
             />
-            <Flex direction={{ base: 'column', md: 'row' }} align="center" spacing={6}>
+            <Flex direction={{ base: 'column', md: 'row' }} align="center" gap={6}>
               <Avatar
                 size="2xl"
                 name={currentFarmer.farmerName || `${currentFarmer.user.first_name} ${currentFarmer.user.last_name}`}
@@ -344,7 +346,7 @@ const FarmerProfile: React.FC = () => {
                 _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
                 transition="all 0.2s"
               >
-                Edit Profile
+                {t('editProfile')}
               </Button>
             </Flex>
           </Box>
@@ -354,7 +356,7 @@ const FarmerProfile: React.FC = () => {
             <CardBody>
               <VStack spacing={4} align="stretch">
                 <HStack justify="space-between">
-                  <Heading size="md">Profile Completion</Heading>
+                  <Heading size="md">{t('profileCompletion')}</Heading>
                   <Text fontWeight="bold" color="blue.500">
                     {profileCompletion.completed}/{profileCompletion.total} completed
                   </Text>
@@ -422,7 +424,7 @@ const FarmerProfile: React.FC = () => {
                     Total Birds
                   </StatLabel>
                   <StatNumber fontSize="3xl" color="purple.600">
-                    {farmerBatches.reduce((total, batch) => total + (batch.currentPopulation || 0), 0)}
+                    {farmerBatches.reduce((total: number, batch: any) => total + (batch.currentPopulation || 0), 0)}
                   </StatNumber>
                   <StatHelpText>Total birds across all batches</StatHelpText>
                 </Stat>
@@ -434,7 +436,7 @@ const FarmerProfile: React.FC = () => {
           <Card bg={cardBg} borderColor={borderColor} shadow="lg">
             <CardBody>
               <VStack spacing={4} align="stretch">
-                <Heading size="md" mb={2}>Contact Information</Heading>
+                <Heading size="md" mb={2}>{t('contactInformation')}</Heading>
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                   <HStack spacing={3}>
                     <Icon as={FiMail} color="blue.500" />
@@ -474,7 +476,7 @@ const FarmerProfile: React.FC = () => {
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Profile</ModalHeader>
+            <ModalHeader>{t('editProfile')}</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <VStack spacing={4}>

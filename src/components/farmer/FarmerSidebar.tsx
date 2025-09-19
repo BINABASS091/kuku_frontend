@@ -26,6 +26,7 @@ import {
 } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 
 interface SidebarItemProps {
@@ -135,6 +136,7 @@ const SidebarItem = ({ icon, label, href, children, badge, badgeColor = 'blue', 
 };
 
 const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
+  const { t } = useTranslation();
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const textColor = useColorModeValue('gray.600', 'gray.300');
@@ -159,13 +161,13 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
   const sidebarItems: SidebarItemProps[] = [
     {
       icon: FiHome,
-      label: 'Dashboard',
+      label: t('dashboard'),
       href: '/farmer',
       onClick: handleNavigation,
     },
     {
       icon: FiMapPin,
-      label: 'My Farms',
+      label: t('myFarms'),
       href: '/farmer/farms',
       badge: farmerStats.activeBatches,
       badgeColor: 'green',
@@ -173,7 +175,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     },
     {
       icon: FiLayers,
-      label: 'Batches',
+      label: t('batches'),
       href: '/farmer/batches',
       badge: farmerStats.activeBatches,
       badgeColor: 'green',
@@ -181,7 +183,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     },
     {
       icon: FiCalendar,
-      label: 'Daily Tasks',
+      label: t('dailyTasks'),
       href: '/farmer/tasks',
       badge: farmerStats.tasksToday,
       badgeColor: 'orange',
@@ -189,7 +191,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     },
     {
       icon: FiHeart,
-      label: 'Health Monitoring',
+      label: t('healthMonitoring'),
       href: '/farmer/health',
       badge: 2,
       badgeColor: 'red',
@@ -197,13 +199,13 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     },
     {
       icon: FiTrendingUp,
-      label: 'Analytics',
+      label: t('analytics'),
       href: '/farmer/analytics',
       onClick: handleNavigation,
     },
     {
       icon: FiStar,
-      label: 'Breed Guidance',
+      label: t('breedGuidance'),
       href: '/farmer/guidance',
       onClick: handleNavigation,
     },

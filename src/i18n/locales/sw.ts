@@ -105,5 +105,36 @@ export default {
   
   // Fedha
   currencyCode: "TZS",
-  currencySymbol: "TSh"
+  currencySymbol: "TSh",
+  
+  // Urambazaji wa ziada na uongozi wa mashamba
+  myFarms: "Mashamba Yangu",
+  dailyTasks: "Kazi za Kila Siku",
+  healthMonitoring: "Ufuatiliaji wa Afya",
+  analytics: "Uchanganuzi",
+  breedGuidance: "Mwongozo wa Aina",
+  
+  // Shughuli za shambani
+  viewFarm: "Ona Shamba",
+  manageFarm: "Dhibiti Shamba",
+  addBatch: "Ongeza Kundi",
+  recordActivity: "Rekodi Shughuli",
+  
+  // Hali na tahadhari
+  healthy: "Mzuri",
+  warning: "Tahadhari",
+  critical: "Hatari",
+  
+  // Muda na tarehe
+  today: "Leo",
+  yesterday: "Jana",
+  thisWeek: "Wiki Hii",
+  thisMonth: "Mwezi Huu",
+  
+  // Vitendo vya kawaida
+  refresh: "Onyesha Upya",
+  export: "Hamisha Nje",
+  import: "Leta",
+  download: "Pakua",
+  upload: "Pakia"
 };

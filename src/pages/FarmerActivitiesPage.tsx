@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Heading, Text, VStack, Spinner, HStack, Icon, Circle } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { activityAPI } from '../services/api';
 import { FiActivity, FiHeart, FiTrendingUp, FiCheckCircle, FiClock } from 'react-icons/fi';
 import FarmerLayout from '../layouts/FarmerLayout';
@@ -25,16 +26,17 @@ const getTypeIcon = (type: string) => {
 };
 
 const FarmerActivitiesPage: React.FC = () => {
+  const { t } = useTranslation();
   const { data, isLoading, isError, error } = useQuery(['farmerActivities'], () => activityAPI.list({ ordering: '-created_at' }));
   const activities = data?.results || [];
 
   return (
     <FarmerLayout>
       <Box p={6}>
-        <Heading size="lg" mb={4}>All Activities</Heading>
+        <Heading size="lg" mb={4}>{t('activities')}</Heading>
         {isLoading && <Spinner />}
         {isError && (
-          <Text color="red.500">{error instanceof Error ? error.message : 'Failed to load activities.'}</Text>
+          <Text color="red.500">{error instanceof Error ? error.message : t('failedToLoadProfileData')}</Text>
         )}
         <VStack align="stretch" spacing={4}>
           {activities.length > 0 ? (
@@ -60,7 +62,7 @@ const FarmerActivitiesPage: React.FC = () => {
               </HStack>
             ))
           ) : (
-            !isLoading && <Text>No activities found.</Text>
+            !isLoading && <Text>{t('noActivitiesYet')}</Text>
           )}
         </VStack>
       </Box>

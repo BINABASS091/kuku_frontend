@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Heading,
@@ -196,6 +197,7 @@ interface Alert {
 
 const FarmerDashboard = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -432,7 +434,7 @@ const FarmerDashboard = () => {
     return (
       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
         <CardHeader>
-          <Heading size="md">Recent Activities</Heading>
+          <Heading size="md">{t('recentActivities')}</Heading>
         </CardHeader>
         <CardBody pt={0}>
           <VStack spacing={3} align="stretch">
@@ -469,7 +471,7 @@ const FarmerDashboard = () => {
                 </HStack>
               ))
             ) : (
-              <Text color="gray.500">No recent activities.</Text>
+              <Text color="gray.500">{t('noActivitiesYet')}</Text>
             )}
             <Button
               leftIcon={<FiEye />}
@@ -477,7 +479,7 @@ const FarmerDashboard = () => {
               size="sm"
               onClick={() => navigate('/farmer/activities')}
             >
-              View All Activities
+              {t('viewAllActivities')}
             </Button>
           </VStack>
         </CardBody>
@@ -492,7 +494,7 @@ const FarmerDashboard = () => {
         {/* Welcome Section */}
         <Box>
           <Heading size="lg" mb={2}>
-            Welcome back, {user?.name || 'Farmer'}! 👋
+            {t('welcome')}, {user?.name || 'Farmer'}! 👋
           </Heading>
           <Text color={textColor}>
             Here's what's happening with your farm today
