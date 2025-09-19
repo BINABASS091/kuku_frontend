@@ -342,7 +342,7 @@ const FarmerHealthPage: React.FC = () => {
                         <StatNumber color="red.500">0.35%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="decrease" />
-                          {t('decreaseFromLastWeek', { percentage: 12 })}
+                          {t('healthDecreaseFromLastWeek', { percentage: 12 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -378,7 +378,7 @@ const FarmerHealthPage: React.FC = () => {
                         <StatNumber color="blue.500">92%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          {t('increaseFromLastMonth', { percentage: 8 })}
+                          {t('healthIncreaseFromLastMonth', { percentage: 8 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -423,14 +423,14 @@ const FarmerHealthPage: React.FC = () => {
                               dataKey="mortality" 
                               stroke="#EF4444" 
                               strokeWidth={2}
-                              name="Mortality %" 
+                              name={t('mortalityPercentage')} 
                             />
                             <Line 
                               type="monotone" 
                               dataKey="morbidity" 
                               stroke="#F59E0B" 
                               strokeWidth={2}
-                              name="Morbidity %" 
+                              name={t('morbidityPercentage')} 
                             />
                           </LineChart>
                         </SafeChartContainer>
@@ -440,7 +440,7 @@ const FarmerHealthPage: React.FC = () => {
 
                   <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="md">Weight & Temperature</Heading>
+                      <Heading size="md">{t('weightTemperature')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">
@@ -459,7 +459,7 @@ const FarmerHealthPage: React.FC = () => {
                               stroke="#3B82F6" 
                               fill="#3B82F6"
                               fillOpacity={0.3}
-                              name="Weight (g)" 
+                              name={t('weightGrams')} 
                             />
                             <Line 
                               yAxisId="right"
@@ -467,7 +467,7 @@ const FarmerHealthPage: React.FC = () => {
                               dataKey="temperature" 
                               stroke="#10B981" 
                               strokeWidth={2}
-                              name="Temperature (°C)" 
+                              name={t('temperatureCelsius')} 
                             />
                           </AreaChart>
                         </SafeChartContainer>
@@ -480,9 +480,9 @@ const FarmerHealthPage: React.FC = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
                     <Flex justify="space-between" align="center">
-                      <Heading size="md">Upcoming Vaccinations</Heading>
+                      <Heading size="md">{t('upcomingVaccinations')}</Heading>
                       <Button leftIcon={<FiPlus />} colorScheme="blue" size="sm">
-                        Schedule Vaccination
+                        {t('scheduleVaccination')}
                       </Button>
                     </Flex>
                   </CardHeader>
@@ -490,12 +490,12 @@ const FarmerHealthPage: React.FC = () => {
                     <Table variant="simple">
                       <Thead>
                         <Tr>
-                          <Th>Vaccine</Th>
-                          <Th>Batch</Th>
-                          <Th>Due Date</Th>
-                          <Th>Age (Weeks)</Th>
-                          <Th>Status</Th>
-                          <Th>Actions</Th>
+                          <Th>{t('vaccine')}</Th>
+                          <Th>{t('batch')}</Th>
+                          <Th>{t('dueDate')}</Th>
+                          <Th>{t('ageWeeks')}</Th>
+                          <Th>{t('status')}</Th>
+                          <Th>{t('actions')}</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
@@ -526,9 +526,9 @@ const FarmerHealthPage: React.FC = () => {
                                   <Icon as={FiSettings} />
                                 </MenuButton>
                                 <MenuList>
-                                  <MenuItem icon={<FiEye />}>View Details</MenuItem>
-                                  <MenuItem icon={<FiEdit />}>Edit Schedule</MenuItem>
-                                  <MenuItem icon={<FiCheckCircle />}>Mark Complete</MenuItem>
+                                  <MenuItem icon={<FiEye />}>{t('viewDetails')}</MenuItem>
+                                  <MenuItem icon={<FiEdit />}>{t('editSchedule')}</MenuItem>
+                                  <MenuItem icon={<FiCheckCircle />}>{t('markComplete')}</MenuItem>
                                 </MenuList>
                               </Menu>
                             </Td>
@@ -549,27 +549,27 @@ const FarmerHealthPage: React.FC = () => {
                   <CardBody>
                     <HStack spacing={4}>
                       <FormControl maxW="200px">
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>{t('status')}</FormLabel>
                         <Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                          <option value="all">All Status</option>
-                          <option value="active">Active</option>
-                          <option value="pending">Pending</option>
-                          <option value="monitoring">Monitoring</option>
-                          <option value="resolved">Resolved</option>
+                          <option value="all">{t('healthAllStatus')}</option>
+                          <option value="active">{t('active')}</option>
+                          <option value="pending">{t('pending')}</option>
+                          <option value="monitoring">{t('monitoring')}</option>
+                          <option value="resolved">{t('resolved')}</option>
                         </Select>
                       </FormControl>
                       <FormControl maxW="200px">
-                        <FormLabel>Priority</FormLabel>
+                        <FormLabel>{t('priority')}</FormLabel>
                         <Select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)}>
-                          <option value="all">All Priorities</option>
-                          <option value="high">High</option>
-                          <option value="medium">Medium</option>
-                          <option value="low">Low</option>
-                          <option value="info">Info</option>
+                          <option value="all">{t('healthAllPriorities')}</option>
+                          <option value="high">{t('high')}</option>
+                          <option value="medium">{t('medium')}</option>
+                          <option value="low">{t('low')}</option>
+                          <option value="info">{t('info')}</option>
                         </Select>
                       </FormControl>
                       <Button leftIcon={<FiPlus />} colorScheme="blue">
-                        Create Alert
+                        {t('createAlert')}
                       </Button>
                     </HStack>
                   </CardBody>
@@ -604,7 +604,7 @@ const FarmerHealthPage: React.FC = () => {
                                 {alert.description}
                               </Text>
                               <HStack spacing={4} fontSize="xs" color={textColor}>
-                                <Text>Batch: {alert.batch}</Text>
+                                <Text>{t('batch')}: {alert.batch}</Text>
                                 <Text>•</Text>
                                 <Text>{alert.timestamp}</Text>
                               </HStack>
@@ -628,13 +628,13 @@ const FarmerHealthPage: React.FC = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <HStack justify="space-between">
-                      <Heading size="md">Health Reports</Heading>
+                      <Heading size="md">{t('healthReports')}</Heading>
                       <HStack>
                         <Button leftIcon={<FiDownload />} variant="outline">
-                          Export All
+                          {t('exportAll')}
                         </Button>
                         <Button leftIcon={<FiPlus />} colorScheme="blue" onClick={onReportModalOpen}>
-                          Generate Report
+                          {t('generateReport')}
                         </Button>
                       </HStack>
                     </HStack>
@@ -660,37 +660,37 @@ const FarmerHealthPage: React.FC = () => {
                         <VStack align="start" spacing={3}>
                           {report.type === 'summary' && (
                             <SimpleGrid columns={2} spacing={3} w="full">
-                              <Text fontSize="sm">Mortality: {report.metrics.averageMortality}%</Text>
-                              <Text fontSize="sm">Morbidity: {report.metrics.averageMorbidity}%</Text>
-                              <Text fontSize="sm">Weight: {report.metrics.averageWeight}g</Text>
-                              <Text fontSize="sm">Vaccination: {report.metrics.vaccinationRate}%</Text>
+                              <Text fontSize="sm">{t('healthMortality')}: {report.metrics.averageMortality}%</Text>
+                              <Text fontSize="sm">{t('morbidity')}: {report.metrics.averageMorbidity}%</Text>
+                              <Text fontSize="sm">{t('weight')}: {report.metrics.averageWeight}g</Text>
+                              <Text fontSize="sm">{t('vaccination')}: {report.metrics.vaccinationRate}%</Text>
                             </SimpleGrid>
                           )}
                           {report.type === 'vaccination' && (
                             <SimpleGrid columns={2} spacing={3} w="full">
-                              <Text fontSize="sm">Scheduled: {report.metrics.scheduledVaccinations}</Text>
-                              <Text fontSize="sm">Completed: {report.metrics.completedVaccinations}</Text>
-                              <Text fontSize="sm">Pending: {report.metrics.pendingVaccinations}</Text>
-                              <Text fontSize="sm">Compliance: {report.metrics.complianceRate}%</Text>
+                              <Text fontSize="sm">{t('scheduled')}: {report.metrics.scheduledVaccinations}</Text>
+                              <Text fontSize="sm">{t('completed')}: {report.metrics.completedVaccinations}</Text>
+                              <Text fontSize="sm">{t('pending')}: {report.metrics.pendingVaccinations}</Text>
+                              <Text fontSize="sm">{t('compliance')}: {report.metrics.complianceRate}%</Text>
                             </SimpleGrid>
                           )}
                           {report.type === 'mortality' && (
                             <VStack align="start" spacing={2} w="full">
-                              <Text fontSize="sm">Total Deaths: {report.metrics.totalDeaths}</Text>
-                              <Text fontSize="sm">Average Rate: {report.metrics.averageRate}%</Text>
-                              <Text fontSize="sm">Trend: {report.metrics.trend}</Text>
+                              <Text fontSize="sm">{t('totalDeaths')}: {report.metrics.totalDeaths}</Text>
+                              <Text fontSize="sm">{t('averageRate')}: {report.metrics.averageRate}%</Text>
+                              <Text fontSize="sm">{t('trend')}: {report.metrics.trend}</Text>
                             </VStack>
                           )}
                           <HStack justify="space-between" w="full" pt={2}>
                             <Text fontSize="xs" color={textColor}>
-                              Created: {report.createdAt}
+                              {t('created')}: {report.createdAt}
                             </Text>
                             <HStack>
                               <Button size="sm" variant="ghost" leftIcon={<FiEye />}>
-                                View
+                                {t('view')}
                               </Button>
                               <Button size="sm" variant="ghost" leftIcon={<FiDownload />}>
-                                Download
+                                {t('download')}
                               </Button>
                             </HStack>
                           </HStack>
@@ -711,7 +711,7 @@ const FarmerHealthPage: React.FC = () => {
             <ModalHeader>
               <HStack>
                 <Icon as={getAlertIcon(selectedAlert?.type)} color={`${getAlertColor(selectedAlert?.type)}.500`} />
-                <Text>Alert Details</Text>
+                <Text>{t('alertDetails')}</Text>
               </HStack>
             </ModalHeader>
             <ModalCloseButton />
@@ -724,23 +724,23 @@ const FarmerHealthPage: React.FC = () => {
                   </Box>
                   <SimpleGrid columns={2} spacing={4} w="full">
                     <Box>
-                      <Text fontSize="sm" fontWeight="medium">Batch</Text>
+                      <Text fontSize="sm" fontWeight="medium">{t('batch')}</Text>
                       <Text>{selectedAlert.batch}</Text>
                     </Box>
                     <Box>
-                      <Text fontSize="sm" fontWeight="medium">Priority</Text>
+                      <Text fontSize="sm" fontWeight="medium">{t('priority')}</Text>
                       <Badge colorScheme={getAlertColor(selectedAlert.priority)}>
                         {selectedAlert.priority}
                       </Badge>
                     </Box>
                     <Box>
-                      <Text fontSize="sm" fontWeight="medium">Status</Text>
+                      <Text fontSize="sm" fontWeight="medium">{t('status')}</Text>
                       <Badge colorScheme={getStatusColor(selectedAlert.status)}>
                         {selectedAlert.status}
                       </Badge>
                     </Box>
                     <Box>
-                      <Text fontSize="sm" fontWeight="medium">Timestamp</Text>
+                      <Text fontSize="sm" fontWeight="medium">{t('timestamp')}</Text>
                       <Text>{selectedAlert.timestamp}</Text>
                     </Box>
                   </SimpleGrid>
@@ -749,10 +749,10 @@ const FarmerHealthPage: React.FC = () => {
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" mr={3} onClick={onAlertModalClose}>
-                Close
+                {t('close')}
               </Button>
               <Button colorScheme="blue">
-                Take Action
+                {t('takeAction')}
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -762,45 +762,45 @@ const FarmerHealthPage: React.FC = () => {
         <Modal isOpen={isReportModalOpen} onClose={onReportModalClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Generate Health Report</ModalHeader>
+            <ModalHeader>{t('generateHealthReport')}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <VStack spacing={4}>
                 <FormControl>
-                  <FormLabel>Report Type</FormLabel>
-                  <Select placeholder="Select report type">
-                    <option value="summary">Health Summary</option>
-                    <option value="vaccination">Vaccination Report</option>
-                    <option value="mortality">Mortality Analysis</option>
-                    <option value="custom">Custom Report</option>
+                  <FormLabel>{t('reportType')}</FormLabel>
+                  <Select placeholder={t('selectReportType')}>
+                    <option value="summary">{t('healthSummary')}</option>
+                    <option value="vaccination">{t('vaccinationReport')}</option>
+                    <option value="mortality">{t('mortalityAnalysis')}</option>
+                    <option value="custom">{t('customReport')}</option>
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Time Period</FormLabel>
-                  <Select placeholder="Select time period">
-                    <option value="week">Last Week</option>
-                    <option value="month">Last Month</option>
-                    <option value="quarter">Last Quarter</option>
-                    <option value="custom">Custom Range</option>
+                  <FormLabel>{t('timePeriod')}</FormLabel>
+                  <Select placeholder={t('selectTimePeriod')}>
+                    <option value="week">{t('lastWeek')}</option>
+                    <option value="month">{t('lastMonth')}</option>
+                    <option value="quarter">{t('lastQuarter')}</option>
+                    <option value="custom">{t('customRange')}</option>
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Batches</FormLabel>
-                  <Select placeholder="Select batches">
-                    <option value="all">All Batches</option>
-                    <option value="B001">Batch B001</option>
-                    <option value="B002">Batch B002</option>
-                    <option value="B003">Batch B003</option>
+                  <FormLabel>{t('batches')}</FormLabel>
+                  <Select placeholder={t('selectBatches')}>
+                    <option value="all">{t('allBatches')}</option>
+                    <option value="B001">{t('batch')} B001</option>
+                    <option value="B002">{t('batch')} B002</option>
+                    <option value="B003">{t('batch')} B003</option>
                   </Select>
                 </FormControl>
               </VStack>
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" mr={3} onClick={onReportModalClose}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button colorScheme="blue">
-                Generate Report
+                {t('generateReport')}
               </Button>
             </ModalFooter>
           </ModalContent>
