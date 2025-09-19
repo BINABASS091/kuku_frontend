@@ -190,15 +190,16 @@ export default {
   remove: "Ondoa",
   
   // Hali
-  active: "Hai",
-  inactive: "Haifai",
+  active: "Inaendelea",
+  inactive: "Haiendi",
   pending: "Inasubiri",
   completed: "Imekamilika",
   inProgress: "Inaendelea",
-  cancelled: "Imeghairiwa",
+  cancelled: "Imesitishwa",
   healthy: "Mzuri",
   sick: "Mgonjwa",
   critical: "Hatarini",
+  unknown: "Haijulikani",
   
   // Vitendo
   confirm: "Thibitisha",
@@ -349,6 +350,79 @@ export default {
   recentAlerts: "Arifa za Hivi Karibuni",
   
   // Ujumbe wa Toast
+  farmCreated: "Shamba Limetengenezwa",
+  farmCreatedSuccessfully: "Shamba jipya limetengenezwa kwa ufanisi.",
+  failedToCreateFarm: "Imeshindwa kutengeneza shamba. Tafadhali jaribu tena.",
+  accessDenied: "Ufikiaji Umekataliwa",
+  noPermissionToPerformAction: "Huna ruhusa ya kufanya kitendo hiki.",
+  onlyOwnersManagersCanEdit: "Ni wamiliki na wasimamizi tu wa mashamba wanaoweza kuhariri mipangilio ya shamba.",
+  onlyOwnersManagersCanEditTooltip: "Ni wamiliki na wasimamizi tu wanaoweza kuhariri mashamba",
+  error: "Hitilafu",
+  
+  // Maudhui ya Ukurasa wa Shamba
+  manageMonitorPoultryOperations: "Simamia na ufuatilie shughuli zako za kufuga kuku",
+  startPoultryJourney: "Anza safari yako ya kufuga kuku kwa kuongeza shamba lako la kwanza.",
+  addFirstFarm: "Ongeza Shamba Lako la Kwanza",
+  failedToLoadFarms: "Imeshindwa kupakia mashamba.",
+  yourOperationOverview: "Muhtasari wa Shughuli Zako",
+  totalDevices: "Vifaa Vyote",
+  
+  // Taarifa za Kadi ya Shamba
+  locationNotSet: "Mahali haijawekwa",
+  size: "Ukubwa",
+  notSpecified: "Haijababainishwa",
+  
+  // Hali ya Vifaa
+  devices: "vifaa",
+  setupNeeded: "Usanidi unahitajika",
+  allOnline: "Vyote vimewashwa",
+  someOffline: "Baadhi vimezimwa",
+  
+  // Hali ya Makundi
+  noBatches: "Hakuna makundi",
+  productionActive: "Uzalishaji unaendelea",
+  allCompleted: "Vyote vimekamilika",
+  
+  
+  // Ukubwa wa Shamba
+  noStock: "Hakuna hisa",
+  largeOperation: "Shughuli kubwa",
+  smallMedium: "Ndogo-ya-kati",
+  
+  // Ukubwa wa Timu
+  team: "timu",
+  soloOperation: "Shughuli ya mtu mmoja",
+  largeTeam: "Timu kubwa",
+  smallTeam: "Timu ndogo",
+  
+  // Vitufe vya Kitendo
+  viewDetails: "Ona Maelezo",
+  manage: "Simamia",
+  
+  // Nukuu za Vitendo vya Haraka
+  viewManageBatches: "Ona na usimamie makundi",
+  dailyTasksActivities: "Kazi za kila siku na shughuli",
+  farmAnalytics: "Uchanganuzi wa shamba",
+  performanceTracking: "Ufuatiliaji wa utendaji",
+  track: "Fuata",
+  
+  // Ujumbe wa Hali
+  completeFarmSetupToStart: "Kamilisha usanidi wa shamba ili uanze shughuli",
+  
+  // Fomu ya Modal
+  enterFarmName: "Ingiza jina la shamba",
+  enterFarmLocationExample: "Ingiza mahali pa shamba (k.m., Kaunti ya Kiambu, Kenya)",
+  farmSizeExample: "k.m., ekari 2, futi za mraba 5000, hektari 10",
+  setupRequired: "Usanidi Unahitajika",
+  underMaintenance: "Chini ya Matengenezo",
+  creatingFarm: "Inatengeneza Shamba...",
+  
+  // Nukuu
+  devicesStatusTooltip: "{{active}} zinazofanya kazi kati ya {{total}} vifaa vyote",
+  batchesStatusTooltip: "{{active}} yanayofanya kazi kati ya {{total}} makundi yote",
+  totalBirdsAcrossActiveBatches: "Ndege wote katika makundi yanayofanya kazi",
+  farmTeamMembersAndRoles: "Wanachama wa timu ya shamba na majukumu yao",
+  
   batchCreatedSuccessfully: "Kikundi kimetengenezwa kwa ufanisi!",
   failedToCreateBatch: "Imeshindwa kutengeneza kikundi. Tafadhali jaribu tena.",
   activityRecordedSuccessfully: "Shughuli imerekodishwa kwa ufanisi!",

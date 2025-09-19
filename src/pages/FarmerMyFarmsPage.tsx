@@ -72,8 +72,8 @@ const MyFarmsPage: React.FC = () => {
       onSuccess: (response) => {
         console.log('DEBUG: Farm created successfully:', response);
         toast({
-          title: 'Farm Created',
-          description: 'New farm has been successfully created.',
+          title: t('farmCreated'),
+          description: t('farmCreatedSuccessfully'),
           status: 'success',
           duration: 3000,
           isClosable: true,
@@ -85,8 +85,8 @@ const MyFarmsPage: React.FC = () => {
       onError: (err: any) => {
         console.error('DEBUG: Farm creation error:', err);
         toast({
-          title: 'Error',
-          description: err?.message || 'Failed to create farm. Please try again.',
+          title: t('error'),
+          description: err?.message || t('failedToCreateFarm'),
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -158,8 +158,8 @@ const MyFarmsPage: React.FC = () => {
   const handleQuickAction = (action: string, farm: any) => {
     if (!canOperate(farm)) {
       toast({
-        title: "Access Denied",
-        description: "You don't have permission to perform this action.",
+        title: t('accessDenied'),
+        description: t('noPermissionToPerformAction'),
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -192,13 +192,13 @@ const MyFarmsPage: React.FC = () => {
     <Box textAlign="center" py={10}>
       <Icon as={FiPlus} w={16} h={16} color="gray.300" mb={4} />
       <Heading size="md" color="gray.500" mb={2}>{t('noFarmsYet')}</Heading>
-      <Text color="gray.400" mb={6}>Start your poultry journey by adding your first farm.</Text>
+      <Text color="gray.400" mb={6}>{t('startPoultryJourney')}</Text>
       <Button 
         colorScheme="teal" 
         leftIcon={<FiPlus />} 
         onClick={onAddFarmModalOpen}
       >
-        Add Your First Farm
+        {t('addFirstFarm')}
       </Button>
     </Box>
   );
@@ -209,7 +209,7 @@ const MyFarmsPage: React.FC = () => {
         <Flex align="center" justify="space-between" mb={8} flexWrap="wrap" gap={4}>
           <VStack align="start" spacing={1}>
             <Heading size="lg" color="gray.700">{t('myFarms')}</Heading>
-            <Text color="gray.500">Manage and monitor your poultry operations</Text>
+            <Text color="gray.500">{t('manageMonitorPoultryOperations')}</Text>
           </VStack>
           <Button 
             colorScheme="teal" 
@@ -232,7 +232,7 @@ const MyFarmsPage: React.FC = () => {
         {isError && (
           <Alert status="error" mb={6} borderRadius="lg">
             <AlertIcon />
-            {error instanceof Error ? error.message : 'Failed to load farms.'}
+            {error instanceof Error ? error.message : t('failedToLoadFarms')}
           </Alert>
         )}
 
@@ -243,31 +243,31 @@ const MyFarmsPage: React.FC = () => {
             {/* Farm Summary Stats */}
             {farms.length > 0 && (
               <Box mb={6} p={4} bg={cardBg} borderRadius="lg" shadow="sm">
-                <Text fontSize="sm" color="gray.600" mb={2}>Your Operation Overview</Text>
+                <Text fontSize="sm" color="gray.600" mb={2}>{t('yourOperationOverview')}</Text>
                 <Grid templateColumns="repeat(auto-fit, minmax(120px, 1fr))" gap={4}>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="teal.600">
                       {farms.length}
                     </Text>
-                    <Text fontSize="xs" color="gray.500">Total Farms</Text>
+                    <Text fontSize="xs" color="gray.500">{t('totalFarms')}</Text>
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="blue.600">
                       {farms.reduce((sum: number, farm: any) => sum + (farm.total_devices || 0), 0)}
                     </Text>
-                    <Text fontSize="xs" color="gray.500">Total Devices</Text>
+                    <Text fontSize="xs" color="gray.500">{t('totalDevices')}</Text>
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="green.600">
                       {farms.reduce((sum: number, farm: any) => sum + (farm.active_batches || 0), 0)}
                     </Text>
-                    <Text fontSize="xs" color="gray.500">Active Batches</Text>
+                    <Text fontSize="xs" color="gray.500">{t('activeBatches')}</Text>
                   </Box>
                   <Box textAlign="center">
                     <Text fontSize="2xl" fontWeight="bold" color="purple.600">
                       {farms.reduce((sum: number, farm: any) => sum + (farm.total_birds || 0), 0)}
                     </Text>
-                    <Text fontSize="xs" color="gray.500">Total Birds</Text>
+                    <Text fontSize="xs" color="gray.500">{t('totalBirds')}</Text>
                   </Box>
                 </Grid>
               </Box>
@@ -302,7 +302,7 @@ const MyFarmsPage: React.FC = () => {
                           py={1}
                           borderRadius="md"
                         >
-                          {farm.farm_status || 'Unknown'}
+                          {farm.farm_status || t('unknown')}
                         </Badge>
                         {farm.myRole && (
                           <Badge 
@@ -323,18 +323,18 @@ const MyFarmsPage: React.FC = () => {
                   <VStack align="start" spacing={2} mb={4}>
                     <HStack color="gray.600" fontSize="sm">
                       <Icon as={FiMapPin} />
-                      <Text noOfLines={1}>{farm.location || 'Location not set'}</Text>
+                      <Text noOfLines={1}>{farm.location || t('locationNotSet')}</Text>
                     </HStack>
                     <HStack color="gray.600" fontSize="sm">
                       <Icon as={FiLayers} />
-                      <Text>Size: {farm.farmSize || 'Not specified'}</Text>
+                      <Text>{t('size')}: {farm.farmSize || t('notSpecified')}</Text>
                     </HStack>
                   </VStack>
 
                   {/* Stats Grid */}
                   <Grid templateColumns="repeat(2, 1fr)" gap={3} mb={4}>
                     <GridItem>
-                      <Tooltip label={`${farm.active_devices || 0} active out of ${farm.total_devices || 0} total devices`} hasArrow>
+                      <Tooltip label={t('devicesStatusTooltip', { active: farm.active_devices || 0, total: farm.total_devices || 0 })} hasArrow>
                         <Box 
                           bg={statBg} 
                           p={3} 
@@ -345,20 +345,20 @@ const MyFarmsPage: React.FC = () => {
                           _hover={{ bg: blueHoverBg }}
                           transition="background 0.2s"
                         >
-                          <Text fontSize="xs" color="gray.500" mb={1}>DEVICES</Text>
+                          <Text fontSize="xs" color="gray.500" mb={1}>{t('devices').toUpperCase()}</Text>
                           <Text fontSize="lg" fontWeight="bold" color="blue.600">
                             {farm.active_devices || 0}/{farm.total_devices || 0}
                           </Text>
                           <Text fontSize="xs" color="gray.400">
-                            {farm.total_devices === 0 ? 'Setup needed' : 
-                             farm.active_devices === farm.total_devices ? 'All online' : 
-                             'Some offline'}
+                            {farm.total_devices === 0 ? t('setupNeeded') : 
+                             farm.active_devices === farm.total_devices ? t('allOnline') : 
+                             t('someOffline')}
                           </Text>
                         </Box>
                       </Tooltip>
                     </GridItem>
                     <GridItem>
-                      <Tooltip label={`${farm.active_batches || 0} active out of ${farm.total_batches || 0} total batches`} hasArrow>
+                      <Tooltip label={t('batchesStatusTooltip', { active: farm.active_batches || 0, total: farm.total_batches || 0 })} hasArrow>
                         <Box 
                           bg={statBg} 
                           p={3} 
@@ -369,20 +369,20 @@ const MyFarmsPage: React.FC = () => {
                           _hover={{ bg: greenHoverBg }}
                           transition="background 0.2s"
                         >
-                          <Text fontSize="xs" color="gray.500" mb={1}>BATCHES</Text>
+                          <Text fontSize="xs" color="gray.500" mb={1}>{t('batches').toUpperCase()}</Text>
                           <Text fontSize="lg" fontWeight="bold" color="green.600">
                             {farm.active_batches || 0}/{farm.total_batches || 0}
                           </Text>
                           <Text fontSize="xs" color="gray.400">
-                            {farm.total_batches === 0 ? 'No batches' : 
-                             farm.active_batches > 0 ? 'Production active' : 
-                             'All completed'}
+                            {farm.total_batches === 0 ? t('noBatches') : 
+                             farm.active_batches > 0 ? t('productionActive') : 
+                             t('allCompleted')}
                           </Text>
                         </Box>
                       </Tooltip>
                     </GridItem>
                     <GridItem>
-                      <Tooltip label="Total birds across all active batches" hasArrow>
+                      <Tooltip label={t('totalBirdsAcrossActiveBatches')} hasArrow>
                         <Box 
                           bg={statBg} 
                           p={3} 
@@ -393,20 +393,20 @@ const MyFarmsPage: React.FC = () => {
                           _hover={{ bg: purpleHoverBg }}
                           transition="background 0.2s"
                         >
-                          <Text fontSize="xs" color="gray.500" mb={1}>TOTAL BIRDS</Text>
+                          <Text fontSize="xs" color="gray.500" mb={1}>{t('totalBirds').toUpperCase()}</Text>
                           <Text fontSize="lg" fontWeight="bold" color="purple.600">
                             {farm.total_birds || 0}
                           </Text>
                           <Text fontSize="xs" color="gray.400">
-                            {farm.total_birds === 0 ? 'No stock' : 
-                             farm.total_birds > 1000 ? 'Large operation' : 
-                             'Small-medium'}
+                            {farm.total_birds === 0 ? t('noStock') : 
+                             farm.total_birds > 1000 ? t('largeOperation') : 
+                             t('smallMedium')}
                           </Text>
                         </Box>
                       </Tooltip>
                     </GridItem>
                     <GridItem>
-                      <Tooltip label="Farm team members and their roles" hasArrow>
+                      <Tooltip label={t('farmTeamMembersAndRoles')} hasArrow>
                         <Box 
                           bg={statBg} 
                           p={3} 
@@ -417,14 +417,14 @@ const MyFarmsPage: React.FC = () => {
                           _hover={{ bg: orangeHoverBg }}
                           transition="background 0.2s"
                         >
-                          <Text fontSize="xs" color="gray.500" mb={1}>TEAM</Text>
+                          <Text fontSize="xs" color="gray.500" mb={1}>{t('team').toUpperCase()}</Text>
                           <Text fontSize="lg" fontWeight="bold" color="orange.600">
                             {farm.memberships?.length || 0}
                           </Text>
                           <Text fontSize="xs" color="gray.400">
-                            {farm.memberships?.length === 1 ? 'Solo operation' : 
-                             farm.memberships?.length > 3 ? 'Large team' : 
-                             'Small team'}
+                            {farm.memberships?.length === 1 ? t('soloOperation') : 
+                             farm.memberships?.length > 3 ? t('largeTeam') : 
+                             t('smallTeam')}
                           </Text>
                         </Box>
                       </Tooltip>
@@ -444,10 +444,10 @@ const MyFarmsPage: React.FC = () => {
                       onClick={() => navigate(`/farmer/farms/${farm.farmID}`)}
                       flex={1}
                     >
-                      View Details
+                      {t('viewDetails')}
                     </Button>
                     <Tooltip 
-                      label={!canManage(farm) ? "Only owners and managers can edit farms" : ""} 
+                      label={!canManage(farm) ? t('onlyOwnersManagersCanEditTooltip') : ""} 
                       hasArrow
                     >
                       <Button 
@@ -460,8 +460,8 @@ const MyFarmsPage: React.FC = () => {
                             navigate(`/farmer/farms/${farm.farmID}/manage`);
                           } else {
                             toast({
-                              title: "Access Denied",
-                              description: "Only farm owners and managers can edit farm settings.",
+                              title: t('accessDenied'),
+                              description: t('onlyOwnersManagersCanEdit'),
                               status: "warning",
                               duration: 3000,
                               isClosable: true,
@@ -471,14 +471,14 @@ const MyFarmsPage: React.FC = () => {
                         isDisabled={!canManage(farm)}
                         flex={1}
                       >
-                        Manage
+                        {t('manage')}
                       </Button>
                     </Tooltip>
                   </HStack>
 
                   {/* Quick Actions Grid */}
                   <Grid templateColumns="repeat(3, 1fr)" gap={2}>
-                    <Tooltip label="View and manage batches" hasArrow>
+                    <Tooltip label={t('viewManageBatches')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -488,10 +488,10 @@ const MyFarmsPage: React.FC = () => {
                         fontSize="xs"
                         p={2}
                       >
-                        Batches
+                        {t('batches')}
                       </Button>
                     </Tooltip>
-                    <Tooltip label="Daily tasks and activities" hasArrow>
+                    <Tooltip label={t('dailyTasksActivities')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -501,10 +501,10 @@ const MyFarmsPage: React.FC = () => {
                         fontSize="xs"
                         p={2}
                       >
-                        Tasks
+                        {t('tasks')}
                       </Button>
                     </Tooltip>
-                    <Tooltip label="Health monitoring" hasArrow>
+                    <Tooltip label={t('healthMonitoring')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -514,10 +514,10 @@ const MyFarmsPage: React.FC = () => {
                         fontSize="xs"
                         p={2}
                       >
-                        Health
+                        {t('health')}
                       </Button>
                     </Tooltip>
-                    <Tooltip label="Farm analytics" hasArrow>
+                    <Tooltip label={t('farmAnalytics')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -527,10 +527,10 @@ const MyFarmsPage: React.FC = () => {
                         fontSize="xs"
                         p={2}
                       >
-                        Analytics
+                        {t('analytics')}
                       </Button>
                     </Tooltip>
-                    <Tooltip label="Add new batch" hasArrow>
+                    <Tooltip label={t('addNewBatch')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -541,10 +541,10 @@ const MyFarmsPage: React.FC = () => {
                         p={2}
                         colorScheme="green"
                       >
-                        Add Batch
+                        {t('addBatch')}
                       </Button>
                     </Tooltip>
-                    <Tooltip label="Performance tracking" hasArrow>
+                    <Tooltip label={t('performanceTracking')} hasArrow>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -554,7 +554,7 @@ const MyFarmsPage: React.FC = () => {
                         fontSize="xs"
                         p={2}
                       >
-                        Track
+                        {t('track')}
                       </Button>
                     </Tooltip>
                   </Grid>
@@ -565,7 +565,7 @@ const MyFarmsPage: React.FC = () => {
                       <HStack>
                         <Icon as={FiAlertTriangle} color="orange.500" />
                         <Text fontSize="xs" color="orange.700">
-                          Complete farm setup to start operations
+                          {t('completeFarmSetupToStart')}
                         </Text>
                       </HStack>
                     </Box>
@@ -587,55 +587,55 @@ const MyFarmsPage: React.FC = () => {
           <ModalBody>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Farm Name</FormLabel>
+                <FormLabel>{t('farmName')}</FormLabel>
                 <Input
                   value={farmForm.name}
                   onChange={(e) => setFarmForm({ ...farmForm, name: e.target.value })}
-                  placeholder="Enter farm name"
+                  placeholder={t('enterFarmName')}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Location</FormLabel>
+                <FormLabel>{t('location')}</FormLabel>
                 <Input
                   value={farmForm.location}
                   onChange={(e) => setFarmForm({ ...farmForm, location: e.target.value })}
-                  placeholder="Enter farm location (e.g., Kiambu County, Kenya)"
+                  placeholder={t('enterFarmLocationExample')}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Farm Size</FormLabel>
+                <FormLabel>{t('farmSize')}</FormLabel>
                 <Input
                   value={farmForm.farmSize}
                   onChange={(e) => setFarmForm({ ...farmForm, farmSize: e.target.value })}
-                  placeholder="e.g., 2 acres, 5000 sq ft, 10 hectares"
+                  placeholder={t('farmSizeExample')}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t('status')}</FormLabel>
                 <Select
                   value={farmForm.status}
                   onChange={(e) => setFarmForm({ ...farmForm, status: e.target.value })}
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="setup_required">Setup Required</option>
-                  <option value="maintenance">Under Maintenance</option>
+                  <option value="active">{t('active')}</option>
+                  <option value="inactive">{t('inactive')}</option>
+                  <option value="setup_required">{t('setupRequired')}</option>
+                  <option value="maintenance">{t('underMaintenance')}</option>
                 </Select>
               </FormControl>
             </VStack>
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onAddFarmModalClose}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button 
               colorScheme="teal" 
               onClick={handleFarmSubmit}
               isLoading={addFarmMutation.isLoading}
-              loadingText="Creating Farm..."
+              loadingText={t('creatingFarm')}
             >
               {t('createFarm')}
             </Button>

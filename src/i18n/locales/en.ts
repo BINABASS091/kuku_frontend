@@ -199,6 +199,7 @@ export default {
   healthy: "Healthy",
   sick: "Sick",
   critical: "Critical",
+  unknown: "Unknown",
   
   // Actions
   confirm: "Confirm",
@@ -349,6 +350,78 @@ export default {
   recentAlerts: "Recent Alerts",
   
   // Toast Messages
+  farmCreated: "Farm Created",
+  farmCreatedSuccessfully: "New farm has been successfully created.",
+  failedToCreateFarm: "Failed to create farm. Please try again.",
+  accessDenied: "Access Denied",
+  noPermissionToPerformAction: "You don't have permission to perform this action.",
+  onlyOwnersManagersCanEdit: "Only farm owners and managers can edit farm settings.",
+  onlyOwnersManagersCanEditTooltip: "Only owners and managers can edit farms",
+  error: "Error",
+  
+  // Farm Page Content
+  manageMonitorPoultryOperations: "Manage and monitor your poultry operations",
+  startPoultryJourney: "Start your poultry journey by adding your first farm.",
+  addFirstFarm: "Add Your First Farm",
+  failedToLoadFarms: "Failed to load farms.",
+  yourOperationOverview: "Your Operation Overview",
+  totalDevices: "Total Devices",
+  
+  // Farm Card Info
+  locationNotSet: "Location not set",
+  size: "Size",
+  notSpecified: "Not specified",
+  
+  // Device Status
+  devices: "devices",
+  setupNeeded: "Setup needed",
+  allOnline: "All online",
+  someOffline: "Some offline",
+  
+  // Batch Status
+  noBatches: "No batches",
+  productionActive: "Production active",
+  allCompleted: "All completed",
+  
+  // Farm Scale
+  noStock: "No stock",
+  largeOperation: "Large operation",
+  smallMedium: "Small-medium",
+  
+  // Team Size
+  team: "team",
+  soloOperation: "Solo operation",
+  largeTeam: "Large team",
+  smallTeam: "Small team",
+  
+  // Action Buttons
+  viewDetails: "View Details",
+  manage: "Manage",
+  
+  // Quick Actions Tooltips
+  viewManageBatches: "View and manage batches",
+  dailyTasksActivities: "Daily tasks and activities",
+  farmAnalytics: "Farm analytics",
+  performanceTracking: "Performance tracking",
+  track: "Track",
+  
+  // Status Messages
+  completeFarmSetupToStart: "Complete farm setup to start operations",
+  
+  // Modal Form
+  enterFarmName: "Enter farm name",
+  enterFarmLocationExample: "Enter farm location (e.g., Kiambu County, Kenya)",
+  farmSizeExample: "e.g., 2 acres, 5000 sq ft, 10 hectares",
+  setupRequired: "Setup Required",
+  underMaintenance: "Under Maintenance",
+  creatingFarm: "Creating Farm...",
+  
+  // Tooltips
+  devicesStatusTooltip: "{{active}} active out of {{total}} total devices",
+  batchesStatusTooltip: "{{active}} active out of {{total}} total batches",
+  totalBirdsAcrossActiveBatches: "Total birds across all active batches",
+  farmTeamMembersAndRoles: "Farm team members and their roles",
+  
   batchCreatedSuccessfully: "Batch created successfully!",
   failedToCreateBatch: "Failed to create batch. Please try again.",
   activityRecordedSuccessfully: "Activity recorded successfully!",
