@@ -471,5 +471,70 @@ export default {
   weightG: "Weight (g)",
   
   // Stats and Messages
-  recording: "Recording..."
+  recording: "Recording...",
+  
+  // Daily Tasks Specific Keys  
+  manageFarmActivities: "Manage your farm activities and schedules",
+  newTask: "New Task",
+  addFeeding: "Add Feeding",
+  recordData: "Record Data",
+  viewCalendar: "View Calendar",
+  searchTasks: "Search tasks...",
+  allCategories: "All Categories", 
+  allPriorities: "All Priorities",
+  calendarView: "Calendar View",
+  inprogress: "In Progress",
+  
+  // Task Titles and Descriptions
+  morningFeedDistributionTask: "Morning Feed Distribution",
+  distributeFeedToAllBatches: "Distribute morning feed to all batches according to feeding schedule",
+  healthCheckBatch: "Health Check - Batch 1",
+  conductRoutineHealthInspection: "Conduct routine health inspection for signs of illness or distress",
+  cleanWaterSystems: "Clean Water Systems",
+  cleanAndRefillWaterDispensers: "Clean and refill all water dispensers, check for blockages",
+  equipmentMaintenance: "Equipment Maintenance",
+  weeklyMaintenanceCheckEquipment: "Weekly maintenance check on feed dispensers and ventilation systems",
+  recordProductionData: "Record Production Data",
+  updateDailyProductionMortality: "Update daily egg production and mortality records",
+  
+  // Locations
+  coopABC: "Coop A, B, C",
+  coopA: "Coop A",
+  allCoops: "All Coops",
+  allEquipmentAreas: "All Equipment Areas",
+  office: "Office",
+  
+  // Empty States
+  noTasksScheduledToday: "No tasks scheduled for today",
+  noPendingTasks: "No pending tasks",
+  noTasksInProgress: "No tasks in progress",  
+  noCompletedTasks: "No completed tasks today",
+  noOverdueTasks: "Great! No overdue tasks",
+  
+  // Calendar
+  weeklyTaskSchedule: "Weekly Task Schedule",
+  sun: "Sun",
+  mon: "Mon",
+  tue: "Tue",
+  wed: "Wed", 
+  thu: "Thu",
+  fri: "Fri",
+  sat: "Sat",
+  more: "more",
+  
+  // Form Fields
+  enterTaskTitle: "Enter task title",
+  enterTaskDescription: "Enter task description",
+  estimatedDuration: "Estimated Duration",
+  minutes: "minutes",
+  recurringTask: "Recurring Task",
+  recurringPattern: "Recurring Pattern",
+  saveChanges: "Save Changes", 
+  defaultDuration: "30",
+  taskCreatedSuccessfully: "Task created successfully!",
+  
+  // Time Formats
+  overdueByHours: "Overdue by {{hours}} hours",
+  dueInHours: "Due in {{hours}} hours",
+  min: " min"
 };

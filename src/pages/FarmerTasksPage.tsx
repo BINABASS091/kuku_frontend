@@ -90,6 +90,19 @@ const FarmerTasksPage: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [activeTab, setActiveTab] = useState(0);
+  
+  // New task form state
+  const [newTaskForm, setNewTaskForm] = useState({
+    title: '',
+    description: '',
+    category: 'feeding' as Task['category'],
+    priority: 'medium' as Task['priority'],
+    dueDate: '',
+    estimatedDuration: 30,
+    location: '',
+    isRecurring: false,
+    recurringPattern: 'daily' as Task['recurringPattern']
+  });
 
   // Theme colors
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -100,8 +113,8 @@ const FarmerTasksPage: React.FC = () => {
   const mockTasks: Task[] = [
     {
       id: '1',
-      title: 'Morning Feed Distribution',
-      description: 'Distribute morning feed to all batches according to feeding schedule',
+      title: t('morningFeedDistributionTask'),
+      description: t('distributeFeedToAllBatches'),
       category: 'feeding',
       priority: 'high',
       status: 'pending',
@@ -111,12 +124,12 @@ const FarmerTasksPage: React.FC = () => {
       farmId: 'farm-001',
       isRecurring: true,
       recurringPattern: 'daily',
-      location: 'Coop A, B, C',
+      location: t('coopABC'),
     },
     {
       id: '2',
-      title: 'Health Check - Batch 1',
-      description: 'Conduct routine health inspection for signs of illness or distress',
+      title: t('healthCheckBatch'),
+      description: t('conductRoutineHealthInspection'),
       category: 'health',
       priority: 'medium',
       status: 'in-progress',
@@ -126,13 +139,13 @@ const FarmerTasksPage: React.FC = () => {
       farmId: 'farm-001',
       isRecurring: true,
       recurringPattern: 'daily',
-      location: 'Coop A',
+      location: t('coopA'),
       assignedTo: 'John Doe',
     },
     {
       id: '3',
-      title: 'Clean Water Systems',
-      description: 'Clean and refill all water dispensers, check for blockages',
+      title: t('cleanWaterSystems'),
+      description: t('cleanAndRefillWaterDispensers'),
       category: 'cleaning',
       priority: 'medium',
       status: 'pending',
@@ -140,12 +153,12 @@ const FarmerTasksPage: React.FC = () => {
       estimatedDuration: 30,
       isRecurring: true,
       recurringPattern: 'daily',
-      location: 'All Coops',
+      location: t('allCoops'),
     },
     {
       id: '4',
-      title: 'Equipment Maintenance',
-      description: 'Weekly maintenance check on feed dispensers and ventilation systems',
+      title: t('equipmentMaintenance'),
+      description: t('weeklyMaintenanceCheckEquipment'),
       category: 'maintenance',
       priority: 'low',
       status: 'pending',
@@ -153,12 +166,12 @@ const FarmerTasksPage: React.FC = () => {
       estimatedDuration: 120,
       isRecurring: true,
       recurringPattern: 'weekly',
-      location: 'All Equipment Areas',
+      location: t('allEquipmentAreas'),
     },
     {
       id: '5',
-      title: 'Record Production Data',
-      description: 'Update daily egg production and mortality records',
+      title: t('recordProductionData'),
+      description: t('updateDailyProductionMortality'),
       category: 'record-keeping',
       priority: 'high',
       status: 'completed',
@@ -167,7 +180,7 @@ const FarmerTasksPage: React.FC = () => {
       completedAt: '2025-09-17T17:45:00Z',
       isRecurring: true,
       recurringPattern: 'daily',
-      location: 'Office',
+      location: t('office'),
     },
   ];
 
@@ -203,6 +216,106 @@ const FarmerTasksPage: React.FC = () => {
       return dueDate < now && task.status !== 'completed';
     }),
   }), [filteredTasks]);
+
+  // Quick Action handlers
+  const handleQuickAction = (category: Task['category'], title: string, description: string, duration: number = 30, priority: Task['priority'] = 'medium') => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(8, 0, 0, 0); // Default to 8 AM tomorrow
+    
+    setNewTaskForm({
+      title,
+      description,
+      category,
+      priority,
+      dueDate: tomorrow.toISOString().slice(0, 16), // Format for datetime-local input
+      estimatedDuration: duration,
+      location: category === 'record-keeping' ? t('office') : t('allCoops'),
+      isRecurring: true,
+      recurringPattern: 'daily'
+    });
+    onNewTaskOpen();
+  };
+
+  const handleCreateFeedingTask = () => {
+    handleQuickAction(
+      'feeding',
+      t('morningFeedDistributionTask'),
+      t('distributeFeedToAllBatches'),
+      45,
+      'high'
+    );
+  };
+
+  const handleCreateHealthCheckTask = () => {
+    handleQuickAction(
+      'health',
+      t('healthCheckBatch'),
+      t('conductRoutineHealthInspection'),
+      60,
+      'medium'
+    );
+  };
+
+  const handleCreateCleaningTask = () => {
+    handleQuickAction(
+      'cleaning',
+      t('cleanWaterSystems'),
+      t('cleanAndRefillWaterDispensers'),
+      30,
+      'medium'
+    );
+  };
+
+  const handleCreateMaintenanceTask = () => {
+    handleQuickAction(
+      'maintenance',
+      t('equipmentMaintenance'),
+      t('weeklyMaintenanceCheckEquipment'),
+      120,
+      'low'
+    );
+  };
+
+  const handleCreateRecordKeepingTask = () => {
+    handleQuickAction(
+      'record-keeping',
+      t('recordProductionData'),
+      t('updateDailyProductionMortality'),
+      15,
+      'high'
+    );
+  };
+
+  const handleFormChange = (field: string, value: any) => {
+    setNewTaskForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCreateTask = () => {
+    // Here you would typically call an API to create the task
+    console.log('Creating task:', newTaskForm);
+    
+    // Reset form
+    setNewTaskForm({
+      title: '',
+      description: '',
+      category: 'feeding',
+      priority: 'medium',
+      dueDate: '',
+      estimatedDuration: 30,
+      location: '',
+      isRecurring: false,
+      recurringPattern: 'daily'
+    });
+    
+    onNewTaskClose();
+    
+    // You could show a success toast here
+    // toast({ title: t('taskCreatedSuccessfully'), status: 'success' });
+  };
 
   // Task statistics
   const taskStats = useMemo(() => ({
@@ -311,7 +424,7 @@ const FarmerTasksPage: React.FC = () => {
               icon={<FiEdit3 />}
               size="sm"
               variant="ghost"
-              aria-label="Edit task"
+              aria-label={t('editTask')}
               onClick={() => {
                 setSelectedTask(task);
                 onEditTaskOpen();
@@ -480,10 +593,7 @@ const FarmerTasksPage: React.FC = () => {
               colorScheme="blue"
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Create feeding task
-                console.log('Create feeding task');
-              }}
+              onClick={handleCreateFeedingTask}
             >
               {t('addFeeding')}
             </Button>
@@ -493,10 +603,7 @@ const FarmerTasksPage: React.FC = () => {
               colorScheme="red"
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Create health check task
-                console.log('Create health check task');
-              }}
+              onClick={handleCreateHealthCheckTask}
             >
               {t('healthCheck')}
             </Button>
@@ -506,10 +613,7 @@ const FarmerTasksPage: React.FC = () => {
               colorScheme="green"
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Create cleaning task
-                console.log('Create cleaning task');
-              }}
+              onClick={handleCreateCleaningTask}
             >
               {t('cleaning')}
             </Button>
@@ -519,10 +623,7 @@ const FarmerTasksPage: React.FC = () => {
               colorScheme="orange"
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Create maintenance task
-                console.log('Create maintenance task');
-              }}
+              onClick={handleCreateMaintenanceTask}
             >
               {t('maintenance')}
             </Button>
@@ -532,10 +633,7 @@ const FarmerTasksPage: React.FC = () => {
               colorScheme="teal"
               variant="outline"
               size="sm"
-              onClick={() => {
-                // Create record keeping task
-                console.log('Create record keeping task');
-              }}
+              onClick={handleCreateRecordKeepingTask}
             >
               {t('recordData')}
             </Button>
@@ -776,18 +874,29 @@ const FarmerTasksPage: React.FC = () => {
             <VStack spacing={4}>
               <FormControl>
                 <FormLabel>{t('taskTitle')}</FormLabel>
-                <Input placeholder={t('enterTaskTitle')} />
+                <Input 
+                  placeholder={t('enterTaskTitle')} 
+                  value={newTaskForm.title}
+                  onChange={(e) => handleFormChange('title', e.target.value)}
+                />
               </FormControl>
               
               <FormControl>
                 <FormLabel>{t('description')}</FormLabel>
-                <Textarea placeholder={t('enterTaskDescription')} />
+                <Textarea 
+                  placeholder={t('enterTaskDescription')} 
+                  value={newTaskForm.description}
+                  onChange={(e) => handleFormChange('description', e.target.value)}
+                />
               </FormControl>
               
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl>
                   <FormLabel>{t('category')}</FormLabel>
-                  <Select>
+                  <Select 
+                    value={newTaskForm.category}
+                    onChange={(e) => handleFormChange('category', e.target.value)}
+                  >
                     <option value="feeding">{t('feeding')}</option>
                     <option value="health">{t('health')}</option>
                     <option value="cleaning">{t('cleaning')}</option>
@@ -799,7 +908,10 @@ const FarmerTasksPage: React.FC = () => {
                 
                 <FormControl>
                   <FormLabel>{t('priority')}</FormLabel>
-                  <Select>
+                  <Select 
+                    value={newTaskForm.priority}
+                    onChange={(e) => handleFormChange('priority', e.target.value)}
+                  >
                     <option value="low">{t('low')}</option>
                     <option value="medium">{t('medium')}</option>
                     <option value="high">{t('high')}</option>
@@ -811,32 +923,66 @@ const FarmerTasksPage: React.FC = () => {
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl>
                   <FormLabel>{t('dueDate')}</FormLabel>
-                  <Input type="datetime-local" />
+                  <Input 
+                    type="datetime-local" 
+                    value={newTaskForm.dueDate}
+                    onChange={(e) => handleFormChange('dueDate', e.target.value)}
+                  />
                 </FormControl>
                 
                 <FormControl>
                   <FormLabel>{t('estimatedDuration')} ({t('minutes')})</FormLabel>
-                  <Input type="number" placeholder="30" />
+                  <Input 
+                    type="number" 
+                    placeholder={t('defaultDuration')} 
+                    value={newTaskForm.estimatedDuration}
+                    onChange={(e) => handleFormChange('estimatedDuration', parseInt(e.target.value) || 30)}
+                  />
                 </FormControl>
               </SimpleGrid>
               
               <FormControl>
                 <FormLabel>{t('location')}</FormLabel>
-                <Input placeholder={t('locationPlaceholder')} />
+                <Input 
+                  placeholder={t('locationPlaceholder')} 
+                  value={newTaskForm.location}
+                  onChange={(e) => handleFormChange('location', e.target.value)}
+                />
               </FormControl>
               
               <FormControl>
                 <HStack justify="space-between">
                   <FormLabel mb={0}>{t('recurringTask')}</FormLabel>
-                  <Switch />
+                  <Switch 
+                    isChecked={newTaskForm.isRecurring}
+                    onChange={(e) => handleFormChange('isRecurring', e.target.checked)}
+                  />
                 </HStack>
               </FormControl>
+              
+              {newTaskForm.isRecurring && (
+                <FormControl>
+                  <FormLabel>{t('recurringPattern')}</FormLabel>
+                  <Select 
+                    value={newTaskForm.recurringPattern}
+                    onChange={(e) => handleFormChange('recurringPattern', e.target.value)}
+                  >
+                    <option value="daily">{t('daily')}</option>
+                    <option value="weekly">{t('weekly')}</option>
+                    <option value="monthly">{t('monthly')}</option>
+                  </Select>
+                </FormControl>
+              )}
               
               <HStack spacing={4} w="full" justify="flex-end">
                 <Button variant="ghost" onClick={onNewTaskClose}>
                   {t('cancel')}
                 </Button>
-                <Button colorScheme="blue" onClick={onNewTaskClose}>
+                <Button 
+                  colorScheme="blue" 
+                  onClick={handleCreateTask}
+                  isDisabled={!newTaskForm.title.trim() || !newTaskForm.description.trim()}
+                >
                   {t('createTask')}
                 </Button>
               </HStack>

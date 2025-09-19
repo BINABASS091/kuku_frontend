@@ -472,5 +472,70 @@ export default {
   weightG: "Uzito (g)",
   
   // Ujumbe wa Takwimu
-  recording: "Inaendelea kurekodi..."
+  recording: "Inaendelea kurekodi...",
+  
+  // Funguo za Kipekee za Kazi za Kila Siku
+  manageFarmActivities: "Simamia shughuli na ratiba za shamba lako",
+  newTask: "Kazi Mpya",
+  addFeeding: "Ongeza Kulisha",
+  recordData: "Rekodi Data",
+  viewCalendar: "Ona Kalenda",
+  searchTasks: "Tafuta kazi...",
+  allCategories: "Aina Zote",
+  allPriorities: "Vipaumbele Vyote",
+  calendarView: "Mwonekano wa Kalenda",
+  inprogress: "Inaendelea",
+  
+  // Majina na Maelezo ya Kazi
+  morningFeedDistributionTask: "Usambazaji wa Chakula cha Asubuhi",
+  distributeFeedToAllBatches: "Sambaza chakula cha asubuhi kwa makundi yote kulingana na ratiba ya kulisha",
+  healthCheckBatch: "Uchunguzi wa Afya - Kikundi 1",
+  conductRoutineHealthInspection: "Fanya uchunguzi wa kawaida wa afya kwa dalili za ugonjwa au dhiki",
+  cleanWaterSystems: "Safisha Mifumo ya Maji",
+  cleanAndRefillWaterDispensers: "Safisha na ujaze vyombo vyote vya maji, angalia kama kuna mazuio",
+  equipmentMaintenance: "Matengenezo ya Vifaa",
+  weeklyMaintenanceCheckEquipment: "Uchunguzi wa matengenezo ya kila wiki kwa vyombo vya chakula na mifumo ya uingizaji hewa",
+  recordProductionData: "Rekodi Data ya Uzalishaji",
+  updateDailyProductionMortality: "Sasisha rekodi za uzalishaji wa mayai na vifo vya kila siku",
+  
+  // Maeneo
+  coopABC: "Banda A, B, C",
+  coopA: "Banda A",
+  allCoops: "Mabanda Yote",
+  allEquipmentAreas: "Maeneo Yote ya Vifaa",
+  office: "Ofisi",
+  
+  // Hali Tupu
+  noTasksScheduledToday: "Hakuna kazi zilizopangwa leo",
+  noPendingTasks: "Hakuna kazi zinazosubiri",
+  noTasksInProgress: "Hakuna kazi zinaendelea",
+  noCompletedTasks: "Hakuna kazi zilizokamilika leo",
+  noOverdueTasks: "Vizuri! Hakuna kazi zilizokwisha wakati",
+  
+  // Kalenda
+  weeklyTaskSchedule: "Ratiba ya Kazi za Wiki",
+  sun: "Jmp",
+  mon: "Jtt",
+  tue: "Jnn",
+  wed: "Jtn",
+  thu: "Alh",
+  fri: "Iju",
+  sat: "Jmos",
+  more: "zaidi",
+  
+  // Mashamba ya Fomu
+  enterTaskTitle: "Ingiza jina la kazi",
+  enterTaskDescription: "Ingiza maelezo ya kazi",
+  estimatedDuration: "Muda Unatarajiwa",
+  minutes: "dakika",
+  recurringTask: "Kazi ya Kurudia",
+  recurringPattern: "Mfumo wa Kurudia",
+  saveChanges: "Hifadhi Mabadiliko",
+  defaultDuration: "30",
+  taskCreatedSuccessfully: "Kazi imetengenezwa kwa ufanisi!",
+  
+  // Miundo ya Wakati
+  overdueByHours: "Imechelewa kwa masaa {{hours}}",
+  dueInHours: "Inahitajika katika masaa {{hours}}",
+  min: " dak"
 };
