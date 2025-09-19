@@ -38,6 +38,24 @@ import {
   Td,
   TableContainer,
   Image,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  useToast,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -65,6 +83,259 @@ const FarmerBreedGuidancePage: React.FC = () => {
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const [selectedBreed, setSelectedBreed] = useState<'broiler' | 'layer' | 'dual'>('broiler');
+  const toast = useToast();
+
+  // Modal disclosures
+  const { isOpen: isTargetsModalOpen, onOpen: onTargetsModalOpen, onClose: onTargetsModalClose } = useDisclosure();
+  const { isOpen: isVaccinationModalOpen, onOpen: onVaccinationModalOpen, onClose: onVaccinationModalClose } = useDisclosure();
+  const { isOpen: isHealthCheckModalOpen, onOpen: onHealthCheckModalOpen, onClose: onHealthCheckModalClose } = useDisclosure();
+  const { isOpen: isRemindersModalOpen, onOpen: onRemindersModalOpen, onClose: onRemindersModalClose } = useDisclosure();
+  const { isOpen: isProgressModalOpen, onOpen: onProgressModalOpen, onClose: onProgressModalClose } = useDisclosure();
+  const { isOpen: isComparisonModalOpen, onOpen: onComparisonModalOpen, onClose: onComparisonModalClose } = useDisclosure();
+
+  // Form states
+  const [targetForm, setTargetForm] = useState({
+    targetWeight: '',
+    targetWeeks: '',
+    feedConversionTarget: '',
+    mortalityTarget: ''
+  });
+
+  const [vaccinationForm, setVaccinationForm] = useState({
+    vaccineName: '',
+    scheduleDate: '',
+    batchId: '',
+    notes: ''
+  });
+
+  const [healthCheckForm, setHealthCheckForm] = useState({
+    checkType: '',
+    observations: '',
+    recommendations: ''
+  });
+
+  const [reminderForm, setReminderForm] = useState({
+    reminderType: '',
+    reminderDate: '',
+    notes: ''
+  });
+
+  const [progressForm, setProgressForm] = useState({
+    trackingPeriod: 'lastMonth',
+    batchId: ''
+  });
+
+  const [comparisonForm, setComparisonForm] = useState({
+    breed1: 'broiler',
+    breed2: 'layer'
+  });
+
+  // Mock data for progress tracking
+  const progressData = {
+    lastWeek: {
+      weightProgress: [
+        { day: 'Mon', actual: 1.2, target: 1.1 },
+        { day: 'Tue', actual: 1.22, target: 1.12 },
+        { day: 'Wed', actual: 1.25, target: 1.14 },
+        { day: 'Thu', actual: 1.27, target: 1.16 },
+        { day: 'Fri', actual: 1.3, target: 1.18 },
+        { day: 'Sat', actual: 1.32, target: 1.2 },
+        { day: 'Sun', actual: 1.35, target: 1.22 }
+      ],
+      feedConversion: [
+        { day: 'Mon', rate: 2.1 },
+        { day: 'Tue', rate: 2.0 },
+        { day: 'Wed', rate: 2.2 },
+        { day: 'Thu', rate: 2.1 },
+        { day: 'Fri', rate: 2.0 },
+        { day: 'Sat', rate: 1.9 },
+        { day: 'Sun', rate: 1.8 }
+      ],
+      mortality: [
+        { day: 'Mon', rate: 0.5 },
+        { day: 'Tue', rate: 0.3 },
+        { day: 'Wed', rate: 0.4 },
+        { day: 'Thu', rate: 0.2 },
+        { day: 'Fri', rate: 0.1 },
+        { day: 'Sat', rate: 0.2 },
+        { day: 'Sun', rate: 0.1 }
+      ],
+      eggProduction: [
+        { day: 'Mon', rate: 85 },
+        { day: 'Tue', rate: 87 },
+        { day: 'Wed', rate: 89 },
+        { day: 'Thu', rate: 86 },
+        { day: 'Fri', rate: 88 },
+        { day: 'Sat', rate: 90 },
+        { day: 'Sun', rate: 92 }
+      ],
+      metrics: {
+        currentWeight: 1.35,
+        targetWeight: 1.22,
+        weightVariance: '+10.7%',
+        avgDailyGain: 0.02,
+        feedEfficiency: 1.8,
+        mortalityThisWeek: 0.24,
+        eggsPerHen: 6.3,
+        productionRate: 88
+      }
+    }
+  };
+
+  // Mock data for breed comparison
+  const breedData = {
+    broiler: {
+      name: 'Broiler Chicken',
+      maturityWeeks: 6,
+      avgWeight: 2.5,
+      eggProductionYear: 0,
+      feedRequirement: 0.15,
+      mortalityRate: 5,
+      profitabilityIndex: 8.5,
+      hardiness: 'medium',
+      diseaseResistance: 'medium',
+      economics: {
+        initialCost: 3.5,
+        feedCostPerYear: 54,
+        revenuePerYear: 12,
+        netProfitPerYear: 8.5,
+        roi: 85,
+        paybackPeriod: 3
+      }
+    },
+    layer: {
+      name: 'Layer Chicken',
+      maturityWeeks: 18,
+      avgWeight: 1.8,
+      eggProductionYear: 280,
+      feedRequirement: 0.12,
+      mortalityRate: 3,
+      profitabilityIndex: 9.2,
+      hardiness: 'high',
+      diseaseResistance: 'high',
+      economics: {
+        initialCost: 4.0,
+        feedCostPerYear: 44,
+        revenuePerYear: 25,
+        netProfitPerYear: 21,
+        roi: 120,
+        paybackPeriod: 4
+      }
+    },
+    dual: {
+      name: 'Dual Purpose',
+      maturityWeeks: 12,
+      avgWeight: 2.2,
+      eggProductionYear: 180,
+      feedRequirement: 0.13,
+      mortalityRate: 4,
+      profitabilityIndex: 7.8,
+      hardiness: 'high',
+      diseaseResistance: 'high',
+      economics: {
+        initialCost: 3.8,
+        feedCostPerYear: 47,
+        revenuePerYear: 18,
+        netProfitPerYear: 14.2,
+        roi: 95,
+        paybackPeriod: 5
+      }
+    }
+  };
+
+  // Handler functions
+  const handleSetTargets = () => {
+    onTargetsModalOpen();
+  };
+
+  const handleViewAnalytics = () => {
+    toast({
+      title: t('redirectingToAnalytics'),
+      description: t('takingYouToAnalyticsPage'),
+      status: 'info',
+      duration: 2000,
+      isClosable: true,
+    });
+    // In a real app, this would navigate to analytics page
+  };
+
+  const handleTrackProgress = () => {
+    onProgressModalOpen();
+  };
+
+  const handleCompareBreeds = () => {
+    onComparisonModalOpen();
+  };
+
+  const handleScheduleVaccination = () => {
+    onVaccinationModalOpen();
+  };
+
+  const handleHealthCheck = () => {
+    onHealthCheckModalOpen();
+  };
+
+  const handleSetReminders = () => {
+    onRemindersModalOpen();
+  };
+
+  const handleLogHealthData = () => {
+    toast({
+      title: t('healthDataLogging'),
+      description: t('healthDataLoggingFeature'),
+      status: 'info',
+      duration: 2000,
+      isClosable: true,
+    });
+  };
+
+  const handleSaveTargets = () => {
+    toast({
+      title: t('targetsSaved'),
+      description: t('performanceTargetsUpdated'),
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+    onTargetsModalClose();
+    setTargetForm({ targetWeight: '', targetWeeks: '', feedConversionTarget: '', mortalityTarget: '' });
+  };
+
+  const handleSaveVaccination = () => {
+    toast({
+      title: t('vaccinationScheduled'),
+      description: t('vaccinationScheduledSuccessfully'),
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+    onVaccinationModalClose();
+    setVaccinationForm({ vaccineName: '', scheduleDate: '', batchId: '', notes: '' });
+  };
+
+  const handleSaveHealthCheck = () => {
+    toast({
+      title: t('healthCheckLogged'),
+      description: t('healthCheckDataSaved'),
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+    onHealthCheckModalClose();
+    setHealthCheckForm({ checkType: '', observations: '', recommendations: '' });
+  };
+
+  const handleSaveReminder = () => {
+    toast({
+      title: t('reminderSet'),
+      description: t('reminderSetSuccessfully'),
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+    onRemindersModalClose();
+    setReminderForm({ reminderType: '', reminderDate: '', notes: '' });
+  };
 
   // Mock data for breed configurations
   const breedConfigurations = {
@@ -618,17 +889,37 @@ const FarmerBreedGuidancePage: React.FC = () => {
                   </CardHeader>
                   <CardBody>
                     <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      <Button leftIcon={<FiTarget />} colorScheme="green" variant="outline">
-                        Set Targets
+                      <Button 
+                        leftIcon={<FiTarget />} 
+                        colorScheme="green" 
+                        variant="outline"
+                        onClick={handleSetTargets}
+                      >
+                        {t('breedSetTargets')}
                       </Button>
-                      <Button leftIcon={<FiBarChart />} colorScheme="blue" variant="outline">
-                        View Analytics
+                      <Button 
+                        leftIcon={<FiBarChart />} 
+                        colorScheme="blue" 
+                        variant="outline"
+                        onClick={handleViewAnalytics}
+                      >
+                        {t('breedViewAnalytics')}
                       </Button>
-                      <Button leftIcon={<FiActivity />} colorScheme="purple" variant="outline">
-                        Track Progress
+                      <Button 
+                        leftIcon={<FiActivity />} 
+                        colorScheme="purple" 
+                        variant="outline"
+                        onClick={handleTrackProgress}
+                      >
+                        {t('breedTrackProgress')}
                       </Button>
-                      <Button leftIcon={<FiAward />} colorScheme="orange" variant="outline">
-                        Compare Breeds
+                      <Button 
+                        leftIcon={<FiAward />} 
+                        colorScheme="orange" 
+                        variant="outline"
+                        onClick={handleCompareBreeds}
+                      >
+                        {t('breedCompareBreeds')}
                       </Button>
                     </SimpleGrid>
                   </CardBody>
@@ -759,17 +1050,37 @@ const FarmerBreedGuidancePage: React.FC = () => {
                   </CardHeader>
                   <CardBody>
                     <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      <Button leftIcon={<FiShield />} colorScheme="green" variant="outline">
-                        Schedule Vaccination
+                      <Button 
+                        leftIcon={<FiShield />} 
+                        colorScheme="green" 
+                        variant="outline"
+                        onClick={handleScheduleVaccination}
+                      >
+                        {t('breedScheduleVaccination')}
                       </Button>
-                      <Button leftIcon={<FiHeart />} colorScheme="red" variant="outline">
-                        Health Check
+                      <Button 
+                        leftIcon={<FiHeart />} 
+                        colorScheme="red" 
+                        variant="outline"
+                        onClick={handleHealthCheck}
+                      >
+                        {t('breedHealthCheck')}
                       </Button>
-                      <Button leftIcon={<FiCalendar />} colorScheme="blue" variant="outline">
-                        Set Reminders
+                      <Button 
+                        leftIcon={<FiCalendar />} 
+                        colorScheme="blue" 
+                        variant="outline"
+                        onClick={handleSetReminders}
+                      >
+                        {t('breedSetReminders')}
                       </Button>
-                      <Button leftIcon={<FiActivity />} colorScheme="purple" variant="outline">
-                        Log Health Data
+                      <Button 
+                        leftIcon={<FiActivity />} 
+                        colorScheme="purple" 
+                        variant="outline"
+                        onClick={handleLogHealthData}
+                      >
+                        {t('breedLogHealthData')}
                       </Button>
                     </SimpleGrid>
                   </CardBody>
@@ -778,6 +1089,628 @@ const FarmerBreedGuidancePage: React.FC = () => {
             </TabPanel>
           </TabPanels>
         </Tabs>
+
+        {/* Set Targets Modal */}
+        <Modal isOpen={isTargetsModalOpen} onClose={onTargetsModalClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('breedSetTargets')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>{t('targetWeight')} (g)</FormLabel>
+                  <NumberInput 
+                    value={targetForm.targetWeight}
+                    onChange={(value) => setTargetForm({...targetForm, targetWeight: value})}
+                  >
+                    <NumberInputField placeholder="2500" />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('targetWeeks')}</FormLabel>
+                  <NumberInput 
+                    value={targetForm.targetWeeks}
+                    onChange={(value) => setTargetForm({...targetForm, targetWeeks: value})}
+                  >
+                    <NumberInputField placeholder="8" />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('feedConversionTarget')}</FormLabel>
+                  <NumberInput 
+                    step={0.1}
+                    value={targetForm.feedConversionTarget}
+                    onChange={(value) => setTargetForm({...targetForm, feedConversionTarget: value})}
+                  >
+                    <NumberInputField placeholder="1.8" />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('mortalityTarget')} (%)</FormLabel>
+                  <NumberInput 
+                    step={0.1}
+                    value={targetForm.mortalityTarget}
+                    onChange={(value) => setTargetForm({...targetForm, mortalityTarget: value})}
+                  >
+                    <NumberInputField placeholder="5.0" />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onTargetsModalClose}>
+                {t('cancel')}
+              </Button>
+              <Button colorScheme="green" onClick={handleSaveTargets}>
+                {t('saveTargets')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Schedule Vaccination Modal */}
+        <Modal isOpen={isVaccinationModalOpen} onClose={onVaccinationModalClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('breedScheduleVaccination')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>{t('vaccineName')}</FormLabel>
+                  <Select 
+                    placeholder={t('selectVaccine')}
+                    value={vaccinationForm.vaccineName}
+                    onChange={(e) => setVaccinationForm({...vaccinationForm, vaccineName: e.target.value})}
+                  >
+                    <option value="newcastle">Newcastle Disease</option>
+                    <option value="gumboro">Gumboro</option>
+                    <option value="mareks">Marek's Disease</option>
+                    <option value="ib">Infectious Bronchitis</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('scheduleDate')}</FormLabel>
+                  <Input 
+                    type="date"
+                    value={vaccinationForm.scheduleDate}
+                    onChange={(e) => setVaccinationForm({...vaccinationForm, scheduleDate: e.target.value})}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('batchId')}</FormLabel>
+                  <Select 
+                    placeholder={t('selectBatch')}
+                    value={vaccinationForm.batchId}
+                    onChange={(e) => setVaccinationForm({...vaccinationForm, batchId: e.target.value})}
+                  >
+                    <option value="B001">Batch B001</option>
+                    <option value="B002">Batch B002</option>
+                    <option value="B003">Batch B003</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('notes')}</FormLabel>
+                  <Textarea 
+                    placeholder={t('addNotes')}
+                    value={vaccinationForm.notes}
+                    onChange={(e) => setVaccinationForm({...vaccinationForm, notes: e.target.value})}
+                  />
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onVaccinationModalClose}>
+                {t('cancel')}
+              </Button>
+              <Button colorScheme="green" onClick={handleSaveVaccination}>
+                {t('scheduleVaccination')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Health Check Modal */}
+        <Modal isOpen={isHealthCheckModalOpen} onClose={onHealthCheckModalClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('breedHealthCheck')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>{t('checkType')}</FormLabel>
+                  <Select 
+                    placeholder={t('selectCheckType')}
+                    value={healthCheckForm.checkType}
+                    onChange={(e) => setHealthCheckForm({...healthCheckForm, checkType: e.target.value})}
+                  >
+                    <option value="routine">Routine Check</option>
+                    <option value="illness">Illness Assessment</option>
+                    <option value="mortality">Mortality Investigation</option>
+                    <option value="performance">Performance Review</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('observations')}</FormLabel>
+                  <Textarea 
+                    placeholder={t('recordObservations')}
+                    value={healthCheckForm.observations}
+                    onChange={(e) => setHealthCheckForm({...healthCheckForm, observations: e.target.value})}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('recommendations')}</FormLabel>
+                  <Textarea 
+                    placeholder={t('addRecommendations')}
+                    value={healthCheckForm.recommendations}
+                    onChange={(e) => setHealthCheckForm({...healthCheckForm, recommendations: e.target.value})}
+                  />
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onHealthCheckModalClose}>
+                {t('cancel')}
+              </Button>
+              <Button colorScheme="red" onClick={handleSaveHealthCheck}>
+                {t('saveHealthCheck')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Set Reminders Modal */}
+        <Modal isOpen={isRemindersModalOpen} onClose={onRemindersModalClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('breedSetReminders')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>{t('reminderType')}</FormLabel>
+                  <Select 
+                    placeholder={t('selectReminderType')}
+                    value={reminderForm.reminderType}
+                    onChange={(e) => setReminderForm({...reminderForm, reminderType: e.target.value})}
+                  >
+                    <option value="vaccination">Vaccination Reminder</option>
+                    <option value="feeding">Feeding Schedule</option>
+                    <option value="weighing">Weight Check</option>
+                    <option value="cleaning">Cleaning Schedule</option>
+                    <option value="medication">Medication</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('reminderDate')}</FormLabel>
+                  <Input 
+                    type="datetime-local"
+                    value={reminderForm.reminderDate}
+                    onChange={(e) => setReminderForm({...reminderForm, reminderDate: e.target.value})}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>{t('notes')}</FormLabel>
+                  <Textarea 
+                    placeholder={t('addReminderNotes')}
+                    value={reminderForm.notes}
+                    onChange={(e) => setReminderForm({...reminderForm, notes: e.target.value})}
+                  />
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onRemindersModalClose}>
+                {t('cancel')}
+              </Button>
+              <Button colorScheme="blue" onClick={handleSaveReminder}>
+                {t('setReminder')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Progress Tracking Modal */}
+        <Modal isOpen={isProgressModalOpen} onClose={onProgressModalClose} size="6xl">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('progressTrackingModal')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={6}>
+                {/* Period Selection */}
+                <FormControl>
+                  <FormLabel>{t('selectTrackingPeriod')}</FormLabel>
+                  <Select 
+                    value={progressForm.trackingPeriod}
+                    onChange={(e) => setProgressForm({...progressForm, trackingPeriod: e.target.value})}
+                  >
+                    <option value="lastWeek">{t('progressLastWeek')}</option>
+                    <option value="lastMonth">{t('progressLastMonth')}</option>
+                    <option value="lastQuarter">{t('progressLastQuarter')}</option>
+                  </Select>
+                </FormControl>
+
+                {/* Key Metrics Cards */}
+                <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} w="100%">
+                  <Card>
+                    <CardBody>
+                      <Stat>
+                        <StatLabel>{t('currentWeight')}</StatLabel>
+                        <StatNumber color="green.500">{progressData.lastWeek.metrics.currentWeight} kg</StatNumber>
+                        <StatHelpText>{t('progressTargetWeight')}: {progressData.lastWeek.metrics.targetWeight} kg</StatHelpText>
+                      </Stat>
+                    </CardBody>
+                  </Card>
+                  
+                  <Card>
+                    <CardBody>
+                      <Stat>
+                        <StatLabel>{t('weightVariance')}</StatLabel>
+                        <StatNumber color="blue.500">{progressData.lastWeek.metrics.weightVariance}</StatNumber>
+                        <StatHelpText>{t('aboveTarget')}</StatHelpText>
+                      </Stat>
+                    </CardBody>
+                  </Card>
+
+                  <Card>
+                    <CardBody>
+                      <Stat>
+                        <StatLabel>{t('progressFeedEfficiency')}</StatLabel>
+                        <StatNumber color="orange.500">{progressData.lastWeek.metrics.feedEfficiency}</StatNumber>
+                        <StatHelpText>{t('progressExcellent')}</StatHelpText>
+                      </Stat>
+                    </CardBody>
+                  </Card>
+
+                  <Card>
+                    <CardBody>
+                      <Stat>
+                        <StatLabel>{t('productionRate')}</StatLabel>
+                        <StatNumber color="purple.500">{progressData.lastWeek.metrics.productionRate}%</StatNumber>
+                        <StatHelpText>{t('onTrack')}</StatHelpText>
+                      </Stat>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+
+                {/* Charts */}
+                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} w="100%">
+                  {/* Weight Progress Chart */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">{t('weightGainProgress')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <Box h="300px">
+                        <SafeChartContainer minHeight={300}>
+                          <AreaChart data={progressData.lastWeek.weightProgress} width={400} height={300}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="day" />
+                            <YAxis />
+                            <Tooltip />
+                            <Area type="monotone" dataKey="target" stackId="1" stroke="#E2E8F0" fill="#E2E8F0" name={t('progressTargetWeight')} />
+                            <Area type="monotone" dataKey="actual" stackId="2" stroke="#38B2AC" fill="#38B2AC" name={t('currentWeight')} />
+                          </AreaChart>
+                        </SafeChartContainer>
+                      </Box>
+                    </CardBody>
+                  </Card>
+
+                  {/* Feed Conversion Chart */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">{t('feedConversionTrend')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <Box h="300px">
+                        <SafeChartContainer minHeight={300}>
+                          <LineChart data={progressData.lastWeek.feedConversion} width={400} height={300}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="day" />
+                            <YAxis />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="rate" stroke="#ED8936" strokeWidth={3} name={t('progressFeedEfficiency')} />
+                          </LineChart>
+                        </SafeChartContainer>
+                      </Box>
+                    </CardBody>
+                  </Card>
+
+                  {/* Mortality Trend Chart */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">{t('mortalityTrend')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <Box h="300px">
+                        <SafeChartContainer minHeight={300}>
+                          <BarChart data={progressData.lastWeek.mortality} width={400} height={300}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="day" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="rate" fill="#E53E3E" name={t('comparisonMortalityRate')} />
+                          </BarChart>
+                        </SafeChartContainer>
+                      </Box>
+                    </CardBody>
+                  </Card>
+
+                  {/* Egg Production Chart */}
+                  <Card>
+                    <CardHeader>
+                      <Heading size="md">{t('eggProductionTrend')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      <Box h="300px">
+                        <SafeChartContainer minHeight={300}>
+                          <LineChart data={progressData.lastWeek.eggProduction} width={400} height={300}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="day" />
+                            <YAxis />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="rate" stroke="#48BB78" strokeWidth={3} name={t('productionRate')} />
+                          </LineChart>
+                        </SafeChartContainer>
+                      </Box>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+
+                {/* Progress Summary */}
+                <Card w="100%">
+                  <CardHeader>
+                    <Heading size="md">{t('progressSummary')}</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack spacing={3} align="stretch">
+                      <HStack justify="space-between">
+                        <Text>{t('weightGainProgress')}</Text>
+                        <Badge colorScheme="green" size="lg">{t('progressExcellent')}</Badge>
+                      </HStack>
+                      <HStack justify="space-between">
+                        <Text>{t('progressFeedEfficiency')}</Text>
+                        <Badge colorScheme="green" size="lg">{t('onTrack')}</Badge>
+                      </HStack>
+                      <HStack justify="space-between">
+                        <Text>{t('mortalityTrend')}</Text>
+                        <Badge colorScheme="yellow" size="lg">{t('improvementNeeded')}</Badge>
+                      </HStack>
+                      <HStack justify="space-between">
+                        <Text>{t('eggProductionTrend')}</Text>
+                        <Badge colorScheme="green" size="lg">{t('aboveTarget')}</Badge>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onProgressModalClose}>
+                {t('close')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Breed Comparison Modal */}
+        <Modal isOpen={isComparisonModalOpen} onClose={onComparisonModalClose} size="6xl">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{t('breedComparisonModal')}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={6}>
+                {/* Breed Selection */}
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="100%">
+                  <FormControl>
+                    <FormLabel>{t('breed1')}</FormLabel>
+                    <Select 
+                      value={comparisonForm.breed1}
+                      onChange={(e) => setComparisonForm({...comparisonForm, breed1: e.target.value})}
+                    >
+                      <option value="broiler">Broiler Chicken</option>
+                      <option value="layer">Layer Chicken</option>
+                      <option value="dual">Dual Purpose</option>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>{t('breed2')}</FormLabel>
+                    <Select 
+                      value={comparisonForm.breed2}
+                      onChange={(e) => setComparisonForm({...comparisonForm, breed2: e.target.value})}
+                    >
+                      <option value="broiler">Broiler Chicken</option>
+                      <option value="layer">Layer Chicken</option>
+                      <option value="dual">Dual Purpose</option>
+                    </Select>
+                  </FormControl>
+                </SimpleGrid>
+
+                {/* Performance Comparison Table */}
+                <Card w="100%">
+                  <CardHeader>
+                    <Heading size="md">{t('comparePerformance')}</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>{t('metric')}</Th>
+                            <Th>{breedData[comparisonForm.breed1 as keyof typeof breedData].name}</Th>
+                            <Th>{breedData[comparisonForm.breed2 as keyof typeof breedData].name}</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          <Tr>
+                            <Td>{t('maturityWeeks')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].maturityWeeks}</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].maturityWeeks}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('comparisonAvgWeight')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].avgWeight} kg</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].avgWeight} kg</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('eggProductionYear')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].eggProductionYear}</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].eggProductionYear}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('feedRequirement')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].feedRequirement} kg/day</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].feedRequirement} kg/day</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('comparisonMortalityRate')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].mortalityRate}%</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].mortalityRate}%</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('profitabilityIndex')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].profitabilityIndex}/10</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].profitabilityIndex}/10</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('hardiness')}</Td>
+                            <Td>
+                              <Badge 
+                                colorScheme={breedData[comparisonForm.breed1 as keyof typeof breedData].hardiness === 'high' ? 'green' : 'yellow'}
+                              >
+                                {t(breedData[comparisonForm.breed1 as keyof typeof breedData].hardiness)}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <Badge 
+                                colorScheme={breedData[comparisonForm.breed2 as keyof typeof breedData].hardiness === 'high' ? 'green' : 'yellow'}
+                              >
+                                {t(breedData[comparisonForm.breed2 as keyof typeof breedData].hardiness)}
+                              </Badge>
+                            </Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('diseaseResistance')}</Td>
+                            <Td>
+                              <Badge 
+                                colorScheme={breedData[comparisonForm.breed1 as keyof typeof breedData].diseaseResistance === 'high' ? 'green' : 'yellow'}
+                              >
+                                {t(breedData[comparisonForm.breed1 as keyof typeof breedData].diseaseResistance)}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <Badge 
+                                colorScheme={breedData[comparisonForm.breed2 as keyof typeof breedData].diseaseResistance === 'high' ? 'green' : 'yellow'}
+                              >
+                                {t(breedData[comparisonForm.breed2 as keyof typeof breedData].diseaseResistance)}
+                              </Badge>
+                            </Td>
+                          </Tr>
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </CardBody>
+                </Card>
+
+                {/* Economic Analysis */}
+                <Card w="100%">
+                  <CardHeader>
+                    <Heading size="md">{t('economicAnalysis')}</Heading>
+                  </CardHeader>
+                  <CardBody>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>{t('economicMetric')}</Th>
+                            <Th>{breedData[comparisonForm.breed1 as keyof typeof breedData].name}</Th>
+                            <Th>{breedData[comparisonForm.breed2 as keyof typeof breedData].name}</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          <Tr>
+                            <Td>{t('initialCost')}</Td>
+                            <Td>${breedData[comparisonForm.breed1 as keyof typeof breedData].economics.initialCost}</Td>
+                            <Td>${breedData[comparisonForm.breed2 as keyof typeof breedData].economics.initialCost}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('feedCostPerYear')}</Td>
+                            <Td>${breedData[comparisonForm.breed1 as keyof typeof breedData].economics.feedCostPerYear}</Td>
+                            <Td>${breedData[comparisonForm.breed2 as keyof typeof breedData].economics.feedCostPerYear}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('revenuePerYear')}</Td>
+                            <Td>${breedData[comparisonForm.breed1 as keyof typeof breedData].economics.revenuePerYear}</Td>
+                            <Td>${breedData[comparisonForm.breed2 as keyof typeof breedData].economics.revenuePerYear}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('netProfitPerYear')}</Td>
+                            <Td color="green.500">${breedData[comparisonForm.breed1 as keyof typeof breedData].economics.netProfitPerYear}</Td>
+                            <Td color="green.500">${breedData[comparisonForm.breed2 as keyof typeof breedData].economics.netProfitPerYear}</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('comparisonROI')}</Td>
+                            <Td color="blue.500">{breedData[comparisonForm.breed1 as keyof typeof breedData].economics.roi}%</Td>
+                            <Td color="blue.500">{breedData[comparisonForm.breed2 as keyof typeof breedData].economics.roi}%</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>{t('paybackPeriod')}</Td>
+                            <Td>{breedData[comparisonForm.breed1 as keyof typeof breedData].economics.paybackPeriod} months</Td>
+                            <Td>{breedData[comparisonForm.breed2 as keyof typeof breedData].economics.paybackPeriod} months</Td>
+                          </Tr>
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </CardBody>
+                </Card>
+
+                {/* Recommendation */}
+                <Alert status="info" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>{t('recommendation')}</AlertTitle>
+                    <AlertDescription>
+                      {t('breedRecommendation')}{' '}
+                      <strong>
+                        {breedData[comparisonForm.breed1 as keyof typeof breedData].economics.roi > 
+                         breedData[comparisonForm.breed2 as keyof typeof breedData].economics.roi 
+                          ? breedData[comparisonForm.breed1 as keyof typeof breedData].name 
+                          : breedData[comparisonForm.breed2 as keyof typeof breedData].name}
+                      </strong>{' '}
+                      {t('basedOnHigherROI')}
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onComparisonModalClose}>
+                {t('close')}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </VStack>
     </FarmerLayout>
   );
