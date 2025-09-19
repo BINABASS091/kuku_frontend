@@ -475,7 +475,7 @@ const FarmerDashboard = () => {
               leftIcon={<FiEye />}
               variant="ghost"
               size="sm"
-              onClick={() => window.location.href = '/farmer/activities'}
+              onClick={() => navigate('/farmer/activities')}
             >
               View All Activities
             </Button>

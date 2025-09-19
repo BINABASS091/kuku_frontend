@@ -3,6 +3,7 @@ import { Box, Heading, Text, VStack, Spinner, HStack, Icon, Circle } from '@chak
 import { useQuery } from '@tanstack/react-query';
 import { activityAPI } from '../services/api';
 import { FiActivity, FiHeart, FiTrendingUp, FiCheckCircle, FiClock } from 'react-icons/fi';
+import FarmerLayout from '../layouts/FarmerLayout';
 
 const getTypeColor = (type: string) => {
   switch (type) {
@@ -28,40 +29,42 @@ const FarmerActivitiesPage: React.FC = () => {
   const activities = data?.results || [];
 
   return (
-    <Box p={6}>
-      <Heading size="lg" mb={4}>All Activities</Heading>
-      {isLoading && <Spinner />}
-      {isError && (
-        <Text color="red.500">{error instanceof Error ? error.message : 'Failed to load activities.'}</Text>
-      )}
-      <VStack align="stretch" spacing={4}>
-        {activities.length > 0 ? (
-          activities.map((activity: any, idx: number) => (
-            <HStack key={activity.id || idx} spacing={3} p={4} borderWidth={1} borderRadius="md" bg="white">
-              <Circle size="8" bg={`${getTypeColor(activity.type)}.100`}>
-                <Icon as={getTypeIcon(activity.type)} size="4" color={`${getTypeColor(activity.type)}.500`} />
-              </Circle>
-              <VStack align="start" spacing={0} flex="1">
-                <Text fontSize="sm" fontWeight="medium">
-                  {activity.action || activity.activity_type || 'Activity'}
-                </Text>
-                <HStack spacing={2}>
-                  <Text fontSize="xs" color="gray.600">
-                    {activity.batchName || activity.batch || ''}
-                  </Text>
-                  <Text fontSize="xs" color="gray.600">•</Text>
-                  <Text fontSize="xs" color="gray.600">
-                    {activity.timestamp || activity.created_at || ''}
-                  </Text>
-                </HStack>
-              </VStack>
-            </HStack>
-          ))
-        ) : (
-          !isLoading && <Text>No activities found.</Text>
+    <FarmerLayout>
+      <Box p={6}>
+        <Heading size="lg" mb={4}>All Activities</Heading>
+        {isLoading && <Spinner />}
+        {isError && (
+          <Text color="red.500">{error instanceof Error ? error.message : 'Failed to load activities.'}</Text>
         )}
-      </VStack>
-    </Box>
+        <VStack align="stretch" spacing={4}>
+          {activities.length > 0 ? (
+            activities.map((activity: any, idx: number) => (
+              <HStack key={activity.id || idx} spacing={3} p={4} borderWidth={1} borderRadius="md" bg="white">
+                <Circle size="8" bg={`${getTypeColor(activity.type)}.100`}>
+                  <Icon as={getTypeIcon(activity.type)} size="4" color={`${getTypeColor(activity.type)}.500`} />
+                </Circle>
+                <VStack align="start" spacing={0} flex="1">
+                  <Text fontSize="sm" fontWeight="medium">
+                    {activity.action || activity.activity_type || 'Activity'}
+                  </Text>
+                  <HStack spacing={2}>
+                    <Text fontSize="xs" color="gray.600">
+                      {activity.batchName || activity.batch || ''}
+                    </Text>
+                    <Text fontSize="xs" color="gray.600">•</Text>
+                    <Text fontSize="xs" color="gray.600">
+                      {activity.timestamp || activity.created_at || ''}
+                    </Text>
+                  </HStack>
+                </VStack>
+              </HStack>
+            ))
+          ) : (
+            !isLoading && <Text>No activities found.</Text>
+          )}
+        </VStack>
+      </Box>
+    </FarmerLayout>
   );
 };
 
