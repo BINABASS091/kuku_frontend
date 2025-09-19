@@ -27,6 +27,7 @@ import {
   AlertTitle,
   AlertDescription
 } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import {
   FiTrendingUp,
   FiDollarSign,
@@ -41,6 +42,7 @@ import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
 
 const FarmerAnalyticsPage: React.FC = () => {
+  const { t } = useTranslation();
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
@@ -76,10 +78,10 @@ const FarmerAnalyticsPage: React.FC = () => {
   ];
 
   const performanceData = [
-    { name: 'Excellent', value: 35, color: '#48BB78' },
-    { name: 'Good', value: 40, color: '#38B2AC' },
-    { name: 'Average', value: 20, color: '#ED8936' },
-    { name: 'Poor', value: 5, color: '#E53E3E' }
+    { name: t('excellent'), value: 35, color: '#48BB78' },
+    { name: t('good'), value: 40, color: '#38B2AC' },
+    { name: t('average'), value: 20, color: '#ED8936' },
+    { name: t('poor'), value: 5, color: '#E53E3E' }
   ];
 
   const profitTrendData = [
@@ -104,9 +106,9 @@ const FarmerAnalyticsPage: React.FC = () => {
     <FarmerLayout>
       <VStack spacing={6} align="stretch">
         <Box>
-          <Heading size="lg" mb={2}>Analytics Dashboard</Heading>
+          <Heading size="lg" mb={2}>{t('analyticsDashboard')}</Heading>
           <Text color={textColor}>
-            Comprehensive insights into your farm's performance and trends
+            {t('comprehensiveInsights')}
           </Text>
         </Box>
 
@@ -114,15 +116,15 @@ const FarmerAnalyticsPage: React.FC = () => {
           <TabList>
             <Tab>
               <Icon as={FiBarChart} mr={2} />
-              Production Analytics
+              {t('analyticsProductionTab')}
             </Tab>
             <Tab>
               <Icon as={FiDollarSign} mr={2} />
-              Financial Analytics
+              {t('analyticsFinancialTab')}
             </Tab>
             <Tab>
               <Icon as={FiTrendingUp} mr={2} />
-              Growth Trends
+              {t('analyticsGrowthTrends')}
             </Tab>
           </TabList>
 
@@ -135,11 +137,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Total Eggs This Month</StatLabel>
+                        <StatLabel>{t('totalEggsThisMonth')}</StatLabel>
                         <StatNumber color="green.500">1,650</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          8.5% from last month
+                          {t('increaseFromLastMonth', { percentage: 8.5 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -148,11 +150,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Active Chickens</StatLabel>
+                        <StatLabel>{t('activeChickens')}</StatLabel>
                         <StatNumber color="blue.500">980</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          3.2% from last month
+                          {t('increaseFromLastMonth', { percentage: 3.2 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -161,11 +163,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Feed Consumption (kg)</StatLabel>
+                        <StatLabel>{t('feedConsumptionKg')}</StatLabel>
                         <StatNumber color="orange.500">400</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          5.3% from last month
+                          {t('increaseFromLastMonth', { percentage: 5.3 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -174,11 +176,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Production Efficiency</StatLabel>
+                        <StatLabel>{t('productionEfficiency')}</StatLabel>
                         <StatNumber color="purple.500">94.2%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          2.1% from last month
+                          {t('increaseFromLastMonth', { percentage: 2.1 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -190,14 +192,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Monthly Production Overview</Heading>
+                        <Heading size="md">{t('monthlyProductionOverview')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Track your farm's production metrics over time
+                          {t('trackFarmProductionMetrics')}
                         </Text>
                       </Box>
                       <Badge colorScheme="green" variant="subtle">
                         <Icon as={FiBarChart} mr={1} />
-                        6 Months
+                        {t('sixMonths')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -209,9 +211,9 @@ const FarmerAnalyticsPage: React.FC = () => {
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Bar dataKey="eggs" fill="#48BB78" name="Eggs" />
-                          <Bar dataKey="chickens" fill="#38B2AC" name="Chickens" />
-                          <Bar dataKey="feed" fill="#ED8936" name="Feed (kg)" />
+                          <Bar dataKey="eggs" fill="#48BB78" name={t('analyticsEggs')} />
+                          <Bar dataKey="chickens" fill="#38B2AC" name={t('analyticsChickens')} />
+                          <Bar dataKey="feed" fill="#ED8936" name={t('analyticsFeedKg')} />
                         </BarChart>
                       </SafeChartContainer>
                     </Box>
@@ -223,14 +225,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Performance Distribution</Heading>
+                        <Heading size="md">{t('performanceDistribution')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Breakdown of your flock's performance categories
+                          {t('breakdownFlockPerformance')}
                         </Text>
                       </Box>
                       <Badge colorScheme="blue" variant="subtle">
                         <Icon as={FiPieChart} mr={1} />
-                        Current Month
+                        {t('currentMonth')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -262,9 +264,9 @@ const FarmerAnalyticsPage: React.FC = () => {
                 <Alert status="info" borderRadius="md">
                   <AlertIcon />
                   <Box>
-                    <AlertTitle>Production Insight!</AlertTitle>
+                    <AlertTitle>{t('productionInsight')}</AlertTitle>
                     <AlertDescription>
-                      Your egg production has increased by 8.5% this month. Consider optimizing feed distribution to maintain this growth.
+                      {t('eggProductionIncreasedOptimizeFeed')}
                     </AlertDescription>
                   </Box>
                 </Alert>
@@ -279,11 +281,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Monthly Revenue</StatLabel>
+                        <StatLabel>{t('analyticsMonthlyRevenue')}</StatLabel>
                         <StatNumber color="green.500">$4,100</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          7.9% from last month
+                          {t('increaseFromLastMonth', { percentage: 7.9 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -292,11 +294,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Operating Costs</StatLabel>
+                        <StatLabel>{t('operatingCosts')}</StatLabel>
                         <StatNumber color="red.500">$2,500</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          4.2% from last month
+                          {t('increaseFromLastMonth', { percentage: 4.2 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -305,11 +307,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Net Profit</StatLabel>
+                        <StatLabel>{t('netProfit')}</StatLabel>
                         <StatNumber color="blue.500">$1,600</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          14.3% from last month
+                          {t('increaseFromLastMonth', { percentage: 14.3 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -321,14 +323,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Financial Trends</Heading>
+                        <Heading size="md">{t('financialTrends')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Revenue, costs, and profit analysis over time
+                          {t('revenueCostsProfitAnalysis')}
                         </Text>
                       </Box>
                       <Badge colorScheme="purple" variant="subtle">
                         <Icon as={FiDollarSign} mr={1} />
-                        6 Months
+                        {t('sixMonths')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -340,9 +342,9 @@ const FarmerAnalyticsPage: React.FC = () => {
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="revenue" stroke="#48BB78" strokeWidth={3} name="Revenue" />
-                          <Line type="monotone" dataKey="costs" stroke="#E53E3E" strokeWidth={3} name="Costs" />
-                          <Line type="monotone" dataKey="profit" stroke="#3182CE" strokeWidth={3} name="Profit" />
+                          <Line type="monotone" dataKey="revenue" stroke="#48BB78" strokeWidth={3} name={t('analyticsRevenue')} />
+                          <Line type="monotone" dataKey="costs" stroke="#E53E3E" strokeWidth={3} name={t('analyticsCosts')} />
+                          <Line type="monotone" dataKey="profit" stroke="#3182CE" strokeWidth={3} name={t('analyticsProfit')} />
                         </LineChart>
                       </SafeChartContainer>
                     </Box>
@@ -354,14 +356,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Profit vs Target</Heading>
+                        <Heading size="md">{t('profitVsTarget')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Compare actual profit against monthly targets
+                          {t('compareActualProfitTargets')}
                         </Text>
                       </Box>
                       <Badge colorScheme="green" variant="subtle">
                         <Icon as={FiTarget} mr={1} />
-                        Performance
+                        {t('performance')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -373,8 +375,8 @@ const FarmerAnalyticsPage: React.FC = () => {
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Area type="monotone" dataKey="target" stackId="1" stroke="#CBD5E0" fill="#CBD5E0" name="Target" />
-                          <Area type="monotone" dataKey="profit" stackId="2" stroke="#48BB78" fill="#48BB78" name="Actual Profit" />
+                          <Area type="monotone" dataKey="target" stackId="1" stroke="#CBD5E0" fill="#CBD5E0" name={t('target')} />
+                          <Area type="monotone" dataKey="profit" stackId="2" stroke="#48BB78" fill="#48BB78" name={t('actualProfit')} />
                         </AreaChart>
                       </SafeChartContainer>
                     </Box>
@@ -385,9 +387,9 @@ const FarmerAnalyticsPage: React.FC = () => {
                 <Alert status="success" borderRadius="md">
                   <AlertIcon />
                   <Box>
-                    <AlertTitle>Excellent Financial Performance!</AlertTitle>
+                    <AlertTitle>{t('excellentFinancialPerformance')}</AlertTitle>
                     <AlertDescription>
-                      You've exceeded your profit target by 6.7% this month. Your ROI is trending upward.
+                      {t('exceededProfitTargetROI')}
                     </AlertDescription>
                   </Box>
                 </Alert>
@@ -402,11 +404,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Avg Weight (kg)</StatLabel>
+                        <StatLabel>{t('avgWeightKg')}</StatLabel>
                         <StatNumber color="purple.500">1.2</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Week 6 performance
+                          {t('weekPerformance', { week: 6 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -415,11 +417,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Mortality Rate</StatLabel>
+                        <StatLabel>{t('mortalityRate')}</StatLabel>
                         <StatNumber color="red.500">0.8%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="decrease" />
-                          Improved by 1.3%
+                          {t('improvedBy', { percentage: 1.3 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -428,11 +430,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Feed Conversion</StatLabel>
+                        <StatLabel>{t('feedConversion')}</StatLabel>
                         <StatNumber color="orange.500">2.2</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Within target range
+                          {t('withinTargetRange')}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -441,11 +443,11 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <Card bg={cardBg} borderColor={borderColor}>
                     <CardBody>
                       <Stat>
-                        <StatLabel>Growth Rate</StatLabel>
+                        <StatLabel>{t('growthRate')}</StatLabel>
                         <StatNumber color="green.500">108.6%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Above target by 8.6%
+                          {t('aboveTargetBy', { percentage: 8.6 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -457,14 +459,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Weight Progress Tracking</Heading>
+                        <Heading size="md">{t('weightProgressTracking')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Monitor weekly weight gain against target benchmarks
+                          {t('monitorWeeklyWeightGain')}
                         </Text>
                       </Box>
                       <Badge colorScheme="green" variant="subtle">
                         <Icon as={FiActivity} mr={1} />
-                        6 Weeks
+                        {t('sixWeeks')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -476,8 +478,8 @@ const FarmerAnalyticsPage: React.FC = () => {
                           <XAxis dataKey="week" />
                           <YAxis />
                           <Tooltip />
-                          <Area type="monotone" dataKey="target" stackId="1" stroke="#E2E8F0" fill="#E2E8F0" name="Target Weight" />
-                          <Area type="monotone" dataKey="actual" stackId="2" stroke="#38B2AC" fill="#38B2AC" name="Actual Weight" />
+                          <Area type="monotone" dataKey="target" stackId="1" stroke="#E2E8F0" fill="#E2E8F0" name={t('targetWeight')} />
+                          <Area type="monotone" dataKey="actual" stackId="2" stroke="#38B2AC" fill="#38B2AC" name={t('actualWeight')} />
                         </AreaChart>
                       </SafeChartContainer>
                     </Box>
@@ -489,14 +491,14 @@ const FarmerAnalyticsPage: React.FC = () => {
                   <CardHeader>
                     <HStack justify="space-between" align="center">
                       <Box>
-                        <Heading size="md">Key Performance Indicators</Heading>
+                        <Heading size="md">{t('keyPerformanceIndicators')}</Heading>
                         <Text color={textColor} mt={1}>
-                          Track mortality rates and feed conversion efficiency
+                          {t('trackMortalityFeedConversion')}
                         </Text>
                       </Box>
                       <Badge colorScheme="blue" variant="subtle">
                         <Icon as={FiPercent} mr={1} />
-                        Weekly Trends
+                        {t('weeklyTrends')}
                       </Badge>
                     </HStack>
                   </CardHeader>
@@ -508,8 +510,8 @@ const FarmerAnalyticsPage: React.FC = () => {
                           <XAxis dataKey="week" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="mortality" stroke="#E53E3E" strokeWidth={3} name="Mortality %" />
-                          <Line type="monotone" dataKey="feed_conversion" stroke="#38B2AC" strokeWidth={3} name="Feed Conversion Ratio" />
+                          <Line type="monotone" dataKey="mortality" stroke="#E53E3E" strokeWidth={3} name={t('mortalityPercent')} />
+                          <Line type="monotone" dataKey="feed_conversion" stroke="#38B2AC" strokeWidth={3} name={t('feedConversionRatio')} />
                         </LineChart>
                       </SafeChartContainer>
                     </Box>
@@ -520,9 +522,9 @@ const FarmerAnalyticsPage: React.FC = () => {
                 <Alert status="warning" borderRadius="md">
                   <AlertIcon />
                   <Box>
-                    <AlertTitle>Growth Monitoring Alert</AlertTitle>
+                    <AlertTitle>{t('growthMonitoringAlert')}</AlertTitle>
                     <AlertDescription>
-                      Your flock is exceeding weight targets. Consider adjusting feed portions to maintain optimal growth rates.
+                      {t('flockExceedingWeightTargets')}
                     </AlertDescription>
                   </Box>
                 </Alert>
