@@ -10,6 +10,7 @@ import FarmerAnalyticsPage from './pages/FarmerAnalyticsPage';
 import FarmerBreedGuidancePage from './pages/FarmerBreedGuidancePage';
 import FarmerHealthPage from './pages/FarmerHealthPage';
 import FarmerSubscriptionPage from './pages/FarmerSubscriptionPage';
+import FarmerSettings from './pages/FarmerSettings';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth, type UserRole } from './context/AuthContext';
@@ -170,6 +171,7 @@ function App() {
                 <Route index element={<FarmerDashboard />} />
                 <Route path="onboarding" element={<FarmerOnboarding />} />
                 <Route path="profile" element={<FarmerProfile />} />
+                <Route path="settings" element={<FarmerSettings />} />
                 <Route path="farms" element={<FarmerMyFarmsPage />} />
                 <Route path="farms/add" element={<FarmerAddFarmPage />} />
                 <Route path="farms/:farmId" element={<FarmerFarmDetailsPage />} />
