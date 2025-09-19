@@ -61,7 +61,7 @@ import { farmAPI, batchAPI, activityAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import FarmerLayout from '../layouts/FarmerLayout';
 
-function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
+function TasksSection({ cardBg, borderColor, textColor, navigate, t }: any) {
   // Fetch today's tasks (batch activities) from API
   const {
     data: todayTasks,
@@ -110,14 +110,14 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
       <CardHeader>
         <HStack justify="space-between">
           <VStack align="start" spacing={0}>
-            <Heading size="md">Today's Tasks</Heading>
+            <Heading size="md">{t('todaysTasks')}</Heading>
             {tasksLoading ? (
-              <Text fontSize="sm" color={textColor}>Loading tasks...</Text>
+              <Text fontSize="sm" color={textColor}>{t('loadingTasks')}</Text>
             ) : tasksError ? (
-              <Text fontSize="sm" color="red.500">Failed to load tasks</Text>
+              <Text fontSize="sm" color="red.500">{t('failedToLoadTasks')}</Text>
             ) : (
               <Text fontSize="sm" color={textColor}>
-                {todayTasks?.filter((task: any) => task.completed).length || 0} of {todayTasks?.length || 0} completed
+                {todayTasks?.filter((task: any) => task.completed).length || 0} {t('of')} {todayTasks?.length || 0} {t('completed')}
               </Text>
             )}
           </VStack>
@@ -126,9 +126,9 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
       <CardBody pt={0}>
         <VStack spacing={3} align="stretch">
           {tasksLoading ? (
-            <Text>Loading...</Text>
+            <Text>{t('loading')}</Text>
           ) : tasksError ? (
-            <Text color="red.500">Error loading tasks</Text>
+            <Text color="red.500">{t('errorLoadingTasks')}</Text>
           ) : todayTasks && todayTasks.length > 0 ? (
             todayTasks.map((task: any, idx: number) => (
               <HStack
@@ -151,7 +151,7 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
                       fontWeight="medium"
                       textDecoration={task.completed ? 'line-through' : 'none'}
                     >
-                      {task.title || task.name || task.activity_type || 'Task'}
+                      {task.title || task.name || task.activity_type || t('task')}
                     </Text>
                     <HStack spacing={2}>
                       <Text fontSize="xs" color={textColor}>
@@ -162,7 +162,7 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
                         colorScheme={getPriorityColor(task.priority || 'medium')}
                         variant="subtle"
                       >
-                        {task.priority || 'medium'}
+                        {t(task.priority || 'medium')}
                       </Badge>
                     </HStack>
                   </VStack>
@@ -170,7 +170,7 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
               </HStack>
             ))
           ) : (
-            <Text color="gray.500">No tasks for today.</Text>
+            <Text color="gray.500">{t('noTasksForToday')}</Text>
           )}
           <Button
             leftIcon={<FiPlus />}
@@ -178,7 +178,7 @@ function TasksSection({ cardBg, borderColor, textColor, navigate }: any) {
             size="sm"
             onClick={() => navigate('/farmer/tasks')}
           >
-            View All Tasks
+            {t('viewAllTasks')}
           </Button>
         </VStack>
       </CardBody>
@@ -245,8 +245,8 @@ const FarmerDashboard = () => {
     try {
       await batchAPI.create(batchForm);
       toast({
-        title: 'Batch Created',
-        description: 'New batch has been successfully created.',
+        title: t('batchCreated'),
+        description: t('batchCreatedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -255,8 +255,8 @@ const FarmerDashboard = () => {
       onBatchModalClose();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to create batch. Please try again.',
+        title: t('error'),
+        description: t('failedToCreateBatch'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -268,8 +268,8 @@ const FarmerDashboard = () => {
     try {
       await activityAPI.create(activityForm);
       toast({
-        title: 'Activity Recorded',
-        description: 'Activity has been successfully recorded.',
+        title: t('activityRecorded'),
+        description: t('activityRecordedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -278,8 +278,8 @@ const FarmerDashboard = () => {
       onActivityModalClose();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to record activity. Please try again.',
+        title: t('error'),
+        description: t('failedToRecordActivity'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -292,8 +292,8 @@ const FarmerDashboard = () => {
       // Assuming you have a health check API endpoint
       await activityAPI.create({ ...healthForm, activity_type: 'health_check' });
       toast({
-        title: 'Health Check Recorded',
-        description: 'Health check has been successfully recorded.',
+        title: t('healthCheckRecorded'),
+        description: t('healthCheckRecordedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -302,8 +302,8 @@ const FarmerDashboard = () => {
       onHealthModalClose();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to record health check. Please try again.',
+        title: t('error'),
+        description: t('failedToRecordHealthCheck'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -333,7 +333,7 @@ const FarmerDashboard = () => {
   });
 
   // Alerts Section
-  function AlertsSection({ cardBg, borderColor, textColor }: any) {
+  function AlertsSection({ cardBg, borderColor, textColor, t }: any) {
     // Fetch alerts from API (replace with your actual alerts API if different)
     const {
       data: alerts,
@@ -351,10 +351,10 @@ const FarmerDashboard = () => {
       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
         <CardHeader>
           <HStack justify="space-between">
-            <Heading size="md">Recent Alerts</Heading>
+            <Heading size="md">{t('recentAlerts')}</Heading>
             {alertsLoading ? null : (
               <Badge colorScheme="red" variant="subtle">
-                {alerts?.length || 0} active
+                {alerts?.length || 0} {t('active')}
               </Badge>
             )}
           </HStack>
@@ -362,9 +362,9 @@ const FarmerDashboard = () => {
         <CardBody pt={0}>
           <VStack spacing={3} align="stretch">
             {alertsLoading ? (
-              <Text>Loading...</Text>
+              <Text>{t('loading')}</Text>
             ) : alertsError ? (
-              <Text color="red.500">Error loading alerts</Text>
+              <Text color="red.500">{t('errorLoadingAlerts')}</Text>
             ) : alerts && alerts.length > 0 ? (
               alerts.map((alert: any, idx: number) => (
                 <Alert
@@ -374,7 +374,7 @@ const FarmerDashboard = () => {
                 >
                   <AlertIcon />
                   <Box flex="1">
-                    <AlertTitle fontSize="sm">{alert.title || alert.activity_type || 'Alert'}</AlertTitle>
+                    <AlertTitle fontSize="sm">{alert.title || alert.activity_type || t('alert')}</AlertTitle>
                     <AlertDescription fontSize="sm">
                       {alert.message || alert.description || ''}
                       {alert.farmName && (
@@ -390,7 +390,7 @@ const FarmerDashboard = () => {
                 </Alert>
               ))
             ) : (
-              <Text color="gray.500">No recent alerts.</Text>
+              <Text color="gray.500">{t('noRecentAlerts')}</Text>
             )}
           </VStack>
         </CardBody>
@@ -399,7 +399,7 @@ const FarmerDashboard = () => {
   }
 
   // Recent Activities Section
-  function RecentActivitiesSection({ cardBg, borderColor, textColor }: any) {
+  function RecentActivitiesSection({ cardBg, borderColor, textColor, t }: any) {
     // Fetch recent activities from API (replace with your actual activities API if different)
     const {
       data: activities,
@@ -439,9 +439,9 @@ const FarmerDashboard = () => {
         <CardBody pt={0}>
           <VStack spacing={3} align="stretch">
             {activitiesLoading ? (
-              <Text>Loading...</Text>
+              <Text>{t('loading')}</Text>
             ) : activitiesError ? (
-              <Text color="red.500">Error loading activities</Text>
+              <Text color="red.500">{t('errorLoadingActivities')}</Text>
             ) : activities && activities.length > 0 ? (
               activities.map((activity: any, idx: number) => (
                 <HStack key={activity.id || idx} spacing={3}>
@@ -454,7 +454,7 @@ const FarmerDashboard = () => {
                   </Circle>
                   <VStack align="start" spacing={0} flex="1">
                     <Text fontSize="sm" fontWeight="medium">
-                      {activity.action || activity.activity_type || 'Activity'}
+                      {activity.action || activity.activity_type || t('activity')}
                     </Text>
                     <HStack spacing={2}>
                       <Text fontSize="xs" color={textColor}>
@@ -497,29 +497,29 @@ const FarmerDashboard = () => {
             {t('welcome')}, {user?.name || 'Farmer'}! 👋
           </Heading>
           <Text color={textColor}>
-            Here's what's happening with your farm today
+            {t('quickOverview')}
           </Text>
         </Box>
 
         {/* Key Metrics */}
         {statsLoading ? (
-          <Box>Loading farm stats...</Box>
+          <Box>{t('loadingYourProfile')}</Box>
         ) : statsError ? (
           <Alert status="error">
             <AlertIcon />
-            Failed to load stats
+            {t('failedToLoadProfileData')}
           </Alert>
         ) : (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
             <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
               <CardBody>
                 <Stat>
-                  <StatLabel color={textColor}>Total Birds</StatLabel>
+                  <StatLabel color={textColor}>{t('totalBirds')}</StatLabel>
                   <StatNumber color="blue.500">{farmStats.totalBirds?.toLocaleString?.() ?? farmStats.totalBirds}</StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
                     {/* TODO: Replace with real data if available */}
-                    12% from last month
+                    {t('increaseFromLastMonth', { percentage: 12 })}
                   </StatHelpText>
                 </Stat>
               </CardBody>
@@ -528,11 +528,11 @@ const FarmerDashboard = () => {
             <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
               <CardBody>
                 <Stat>
-                  <StatLabel color={textColor}>Eggs Today</StatLabel>
+                  <StatLabel color={textColor}>{t('eggsToday')}</StatLabel>
                   <StatNumber color="green.500">{farmStats.eggsToday?.toLocaleString?.() ?? farmStats.eggsToday}</StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    {farmStats.dailyProduction}% efficiency
+                    {farmStats.dailyProduction}% {t('efficiency')}
                   </StatHelpText>
                 </Stat>
               </CardBody>
@@ -541,12 +541,12 @@ const FarmerDashboard = () => {
             <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
               <CardBody>
                 <Stat>
-                  <StatLabel color={textColor}>Feed Remaining</StatLabel>
+                  <StatLabel color={textColor}>{t('feedRemaining')}</StatLabel>
                   <StatNumber color="orange.500">{farmStats.feedRemaining}%</StatNumber>
                   <StatHelpText>
                     <StatArrow type="decrease" />
                     {/* TODO: Replace with real data if available */}
-                    3 days remaining
+                    {t('daysRemaining', { days: 3 })}
                   </StatHelpText>
                 </Stat>
               </CardBody>
@@ -555,11 +555,11 @@ const FarmerDashboard = () => {
             <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
               <CardBody>
                 <Stat>
-                  <StatLabel color={textColor}>Monthly Revenue</StatLabel>
+                  <StatLabel color={textColor}>{t('monthlyRevenue')}</StatLabel>
                   <StatNumber color="purple.500">₹{farmStats.monthlyRevenue?.toLocaleString?.() ?? farmStats.monthlyRevenue}</StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
-                    {farmStats.weeklyGrowth}% this week
+                    {farmStats.weeklyGrowth}% {t('weeklyGrowth')}
                   </StatHelpText>
                 </Stat>
               </CardBody>
@@ -570,7 +570,7 @@ const FarmerDashboard = () => {
         {/* Quick Actions */}
         <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
           <CardHeader>
-            <Heading size="md">Quick Actions</Heading>
+            <Heading size="md">{t('quickActions')}</Heading>
           </CardHeader>
           <CardBody pt={0}>
             <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
@@ -579,7 +579,7 @@ const FarmerDashboard = () => {
                 colorScheme="green"
                 onClick={onBatchModalOpen}
               >
-                Add New Batch
+                {t('addNewBatch')}
               </Button>
               <Button
                 leftIcon={<FiActivity />}
@@ -587,7 +587,7 @@ const FarmerDashboard = () => {
                 variant="outline"
                 onClick={onActivityModalOpen}
               >
-                Record Activity
+                {t('recordActivity')}
               </Button>
               <Button
                 leftIcon={<FiHeart />}
@@ -595,7 +595,7 @@ const FarmerDashboard = () => {
                 variant="outline"
                 onClick={onHealthModalOpen}
               >
-                Health Check
+                {t('healthCheck')}
               </Button>
               <Button
                 leftIcon={<FiTrendingUp />}
@@ -603,21 +603,20 @@ const FarmerDashboard = () => {
                 variant="outline"
                 onClick={onReportsModalOpen}
               >
-                View Reports
+                {t('generateReport')}
               </Button>
             </SimpleGrid>
           </CardBody>
         </Card>
 
-  {/* Tasks Section - Live API Data */}
-  <TasksSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} navigate={navigate} />
+        {/* Tasks Section - Live API Data */}
+        <TasksSection t={t} cardBg={cardBg} borderColor={borderColor} textColor={textColor} navigate={navigate} />
 
+        {/* Alerts Section - Live API Data */}
+        <AlertsSection t={t} cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
-  {/* Alerts Section - Live API Data */}
-  <AlertsSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
-
-  {/* Recent Activities Section - Live API Data */}
-  <RecentActivitiesSection cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
+        {/* Recent Activities Section - Live API Data */}
+        <RecentActivitiesSection t={t} cardBg={cardBg} borderColor={borderColor} textColor={textColor} />
 
         {/* Tasks & Activities Section - TODO: Wire up to API */}
         {/*
@@ -631,42 +630,42 @@ const FarmerDashboard = () => {
       <Modal isOpen={isBatchModalOpen} onClose={onBatchModalClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add New Batch</ModalHeader>
+          <ModalHeader>{t('addNewBatch')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Batch Name</FormLabel>
+                <FormLabel>{t('batchName')}</FormLabel>
                 <Input
                   value={batchForm.name}
                   onChange={(e) => setBatchForm({ ...batchForm, name: e.target.value })}
-                  placeholder="Enter batch name"
+                  placeholder={t('enterBatchName')}
                 />
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Breed</FormLabel>
+                <FormLabel>{t('breed')}</FormLabel>
                 <Select
                   value={batchForm.breed}
                   onChange={(e) => setBatchForm({ ...batchForm, breed: e.target.value })}
-                  placeholder="Select breed"
+                  placeholder={t('selectBreed')}
                 >
-                  <option value="broiler">Broiler</option>
-                  <option value="layer">Layer</option>
-                  <option value="kienyeji">Kienyeji</option>
-                  <option value="improved-kienyeji">Improved Kienyeji</option>
+                  <option value="broiler">{t('broiler')}</option>
+                  <option value="layer">{t('layer')}</option>
+                  <option value="kienyeji">{t('kienyeji')}</option>
+                  <option value="improved-kienyeji">{t('improvedKienyeji')}</option>
                 </Select>
               </FormControl>
 
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl isRequired>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>{t('quantity')}</FormLabel>
                   <NumberInput
                     value={batchForm.quantity}
                     onChange={(value) => setBatchForm({ ...batchForm, quantity: value })}
                     min={1}
                   >
-                    <NumberInputField placeholder="Number of birds" />
+                    <NumberInputField placeholder={t('numberOfBirds')} />
                     <NumberInputStepper>
                       <NumberIncrementStepper />
                       <NumberDecrementStepper />
@@ -675,13 +674,13 @@ const FarmerDashboard = () => {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Age (weeks)</FormLabel>
+                  <FormLabel>{t('ageWeeks')}</FormLabel>
                   <NumberInput
                     value={batchForm.age}
                     onChange={(value) => setBatchForm({ ...batchForm, age: value })}
                     min={0}
                   >
-                    <NumberInputField placeholder="Age in weeks" />
+                    <NumberInputField placeholder={t('ageInWeeks')} />
                     <NumberInputStepper>
                       <NumberIncrementStepper />
                       <NumberDecrementStepper />
@@ -691,7 +690,7 @@ const FarmerDashboard = () => {
               </SimpleGrid>
 
               <FormControl>
-                <FormLabel>Acquisition Date</FormLabel>
+                <FormLabel>{t('acquisitionDate')}</FormLabel>
                 <Input
                   type="date"
                   value={batchForm.acquisition_date}
@@ -700,11 +699,11 @@ const FarmerDashboard = () => {
               </FormControl>
 
               <FormControl>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel>{t('notes')}</FormLabel>
                 <Textarea
                   value={batchForm.notes}
                   onChange={(e) => setBatchForm({ ...batchForm, notes: e.target.value })}
-                  placeholder="Additional notes about this batch"
+                  placeholder={t('additionalNotes')}
                   rows={3}
                 />
               </FormControl>
@@ -712,10 +711,10 @@ const FarmerDashboard = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onBatchModalClose}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button colorScheme="green" onClick={handleBatchSubmit}>
-              Create Batch
+              {t('createBatch')}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -725,68 +724,68 @@ const FarmerDashboard = () => {
       <Modal isOpen={isActivityModalOpen} onClose={onActivityModalClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Record Activity</ModalHeader>
+          <ModalHeader>{t('recordActivity')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Batch</FormLabel>
+                <FormLabel>{t('batch')}</FormLabel>
                 <Select
                   value={activityForm.batch}
                   onChange={(e) => setActivityForm({ ...activityForm, batch: e.target.value })}
-                  placeholder="Select batch"
+                  placeholder={t('selectBatch')}
                 >
-                  <option value="batch-1">Batch 1 - Broilers (Week 6)</option>
-                  <option value="batch-2">Batch 2 - Layers (Week 12)</option>
-                  <option value="batch-3">Batch 3 - Kienyeji (Week 8)</option>
+                  <option value="batch-1">{t('batch')} 1 - {t('broilers')} ({t('week')} 6)</option>
+                  <option value="batch-2">{t('batch')} 2 - {t('layers')} ({t('week')} 12)</option>
+                  <option value="batch-3">{t('batch')} 3 - {t('kienyeji')} ({t('week')} 8)</option>
                 </Select>
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Activity Type</FormLabel>
+                <FormLabel>{t('activityType')}</FormLabel>
                 <Select
                   value={activityForm.activity_type}
                   onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })}
-                  placeholder="Select activity type"
+                  placeholder={t('selectActivityType')}
                 >
-                  <option value="feeding">Feeding</option>
-                  <option value="vaccination">Vaccination</option>
-                  <option value="cleaning">Cleaning</option>
-                  <option value="egg_collection">Egg Collection</option>
-                  <option value="health_check">Health Check</option>
-                  <option value="medication">Medication</option>
-                  <option value="maintenance">Maintenance</option>
+                  <option value="feeding">{t('feeding')}</option>
+                  <option value="vaccination">{t('vaccination')}</option>
+                  <option value="cleaning">{t('cleaning')}</option>
+                  <option value="egg_collection">{t('eggCollection')}</option>
+                  <option value="health_check">{t('healthCheck')}</option>
+                  <option value="medication">{t('medication')}</option>
+                  <option value="maintenance">{t('maintenance')}</option>
                 </Select>
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t('description')}</FormLabel>
                 <Textarea
                   value={activityForm.description}
                   onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
-                  placeholder="Describe the activity performed"
+                  placeholder={t('describeActivity')}
                   rows={3}
                 />
               </FormControl>
 
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl>
-                  <FormLabel>Quantity/Amount</FormLabel>
+                  <FormLabel>{t('quantityAmount')}</FormLabel>
                   <Input
                     value={activityForm.quantity}
                     onChange={(e) => setActivityForm({ ...activityForm, quantity: e.target.value })}
-                    placeholder="e.g., 50kg feed, 100 eggs"
+                    placeholder={t('quantityExample')}
                   />
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Cost (KSH)</FormLabel>
+                  <FormLabel>{t('costTzs')}</FormLabel>
                   <NumberInput
                     value={activityForm.cost}
                     onChange={(value) => setActivityForm({ ...activityForm, cost: value })}
                     min={0}
                   >
-                    <NumberInputField placeholder="Cost if applicable" />
+                    <NumberInputField placeholder={t('costIfApplicable')} />
                     <NumberInputStepper>
                       <NumberIncrementStepper />
                       <NumberDecrementStepper />
@@ -796,7 +795,7 @@ const FarmerDashboard = () => {
               </SimpleGrid>
 
               <FormControl>
-                <FormLabel>Date & Time</FormLabel>
+                <FormLabel>{t('dateTime')}</FormLabel>
                 <Input
                   type="datetime-local"
                   value={activityForm.scheduled_date}
@@ -807,10 +806,10 @@ const FarmerDashboard = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onActivityModalClose}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button colorScheme="blue" onClick={handleActivitySubmit}>
-              Record Activity
+              {t('recordActivity')}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -820,72 +819,72 @@ const FarmerDashboard = () => {
       <Modal isOpen={isHealthModalOpen} onClose={onHealthModalClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Health Check</ModalHeader>
+          <ModalHeader>{t('healthCheck')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
               <FormControl isRequired>
-                <FormLabel>Batch</FormLabel>
+                <FormLabel>{t('batch')}</FormLabel>
                 <Select
                   value={healthForm.batch}
                   onChange={(e) => setHealthForm({ ...healthForm, batch: e.target.value })}
-                  placeholder="Select batch"
+                  placeholder={t('selectBatch')}
                 >
-                  <option value="batch-1">Batch 1 - Broilers (Week 6)</option>
-                  <option value="batch-2">Batch 2 - Layers (Week 12)</option>
-                  <option value="batch-3">Batch 3 - Kienyeji (Week 8)</option>
+                  <option value="batch-1">{t('batch')} 1 - {t('broilers')} ({t('week')} 6)</option>
+                  <option value="batch-2">{t('batch')} 2 - {t('layers')} ({t('week')} 12)</option>
+                  <option value="batch-3">{t('batch')} 3 - {t('kienyeji')} ({t('week')} 8)</option>
                 </Select>
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>Check Type</FormLabel>
+                <FormLabel>{t('checkType')}</FormLabel>
                 <Select
                   value={healthForm.check_type}
                   onChange={(e) => setHealthForm({ ...healthForm, check_type: e.target.value })}
-                  placeholder="Select check type"
+                  placeholder={t('selectCheckType')}
                 >
-                  <option value="routine">Routine Health Check</option>
-                  <option value="symptom_investigation">Symptom Investigation</option>
-                  <option value="post_medication">Post-Medication Check</option>
-                  <option value="vaccination_followup">Vaccination Follow-up</option>
-                  <option value="emergency">Emergency Check</option>
+                  <option value="routine">{t('routineHealthCheck')}</option>
+                  <option value="symptom_investigation">{t('symptomInvestigation')}</option>
+                  <option value="post_medication">{t('postMedicationCheck')}</option>
+                  <option value="vaccination_followup">{t('vaccinationFollowup')}</option>
+                  <option value="emergency">{t('emergencyCheck')}</option>
                 </Select>
               </FormControl>
 
               <FormControl>
-                <FormLabel>Symptoms Observed</FormLabel>
+                <FormLabel>{t('symptomsObserved')}</FormLabel>
                 <Textarea
                   value={healthForm.symptoms}
                   onChange={(e) => setHealthForm({ ...healthForm, symptoms: e.target.value })}
-                  placeholder="Describe any symptoms or observations"
+                  placeholder={t('describeSymptomsObservations')}
                   rows={3}
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Medication/Treatment</FormLabel>
+                <FormLabel>{t('medicationTreatment')}</FormLabel>
                 <Input
                   value={healthForm.medication}
                   onChange={(e) => setHealthForm({ ...healthForm, medication: e.target.value })}
-                  placeholder="Medication given or treatment applied"
+                  placeholder={t('medicationGivenTreatment')}
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Veterinarian</FormLabel>
+                <FormLabel>{t('veterinarian')}</FormLabel>
                 <Input
                   value={healthForm.veterinarian}
                   onChange={(e) => setHealthForm({ ...healthForm, veterinarian: e.target.value })}
-                  placeholder="Veterinarian name (if consulted)"
+                  placeholder={t('veterinarianNameConsulted')}
                 />
               </FormControl>
 
               <FormControl>
-                <FormLabel>Additional Notes</FormLabel>
+                <FormLabel>{t('additionalNotes')}</FormLabel>
                 <Textarea
                   value={healthForm.notes}
                   onChange={(e) => setHealthForm({ ...healthForm, notes: e.target.value })}
-                  placeholder="Additional notes or recommendations"
+                  placeholder={t('additionalNotesRecommendations')}
                   rows={3}
                 />
               </FormControl>
@@ -893,10 +892,10 @@ const FarmerDashboard = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onHealthModalClose}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button colorScheme="red" onClick={handleHealthSubmit}>
-              Save Health Check
+              {t('saveHealthCheck')}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -906,12 +905,12 @@ const FarmerDashboard = () => {
       <Modal isOpen={isReportsModalOpen} onClose={onReportsModalClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Quick Reports</ModalHeader>
+          <ModalHeader>{t('quickReports')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
               <Text color={textColor} textAlign="center">
-                Select a report to view or navigate to the full analytics page for detailed insights.
+                {t('selectReportDescription')}
               </Text>
               
               <Divider />
@@ -927,8 +926,8 @@ const FarmerDashboard = () => {
                   }}
                 >
                   <VStack spacing={1}>
-                    <Text fontWeight="bold">Production Report</Text>
-                    <Text fontSize="sm" color={textColor}>Eggs, feed consumption, growth</Text>
+                    <Text fontWeight="bold">{t('productionReport')}</Text>
+                    <Text fontSize="sm" color={textColor}>{t('productionReportDesc')}</Text>
                   </VStack>
                 </Button>
 
@@ -942,8 +941,8 @@ const FarmerDashboard = () => {
                   }}
                 >
                   <VStack spacing={1}>
-                    <Text fontWeight="bold">Financial Report</Text>
-                    <Text fontSize="sm" color={textColor}>Revenue, costs, profit analysis</Text>
+                    <Text fontWeight="bold">{t('financialReport')}</Text>
+                    <Text fontSize="sm" color={textColor}>{t('financialReportDesc')}</Text>
                   </VStack>
                 </Button>
 
@@ -957,8 +956,8 @@ const FarmerDashboard = () => {
                   }}
                 >
                   <VStack spacing={1}>
-                    <Text fontWeight="bold">Health Report</Text>
-                    <Text fontSize="sm" color={textColor}>Mortality, treatments, vaccines</Text>
+                    <Text fontWeight="bold">{t('healthReport')}</Text>
+                    <Text fontSize="sm" color={textColor}>{t('healthReportDesc')}</Text>
                   </VStack>
                 </Button>
 
@@ -972,8 +971,8 @@ const FarmerDashboard = () => {
                   }}
                 >
                   <VStack spacing={1}>
-                    <Text fontWeight="bold">Performance Report</Text>
-                    <Text fontSize="sm" color={textColor}>KPIs, trends, comparisons</Text>
+                    <Text fontWeight="bold">{t('performanceReport')}</Text>
+                    <Text fontSize="sm" color={textColor}>{t('performanceReportDesc')}</Text>
                   </VStack>
                 </Button>
               </SimpleGrid>
@@ -981,7 +980,7 @@ const FarmerDashboard = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onReportsModalClose}>
-              Close
+              {t('close')}
             </Button>
             <Button 
               colorScheme="purple" 
@@ -990,7 +989,7 @@ const FarmerDashboard = () => {
                 onReportsModalClose();
               }}
             >
-              View Full Analytics
+              {t('viewFullAnalytics')}
             </Button>
           </ModalFooter>
         </ModalContent>

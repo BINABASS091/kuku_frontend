@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Card,
@@ -122,6 +123,7 @@ interface PerformanceData {
 }
 
 const FarmerBatchesPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -320,8 +322,8 @@ const FarmerBatchesPage: React.FC = () => {
     },
     onSuccess: () => {
       toast({
-        title: 'Success',
-        description: 'Batch created successfully!',
+        title: t('success'),
+        description: t('batchCreatedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -340,8 +342,8 @@ const FarmerBatchesPage: React.FC = () => {
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create batch',
+        title: t('error'),
+        description: error.message || t('failedToCreateBatch'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -363,8 +365,8 @@ const FarmerBatchesPage: React.FC = () => {
     },
     onSuccess: () => {
       toast({
-        title: 'Success',
-        description: 'Activity recorded successfully!',
+        title: t('success'),
+        description: t('activityRecordedSuccessfully'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -382,8 +384,8 @@ const FarmerBatchesPage: React.FC = () => {
     },
     onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to record activity',
+        title: t('error'),
+        description: error.message || t('failedToRecordActivity'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -495,10 +497,10 @@ const FarmerBatchesPage: React.FC = () => {
         {/* Page Header */}
         <Box>
           <Heading size="lg" mb={2}>
-            Batch Management 🐔
+            {t('batchManagement')} 🐔
           </Heading>
           <Text color={textColor}>
-            Manage your poultry batches, track activities, and monitor performance
+            {t('manageBatchesDescription')}
           </Text>
         </Box>
 
@@ -507,13 +509,13 @@ const FarmerBatchesPage: React.FC = () => {
           <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
             <CardBody>
               <Stat>
-                <StatLabel color={textColor}>Active Batches</StatLabel>
+                <StatLabel color={textColor}>{t('activeBatches')}</StatLabel>
                 <StatNumber color="green.500">
                   {safeBatches.filter((b: any) => b.status === 'active').length}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="increase" />
-                  2 new this month
+                  {t('newThisMonth', { count: 2 })}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -522,13 +524,13 @@ const FarmerBatchesPage: React.FC = () => {
           <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
             <CardBody>
               <Stat>
-                <StatLabel color={textColor}>Total Birds</StatLabel>
+                <StatLabel color={textColor}>{t('totalBirds')}</StatLabel>
                 <StatNumber color="blue.500">
                   {safeBatches.reduce((sum: number, batch: any) => sum + batch.activeBirds, 0).toLocaleString()}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="increase" />
-                  5% from last week
+                  {t('increaseFromLastWeek', { percentage: 5 })}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -537,13 +539,13 @@ const FarmerBatchesPage: React.FC = () => {
           <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
             <CardBody>
               <Stat>
-                <StatLabel color={textColor}>Avg Mortality</StatLabel>
+                <StatLabel color={textColor}>{t('avgMortality')}</StatLabel>
                 <StatNumber color="orange.500">
                   {safeBatches.length > 0 ? (safeBatches.reduce((sum: number, batch: any) => sum + batch.mortalityRate, 0) / safeBatches.length).toFixed(1) : '0.0'}%
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="decrease" />
-                  Within target range
+                  {t('withinTargetRange')}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -552,13 +554,13 @@ const FarmerBatchesPage: React.FC = () => {
           <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
             <CardBody>
               <Stat>
-                <StatLabel color={textColor}>Feed Conversion</StatLabel>
+                <StatLabel color={textColor}>{t('feedConversion')}</StatLabel>
                 <StatNumber color="purple.500">
                   {safeBatches.length > 0 ? (safeBatches.reduce((sum: number, batch: any) => sum + batch.feedConversion, 0) / safeBatches.length).toFixed(1) : '0.0'}
                 </StatNumber>
                 <StatHelpText>
                   <StatArrow type="decrease" />
-                  Improving efficiency
+                  {t('improvingEfficiency')}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -568,9 +570,9 @@ const FarmerBatchesPage: React.FC = () => {
         {/* Main Content with Tabs */}
         <Tabs variant="enclosed" colorScheme="green">
           <TabList>
-            <Tab>Active Batches</Tab>
-            <Tab>Activities</Tab>
-            <Tab>Performance</Tab>
+            <Tab>{t('activeBatches')}</Tab>
+            <Tab>{t('activities')}</Tab>
+            <Tab>{t('performance')}</Tab>
           </TabList>
 
           <TabPanels>
@@ -585,7 +587,7 @@ const FarmerBatchesPage: React.FC = () => {
                         <FiSearch color="gray.300" />
                       </InputLeftElement>
                       <Input
-                        placeholder="Search batches..."
+                        placeholder={t('searchBatches')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -596,10 +598,10 @@ const FarmerBatchesPage: React.FC = () => {
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                      <option value="all">All Status</option>
-                      <option value="active">Active</option>
-                      <option value="completed">Completed</option>
-                      <option value="planned">Planned</option>
+                      <option value="all">{t('allStatus')}</option>
+                      <option value="active">{t('active')}</option>
+                      <option value="completed">{t('completed')}</option>
+                      <option value="planned">{t('planned')}</option>
                     </Select>
                   </HStack>
 
@@ -608,7 +610,7 @@ const FarmerBatchesPage: React.FC = () => {
                     colorScheme="green"
                     onClick={onAddBatchOpen}
                   >
-                    Add New Batch
+                    {t('addNewBatch')}
                   </Button>
                 </Flex>
 
@@ -640,13 +642,13 @@ const FarmerBatchesPage: React.FC = () => {
                             />
                             <MenuList>
                               <MenuItem icon={<FiEye />} onClick={() => handleViewBatch(batch)}>
-                                View Details
+                                {t('viewDetails')}
                               </MenuItem>
                               <MenuItem icon={<FiEdit />} onClick={() => handleEditBatch(batch.id)}>
-                                Edit Batch
+                                {t('editBatch')}
                               </MenuItem>
                               <MenuItem icon={<FiTrash2 />} color="red.500" onClick={() => handleDeleteBatch(batch.id)}>
-                                Delete Batch
+                                {t('deleteBatch')}
                               </MenuItem>
                             </MenuList>
                           </Menu>
@@ -658,16 +660,16 @@ const FarmerBatchesPage: React.FC = () => {
                           <SimpleGrid columns={2} spacing={4}>
                             <VStack align="start" spacing={1}>
                               <Text fontSize="xs" color={textColor} textTransform="uppercase">
-                                Age
+                                {t('age')}
                               </Text>
                               <Text fontSize="lg" fontWeight="bold">
-                                {batch.currentAge} days
+                                {batch.currentAge} {t('days')}
                               </Text>
                             </VStack>
                             
                             <VStack align="start" spacing={1}>
                               <Text fontSize="xs" color={textColor} textTransform="uppercase">
-                                Birds
+                                {t('birds')}
                               </Text>
                               <Text fontSize="lg" fontWeight="bold">
                                 {batch.activeBirds}/{batch.totalBirds}
@@ -677,21 +679,21 @@ const FarmerBatchesPage: React.FC = () => {
 
                           <VStack spacing={2} align="stretch">
                             <HStack justify="space-between">
-                              <Text fontSize="sm">Health Status</Text>
+                              <Text fontSize="sm">{t('healthStatus')}</Text>
                               <Badge colorScheme={getHealthColor(batch.health)} variant="subtle">
-                                {batch.health.toUpperCase()}
+                                {t(batch.health.toLowerCase())}
                               </Badge>
                             </HStack>
                             
                             <HStack justify="space-between">
-                              <Text fontSize="sm">Mortality Rate</Text>
+                              <Text fontSize="sm">{t('mortalityRate')}</Text>
                               <Text fontSize="sm" fontWeight="medium">
                                 {batch.mortalityRate}%
                               </Text>
                             </HStack>
                             
                             <HStack justify="space-between">
-                              <Text fontSize="sm">Feed Conversion</Text>
+                              <Text fontSize="sm">{t('feedConversion')}</Text>
                               <Text fontSize="sm" fontWeight="medium">
                                 {batch.feedConversion}:1
                               </Text>
@@ -704,7 +706,7 @@ const FarmerBatchesPage: React.FC = () => {
                             textAlign="center"
                             py={1}
                           >
-                            {batch.status.toUpperCase()}
+                            {t(batch.status)}
                           </Badge>
                         </VStack>
                       </CardBody>
@@ -715,11 +717,11 @@ const FarmerBatchesPage: React.FC = () => {
                 {filteredBatches.length === 0 && (
                   <Alert status="info" borderRadius="md">
                     <AlertIcon />
-                    <AlertTitle>No batches found!</AlertTitle>
+                    <AlertTitle>{t('noBatchesFound')}</AlertTitle>
                     <AlertDescription>
                       {searchTerm || statusFilter !== 'all'
-                        ? 'Try adjusting your search or filter criteria.'
-                        : 'Get started by creating your first batch.'}
+                        ? t('adjustSearchCriteria')
+                        : t('createFirstBatch')}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -730,25 +732,25 @@ const FarmerBatchesPage: React.FC = () => {
             <TabPanel>
               <VStack spacing={4} align="stretch">
                 <HStack justify="space-between">
-                  <Heading size="md">Recent Activities</Heading>
+                  <Heading size="md">{t('recentActivities')}</Heading>
                   <Button
                     leftIcon={<FiPlus />}
                     colorScheme="blue"
                     onClick={onActivityModalOpen}
                   >
-                    Record Activity
+                    {t('recordActivity')}
                   </Button>
                 </HStack>
 
                 <Table variant="simple">
                   <Thead>
                     <Tr>
-                      <Th>Batch</Th>
-                      <Th>Activity</Th>
-                      <Th>Date & Time</Th>
-                      <Th>Performed By</Th>
-                      <Th>Status</Th>
-                      <Th>Actions</Th>
+                      <Th>{t('batch')}</Th>
+                      <Th>{t('activity')}</Th>
+                      <Th>{t('dateTime')}</Th>
+                      <Th>{t('performedBy')}</Th>
+                      <Th>{t('status')}</Th>
+                      <Th>{t('actions')}</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -760,7 +762,7 @@ const FarmerBatchesPage: React.FC = () => {
                         <Td>
                           <HStack>
                             <Badge colorScheme={getActivityTypeColor(activity.type)} variant="subtle">
-                              {activity.type}
+                              {t(activity.type)}
                             </Badge>
                             <Text fontSize="sm">{activity.description}</Text>
                           </HStack>
@@ -776,7 +778,7 @@ const FarmerBatchesPage: React.FC = () => {
                         </Td>
                         <Td>
                           <Badge colorScheme={getActivityStatusColor(activity.status)} variant="subtle">
-                            {activity.status}
+                            {t(activity.status)}
                           </Badge>
                         </Td>
                         <Td>
@@ -805,13 +807,13 @@ const FarmerBatchesPage: React.FC = () => {
             {/* Performance Tab */}
             <TabPanel>
               <VStack spacing={6} align="stretch">
-                <Heading size="md">Performance Analytics</Heading>
+                <Heading size="md">{t('performanceAnalytics')}</Heading>
                 
                 {performanceData && performanceData.length > 0 ? (
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
                   <Card key="chart-egg-production" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="sm">Egg Production Trends</Heading>
+                      <Heading size="sm">{t('eggProductionTrends')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
@@ -826,7 +828,7 @@ const FarmerBatchesPage: React.FC = () => {
                               dataKey="eggProduction"
                               stroke="#3B82F6"
                               strokeWidth={2}
-                              name="Eggs"
+                              name={t('eggs')}
                             />
                           </LineChart>
                         </SafeChartContainer>
@@ -836,7 +838,7 @@ const FarmerBatchesPage: React.FC = () => {
 
                   <Card key="chart-feed-consumption" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="sm">Feed Consumption</Heading>
+                      <Heading size="sm">{t('feedConsumption')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
@@ -846,7 +848,7 @@ const FarmerBatchesPage: React.FC = () => {
                             <XAxis dataKey="date" />
                             <YAxis />
                             <Tooltip />
-                            <Bar dataKey="feedConsumption" fill="#10B981" name="Feed (kg)" />
+                            <Bar dataKey="feedConsumption" fill="#10B981" name={t('feedKg')} />
                           </BarChart>
                         </SafeChartContainer>
                       </Box>
@@ -855,7 +857,7 @@ const FarmerBatchesPage: React.FC = () => {
 
                   <Card key="chart-mortality-tracking" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="sm">Mortality Tracking</Heading>
+                      <Heading size="sm">{t('mortalityTracking')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
@@ -871,7 +873,7 @@ const FarmerBatchesPage: React.FC = () => {
                               stroke="#F59E0B"
                               fill="#F59E0B"
                               fillOpacity={0.3}
-                              name="Mortality"
+                              name={t('mortality')}
                             />
                           </AreaChart>
                         </SafeChartContainer>
@@ -881,7 +883,7 @@ const FarmerBatchesPage: React.FC = () => {
 
                   <Card key="chart-average-weight" bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="sm">Average Weight</Heading>
+                      <Heading size="sm">{t('averageWeight')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="250px" w="100%" minH="250px">
@@ -896,7 +898,7 @@ const FarmerBatchesPage: React.FC = () => {
                               dataKey="weight"
                               stroke="#8B5CF6"
                               strokeWidth={2}
-                              name="Weight (g)"
+                              name={t('weightG')}
                             />
                           </LineChart>
                         </SafeChartContainer>
@@ -905,7 +907,7 @@ const FarmerBatchesPage: React.FC = () => {
                   </Card>
                 </SimpleGrid>
                 ) : (
-                  <Text>Loading performance data...</Text>
+                  <Text>{t('loadingPerformanceData')}</Text>
                 )}
               </VStack>
             </TabPanel>
@@ -917,7 +919,7 @@ const FarmerBatchesPage: React.FC = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              {selectedBatch?.name} Details
+              {selectedBatch?.name} {t('details')}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -926,28 +928,28 @@ const FarmerBatchesPage: React.FC = () => {
                   <SimpleGrid columns={2} spacing={4}>
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Breed
+                        {t('breed')}
                       </Text>
                       <Text>{selectedBatch.breed}</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Location
+                        {t('location')}
                       </Text>
                       <Text>{selectedBatch.location}</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Start Date
+                        {t('startDate')}
                       </Text>
                       <Text>{format(new Date(selectedBatch.startDate), 'MMM dd, yyyy')}</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Expected Harvest
+                        {t('expectedHarvest')}
                       </Text>
                       <Text>{format(new Date(selectedBatch.expectedHarvestDate), 'MMM dd, yyyy')}</Text>
                     </VStack>
@@ -958,31 +960,31 @@ const FarmerBatchesPage: React.FC = () => {
                   <SimpleGrid columns={2} spacing={4}>
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Current Age
+                        {t('currentAge')}
                       </Text>
-                      <Text>{selectedBatch.currentAge} days</Text>
+                      <Text>{selectedBatch.currentAge} {t('days')}</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Active Birds
+                        {t('activeBirds')}
                       </Text>
                       <Text>{selectedBatch.activeBirds} / {selectedBatch.totalBirds}</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Average Weight
+                        {t('averageWeight')}
                       </Text>
                       <Text>{selectedBatch.avgWeight}g</Text>
                     </VStack>
                     
                     <VStack align="start" spacing={2}>
                       <Text fontSize="sm" color={textColor} fontWeight="bold">
-                        Health Status
+                        {t('healthStatus')}
                       </Text>
                       <Badge colorScheme={getHealthColor(selectedBatch.health)} variant="subtle">
-                        {selectedBatch.health.toUpperCase()}
+                        {t(selectedBatch.health.toLowerCase())}
                       </Badge>
                     </VStack>
                   </SimpleGrid>
@@ -991,10 +993,10 @@ const FarmerBatchesPage: React.FC = () => {
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" mr={3} onClick={onClose}>
-                Close
+                {t('close')}
               </Button>
               <Button colorScheme="blue" onClick={() => selectedBatch && handleEditBatch(selectedBatch.id)}>
-                Edit Batch
+                {t('editBatch')}
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -1004,18 +1006,18 @@ const FarmerBatchesPage: React.FC = () => {
         <Modal isOpen={isAddBatchOpen} onClose={onAddBatchClose} size="lg">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Add New Batch</ModalHeader>
+            <ModalHeader>{t('addNewBatch')}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <form onSubmit={handleAddBatchSubmit}>
                 <VStack spacing={4} align="stretch">
                   <FormControl isRequired>
-                    <FormLabel>Farm</FormLabel>
+                    <FormLabel>{t('farm')}</FormLabel>
                     <Select
                       name="farmID"
                       value={batchForm.farmID}
                       onChange={handleBatchFormChange}
-                      placeholder="Select farm"
+                      placeholder={t('selectFarm')}
                     >
                       {(farms || []).map((farm: any) => (
                         <option key={farm.farmID || farm.id} value={farm.farmID || farm.id}>
@@ -1026,12 +1028,12 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Breed</FormLabel>
+                    <FormLabel>{t('breed')}</FormLabel>
                     <Select
                       name="breedID"
                       value={batchForm.breedID}
                       onChange={handleBatchFormChange}
-                      placeholder="Select breed"
+                      placeholder={t('selectBreed')}
                     >
                       {(breeds || []).map((breed: any) => (
                         <option key={breed.breedID || breed.id} value={breed.breedID || breed.id}>
@@ -1042,7 +1044,7 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Arrive Date</FormLabel>
+                    <FormLabel>{t('arriveDate')}</FormLabel>
                     <Input
                       type="date"
                       name="arriveDate"
@@ -1053,48 +1055,48 @@ const FarmerBatchesPage: React.FC = () => {
 
                   <SimpleGrid columns={2} spacing={4}>
                     <FormControl isRequired>
-                      <FormLabel>Initial Age (days)</FormLabel>
+                      <FormLabel>{t('initialAge')} ({t('days')})</FormLabel>
                       <Input
                         type="number"
                         name="initAge"
                         value={batchForm.initAge}
                         onChange={handleBatchFormChange}
-                        placeholder="Enter initial age"
+                        placeholder={t('enterInitialAge')}
                       />
                     </FormControl>
 
                     <FormControl isRequired>
-                      <FormLabel>Harvest Age (days)</FormLabel>
+                      <FormLabel>{t('harvestAge')} ({t('days')})</FormLabel>
                       <Input
                         type="number"
                         name="harvestAge"
                         value={batchForm.harvestAge}
                         onChange={handleBatchFormChange}
-                        placeholder="Enter harvest age"
+                        placeholder={t('enterHarvestAge')}
                       />
                     </FormControl>
                   </SimpleGrid>
 
                   <SimpleGrid columns={2} spacing={4}>
                     <FormControl isRequired>
-                      <FormLabel>Quantity</FormLabel>
+                      <FormLabel>{t('quantity')}</FormLabel>
                       <Input
                         type="number"
                         name="quanitity"
                         value={batchForm.quanitity}
                         onChange={handleBatchFormChange}
-                        placeholder="Number of birds"
+                        placeholder={t('numberOfBirds')}
                       />
                     </FormControl>
 
                     <FormControl isRequired>
-                      <FormLabel>Initial Weight (g)</FormLabel>
+                      <FormLabel>{t('initialWeight')} (g)</FormLabel>
                       <Input
                         type="number"
                         name="initWeight"
                         value={batchForm.initWeight}
                         onChange={handleBatchFormChange}
-                        placeholder="Average weight in grams"
+                        placeholder={t('averageWeightInGrams')}
                       />
                     </FormControl>
                   </SimpleGrid>
@@ -1103,15 +1105,15 @@ const FarmerBatchesPage: React.FC = () => {
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" mr={3} onClick={onAddBatchClose}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 colorScheme="green"
                 onClick={handleAddBatchSubmit}
                 isLoading={addBatchMutation.isLoading}
-                loadingText="Creating..."
+                loadingText={t('creating')}
               >
-                Create Batch
+                {t('createBatch')}
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -1121,18 +1123,18 @@ const FarmerBatchesPage: React.FC = () => {
         <Modal isOpen={isActivityModalOpen} onClose={onActivityModalClose} size="lg">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Record Activity</ModalHeader>
+            <ModalHeader>{t('recordActivity')}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <form onSubmit={handleActivitySubmit}>
                 <VStack spacing={4}>
                   <FormControl isRequired>
-                    <FormLabel>Batch</FormLabel>
+                    <FormLabel>{t('batch')}</FormLabel>
                     <Select
                       name="batchID"
                       value={activityForm.batchID}
                       onChange={handleActivityFormChange}
-                      placeholder="Select batch"
+                      placeholder={t('selectBatch')}
                     >
                       {batches?.map((batch: any) => (
                         <option key={batch.batchID || batch.id} value={batch.batchID || batch.id}>
@@ -1143,12 +1145,12 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Activity Type</FormLabel>
+                    <FormLabel>{t('activityType')}</FormLabel>
                     <Select
                       name="activityTypeID"
                       value={activityForm.activityTypeID}
                       onChange={handleActivityFormChange}
-                      placeholder="Select activity type"
+                      placeholder={t('selectActivityType')}
                     >
                       {activityTypes?.map((type: any) => (
                         <option key={type.breedActivityID || type.id} value={type.breedActivityID || type.id}>
@@ -1159,17 +1161,17 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Activity Name</FormLabel>
+                    <FormLabel>{t('activityName')}</FormLabel>
                     <Input
                       name="batchActivityName"
                       value={activityForm.batchActivityName}
                       onChange={handleActivityFormChange}
-                      placeholder="Enter activity name"
+                      placeholder={t('enterActivityName')}
                     />
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>{t('date')}</FormLabel>
                     <Input
                       type="date"
                       name="batchActivityDate"
@@ -1179,18 +1181,18 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Details</FormLabel>
+                    <FormLabel>{t('details')}</FormLabel>
                     <Textarea
                       name="batchActivityDetails"
                       value={activityForm.batchActivityDetails}
                       onChange={handleActivityFormChange}
-                      placeholder="Enter activity details (optional)"
+                      placeholder={t('enterActivityDetails')}
                       rows={3}
                     />
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Cost (₦)</FormLabel>
+                    <FormLabel>{t('cost')} (₦)</FormLabel>
                     <Input
                       type="number"
                       name="batchAcitivtyCost"
@@ -1205,15 +1207,15 @@ const FarmerBatchesPage: React.FC = () => {
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" mr={3} onClick={onActivityModalClose}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 colorScheme="blue"
                 onClick={handleActivitySubmit}
                 isLoading={addActivityMutation.isLoading}
-                loadingText="Recording..."
+                loadingText={t('recording')}
               >
-                Record Activity
+                {t('recordActivity')}
               </Button>
             </ModalFooter>
           </ModalContent>

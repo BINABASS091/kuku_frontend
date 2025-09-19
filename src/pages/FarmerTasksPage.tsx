@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Card,
@@ -78,6 +79,7 @@ interface Task {
 }
 
 const FarmerTasksPage: React.FC = () => {
+  const { t } = useTranslation();
   const { isLoading, isError, error } = useQuery(['farmerTasks'], fetchFarmerTasks);
   const { isOpen: isNewTaskOpen, onOpen: onNewTaskOpen, onClose: onNewTaskClose } = useDisclosure();
   const { isOpen: isEditTaskOpen, onOpen: onEditTaskOpen, onClose: onEditTaskClose } = useDisclosure();
@@ -266,9 +268,9 @@ const FarmerTasksPage: React.FC = () => {
     const diffHours = Math.ceil(diff / (1000 * 60 * 60));
     
     if (diffHours < 0) {
-      return `Overdue by ${Math.abs(diffHours)}h`;
+      return t('overdueByHours', { hours: Math.abs(diffHours) });
     } else if (diffHours < 24) {
-      return `Due in ${diffHours}h`;
+      return t('dueInHours', { hours: diffHours });
     } else {
       return date.toLocaleDateString();
     }
@@ -294,13 +296,13 @@ const FarmerTasksPage: React.FC = () => {
             </HStack>
             <HStack spacing={2}>
               <Badge colorScheme={getCategoryColor(task.category)} size="sm">
-                {task.category.replace('-', ' ')}
+                {t(task.category.replace('-', ''))}
               </Badge>
               <Badge colorScheme={getPriorityColor(task.priority)} size="sm">
-                {task.priority}
+                {t(task.priority)}
               </Badge>
               <Badge colorScheme={getStatusColor(task.status)} size="sm">
-                {task.status.replace('-', ' ')}
+                {t(task.status.replace('-', ''))}
               </Badge>
             </HStack>
           </VStack>
@@ -337,7 +339,7 @@ const FarmerTasksPage: React.FC = () => {
               <HStack spacing={1}>
                 <FiClock />
                 <Text fontSize="xs" color={textColor}>
-                  {task.estimatedDuration}min
+                  {task.estimatedDuration}{t('min')}
                 </Text>
               </HStack>
               
@@ -354,7 +356,7 @@ const FarmerTasksPage: React.FC = () => {
                 <HStack spacing={1}>
                   <FiRepeat />
                   <Text fontSize="xs" color={textColor}>
-                    {task.recurringPattern}
+                    {t(task.recurringPattern || '')}
                   </Text>
                 </HStack>
               )}
@@ -384,7 +386,7 @@ const FarmerTasksPage: React.FC = () => {
     return (
       <Box p={6} textAlign="center">
         <Spinner size="xl" />
-        <Text mt={4}>Loading tasks...</Text>
+        <Text mt={4}>{t('loadingTasks')}</Text>
       </Box>
     );
   }
@@ -394,7 +396,7 @@ const FarmerTasksPage: React.FC = () => {
       <Box p={6}>
         <Alert status="error" mb={4}>
           <AlertIcon />
-          {error instanceof Error ? error.message : 'Failed to load tasks.'}
+          {error instanceof Error ? error.message : t('failedToLoadTasks')}
         </Alert>
       </Box>
     );
@@ -406,15 +408,15 @@ const FarmerTasksPage: React.FC = () => {
         {/* Header */}
         <Flex justify="space-between" align="center" mb={6}>
         <VStack align="start" spacing={0}>
-          <Heading size="lg" color={textColor}>Daily Tasks</Heading>
-          <Text color={textColor}>Manage your farm activities and schedules</Text>
+          <Heading size="lg" color={textColor}>{t('dailyTasks')}</Heading>
+          <Text color={textColor}>{t('manageFarmActivities')}</Text>
         </VStack>
         <Button
           leftIcon={<FiPlus />}
           colorScheme="blue"
           onClick={onNewTaskOpen}
         >
-          New Task
+          {t('newTask')}
         </Button>
       </Flex>
 
@@ -425,7 +427,7 @@ const FarmerTasksPage: React.FC = () => {
             <Text fontSize="2xl" fontWeight="bold" color="blue.500">
               {taskStats.total}
             </Text>
-            <Text fontSize="sm" color={textColor}>Total Tasks</Text>
+            <Text fontSize="sm" color={textColor}>{t('totalTasks')}</Text>
           </CardBody>
         </Card>
         
@@ -434,7 +436,7 @@ const FarmerTasksPage: React.FC = () => {
             <Text fontSize="2xl" fontWeight="bold" color="yellow.500">
               {taskStats.pending}
             </Text>
-            <Text fontSize="sm" color={textColor}>Pending</Text>
+            <Text fontSize="sm" color={textColor}>{t('pending')}</Text>
           </CardBody>
         </Card>
         
@@ -443,7 +445,7 @@ const FarmerTasksPage: React.FC = () => {
             <Text fontSize="2xl" fontWeight="bold" color="blue.500">
               {taskStats.inProgress}
             </Text>
-            <Text fontSize="sm" color={textColor}>In Progress</Text>
+            <Text fontSize="sm" color={textColor}>{t('inprogress')}</Text>
           </CardBody>
         </Card>
         
@@ -452,7 +454,7 @@ const FarmerTasksPage: React.FC = () => {
             <Text fontSize="2xl" fontWeight="bold" color="green.500">
               {taskStats.completed}
             </Text>
-            <Text fontSize="sm" color={textColor}>Completed</Text>
+            <Text fontSize="sm" color={textColor}>{t('completed')}</Text>
           </CardBody>
         </Card>
         
@@ -461,7 +463,7 @@ const FarmerTasksPage: React.FC = () => {
             <Text fontSize="2xl" fontWeight="bold" color="red.500">
               {taskStats.overdue}
             </Text>
-            <Text fontSize="sm" color={textColor}>Overdue</Text>
+            <Text fontSize="sm" color={textColor}>{t('overdue')}</Text>
           </CardBody>
         </Card>
       </SimpleGrid>
@@ -469,7 +471,7 @@ const FarmerTasksPage: React.FC = () => {
       {/* Quick Actions */}
       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor} mb={6}>
         <CardHeader>
-          <Heading size="md" color={textColor}>Quick Actions</Heading>
+          <Heading size="md" color={textColor}>{t('quickActions')}</Heading>
         </CardHeader>
         <CardBody>
           <SimpleGrid columns={{ base: 2, md: 4, lg: 6 }} spacing={4}>
@@ -483,7 +485,7 @@ const FarmerTasksPage: React.FC = () => {
                 console.log('Create feeding task');
               }}
             >
-              Add Feeding
+              {t('addFeeding')}
             </Button>
             
             <Button
@@ -496,7 +498,7 @@ const FarmerTasksPage: React.FC = () => {
                 console.log('Create health check task');
               }}
             >
-              Health Check
+              {t('healthCheck')}
             </Button>
             
             <Button
@@ -509,7 +511,7 @@ const FarmerTasksPage: React.FC = () => {
                 console.log('Create cleaning task');
               }}
             >
-              Cleaning
+              {t('cleaning')}
             </Button>
             
             <Button
@@ -522,7 +524,7 @@ const FarmerTasksPage: React.FC = () => {
                 console.log('Create maintenance task');
               }}
             >
-              Maintenance
+              {t('maintenance')}
             </Button>
             
             <Button
@@ -535,7 +537,7 @@ const FarmerTasksPage: React.FC = () => {
                 console.log('Create record keeping task');
               }}
             >
-              Record Data
+              {t('recordData')}
             </Button>
             
             <Button
@@ -548,7 +550,7 @@ const FarmerTasksPage: React.FC = () => {
                 setActiveTab(5);
               }}
             >
-              View Calendar
+              {t('viewCalendar')}
             </Button>
           </SimpleGrid>
         </CardBody>
@@ -559,13 +561,13 @@ const FarmerTasksPage: React.FC = () => {
         <CardBody>
           <SimpleGrid columns={{ base: 1, md: 4 }} spacing={4}>
             <FormControl>
-              <FormLabel fontSize="sm">Search</FormLabel>
+              <FormLabel fontSize="sm">{t('search')}</FormLabel>
               <InputGroup>
                 <InputLeftElement>
                   <FiSearch />
                 </InputLeftElement>
                 <Input
-                  placeholder="Search tasks..."
+                  placeholder={t('searchTasks')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -573,37 +575,37 @@ const FarmerTasksPage: React.FC = () => {
             </FormControl>
             
             <FormControl>
-              <FormLabel fontSize="sm">Category</FormLabel>
+              <FormLabel fontSize="sm">{t('category')}</FormLabel>
               <Select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-                <option value="all">All Categories</option>
-                <option value="feeding">Feeding</option>
-                <option value="health">Health</option>
-                <option value="cleaning">Cleaning</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="breeding">Breeding</option>
-                <option value="record-keeping">Record Keeping</option>
+                <option value="all">{t('allCategories')}</option>
+                <option value="feeding">{t('feeding')}</option>
+                <option value="health">{t('health')}</option>
+                <option value="cleaning">{t('cleaning')}</option>
+                <option value="maintenance">{t('maintenance')}</option>
+                <option value="breeding">{t('breeding')}</option>
+                <option value="record-keeping">{t('recordkeeping')}</option>
               </Select>
             </FormControl>
             
             <FormControl>
-              <FormLabel fontSize="sm">Status</FormLabel>
+              <FormLabel fontSize="sm">{t('status')}</FormLabel>
               <Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="overdue">Overdue</option>
+                <option value="all">{t('allStatus')}</option>
+                <option value="pending">{t('pending')}</option>
+                <option value="in-progress">{t('inprogress')}</option>
+                <option value="completed">{t('completed')}</option>
+                <option value="overdue">{t('overdue')}</option>
               </Select>
             </FormControl>
             
             <FormControl>
-              <FormLabel fontSize="sm">Priority</FormLabel>
+              <FormLabel fontSize="sm">{t('priority')}</FormLabel>
               <Select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)}>
-                <option value="all">All Priorities</option>
-                <option value="urgent">Urgent</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
+                <option value="all">{t('allPriorities')}</option>
+                <option value="urgent">{t('urgent')}</option>
+                <option value="high">{t('high')}</option>
+                <option value="medium">{t('medium')}</option>
+                <option value="low">{t('low')}</option>
               </Select>
             </FormControl>
           </SimpleGrid>
@@ -613,12 +615,12 @@ const FarmerTasksPage: React.FC = () => {
       {/* Tasks Tabs */}
       <Tabs index={activeTab} onChange={setActiveTab}>
         <TabList>
-          <Tab>Today ({tasksByStatus.today.length})</Tab>
-          <Tab>Pending ({tasksByStatus.pending.length})</Tab>
-          <Tab>In Progress ({tasksByStatus.inProgress.length})</Tab>
-          <Tab>Completed ({tasksByStatus.completed.length})</Tab>
-          <Tab>Overdue ({tasksByStatus.overdue.length})</Tab>
-          <Tab>Calendar View</Tab>
+          <Tab>{t('today')} ({tasksByStatus.today.length})</Tab>
+          <Tab>{t('pending')} ({tasksByStatus.pending.length})</Tab>
+          <Tab>{t('inprogress')} ({tasksByStatus.inProgress.length})</Tab>
+          <Tab>{t('completed')} ({tasksByStatus.completed.length})</Tab>
+          <Tab>{t('overdue')} ({tasksByStatus.overdue.length})</Tab>
+          <Tab>{t('calendarView')}</Tab>
         </TabList>
 
         <TabPanels>
@@ -630,7 +632,7 @@ const FarmerTasksPage: React.FC = () => {
             </SimpleGrid>
             {tasksByStatus.today.length === 0 && (
               <Text textAlign="center" color={textColor} py={8}>
-                No tasks scheduled for today
+                {t('noTasksScheduledToday')}
               </Text>
             )}
           </TabPanel>
@@ -643,7 +645,7 @@ const FarmerTasksPage: React.FC = () => {
             </SimpleGrid>
             {tasksByStatus.pending.length === 0 && (
               <Text textAlign="center" color={textColor} py={8}>
-                No pending tasks
+                {t('noPendingTasks')}
               </Text>
             )}
           </TabPanel>
@@ -656,7 +658,7 @@ const FarmerTasksPage: React.FC = () => {
             </SimpleGrid>
             {tasksByStatus.inProgress.length === 0 && (
               <Text textAlign="center" color={textColor} py={8}>
-                No tasks in progress
+                {t('noTasksInProgress')}
               </Text>
             )}
           </TabPanel>
@@ -669,7 +671,7 @@ const FarmerTasksPage: React.FC = () => {
             </SimpleGrid>
             {tasksByStatus.completed.length === 0 && (
               <Text textAlign="center" color={textColor} py={8}>
-                No completed tasks
+                {t('noCompletedTasks')}
               </Text>
             )}
           </TabPanel>
@@ -682,7 +684,7 @@ const FarmerTasksPage: React.FC = () => {
             </SimpleGrid>
             {tasksByStatus.overdue.length === 0 && (
               <Text textAlign="center" color={textColor} py={8}>
-                No overdue tasks
+                {t('noOverdueTasks')}
               </Text>
             )}
           </TabPanel>
@@ -691,11 +693,11 @@ const FarmerTasksPage: React.FC = () => {
           <TabPanel px={0}>
             <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
               <CardHeader>
-                <Heading size="md">Weekly Task Schedule</Heading>
+                <Heading size="md">{t('weeklyTaskSchedule')}</Heading>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={7} spacing={2} mb={4}>
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                  {[t('sun'), t('mon'), t('tue'), t('wed'), t('thu'), t('fri'), t('sat')].map(day => (
                     <Text key={day} textAlign="center" fontWeight="bold" fontSize="sm" color={textColor}>
                       {day}
                     </Text>
@@ -750,7 +752,7 @@ const FarmerTasksPage: React.FC = () => {
                           ))}
                           {dayTasks.length > 2 && (
                             <Text fontSize="xs" color={textColor}>
-                              +{dayTasks.length - 2} more
+                              +{dayTasks.length - 2} {t('more')}
                             </Text>
                           )}
                         </VStack>
@@ -768,74 +770,74 @@ const FarmerTasksPage: React.FC = () => {
       <Modal isOpen={isNewTaskOpen} onClose={onNewTaskClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create New Task</ModalHeader>
+          <ModalHeader>{t('createNewTask')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <VStack spacing={4}>
               <FormControl>
-                <FormLabel>Task Title</FormLabel>
-                <Input placeholder="Enter task title..." />
+                <FormLabel>{t('taskTitle')}</FormLabel>
+                <Input placeholder={t('enterTaskTitle')} />
               </FormControl>
               
               <FormControl>
-                <FormLabel>Description</FormLabel>
-                <Textarea placeholder="Enter task description..." />
+                <FormLabel>{t('description')}</FormLabel>
+                <Textarea placeholder={t('enterTaskDescription')} />
               </FormControl>
               
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>{t('category')}</FormLabel>
                   <Select>
-                    <option value="feeding">Feeding</option>
-                    <option value="health">Health</option>
-                    <option value="cleaning">Cleaning</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="breeding">Breeding</option>
-                    <option value="record-keeping">Record Keeping</option>
+                    <option value="feeding">{t('feeding')}</option>
+                    <option value="health">{t('health')}</option>
+                    <option value="cleaning">{t('cleaning')}</option>
+                    <option value="maintenance">{t('maintenance')}</option>
+                    <option value="breeding">{t('breeding')}</option>
+                    <option value="record-keeping">{t('recordkeeping')}</option>
                   </Select>
                 </FormControl>
                 
                 <FormControl>
-                  <FormLabel>Priority</FormLabel>
+                  <FormLabel>{t('priority')}</FormLabel>
                   <Select>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
+                    <option value="low">{t('low')}</option>
+                    <option value="medium">{t('medium')}</option>
+                    <option value="high">{t('high')}</option>
+                    <option value="urgent">{t('urgent')}</option>
                   </Select>
                 </FormControl>
               </SimpleGrid>
               
               <SimpleGrid columns={2} spacing={4} w="full">
                 <FormControl>
-                  <FormLabel>Due Date</FormLabel>
+                  <FormLabel>{t('dueDate')}</FormLabel>
                   <Input type="datetime-local" />
                 </FormControl>
                 
                 <FormControl>
-                  <FormLabel>Estimated Duration (minutes)</FormLabel>
+                  <FormLabel>{t('estimatedDuration')} ({t('minutes')})</FormLabel>
                   <Input type="number" placeholder="30" />
                 </FormControl>
               </SimpleGrid>
               
               <FormControl>
-                <FormLabel>Location</FormLabel>
-                <Input placeholder="e.g., Coop A, Farm Office" />
+                <FormLabel>{t('location')}</FormLabel>
+                <Input placeholder={t('locationPlaceholder')} />
               </FormControl>
               
               <FormControl>
                 <HStack justify="space-between">
-                  <FormLabel mb={0}>Recurring Task</FormLabel>
+                  <FormLabel mb={0}>{t('recurringTask')}</FormLabel>
                   <Switch />
                 </HStack>
               </FormControl>
               
               <HStack spacing={4} w="full" justify="flex-end">
                 <Button variant="ghost" onClick={onNewTaskClose}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button colorScheme="blue" onClick={onNewTaskClose}>
-                  Create Task
+                  {t('createTask')}
                 </Button>
               </HStack>
             </VStack>
@@ -847,60 +849,60 @@ const FarmerTasksPage: React.FC = () => {
       <Modal isOpen={isEditTaskOpen} onClose={onEditTaskClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Edit Task</ModalHeader>
+          <ModalHeader>{t('editTask')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             {selectedTask && (
               <VStack spacing={4}>
                 <FormControl>
-                  <FormLabel>Task Title</FormLabel>
+                  <FormLabel>{t('taskTitle')}</FormLabel>
                   <Input defaultValue={selectedTask.title} />
                 </FormControl>
                 
                 <FormControl>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('description')}</FormLabel>
                   <Textarea defaultValue={selectedTask.description} />
                 </FormControl>
                 
                 <SimpleGrid columns={2} spacing={4} w="full">
                   <FormControl>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>{t('category')}</FormLabel>
                     <Select defaultValue={selectedTask.category}>
-                      <option value="feeding">Feeding</option>
-                      <option value="health">Health</option>
-                      <option value="cleaning">Cleaning</option>
-                      <option value="maintenance">Maintenance</option>
-                      <option value="breeding">Breeding</option>
-                      <option value="record-keeping">Record Keeping</option>
+                      <option value="feeding">{t('feeding')}</option>
+                      <option value="health">{t('health')}</option>
+                      <option value="cleaning">{t('cleaning')}</option>
+                      <option value="maintenance">{t('maintenance')}</option>
+                      <option value="breeding">{t('breeding')}</option>
+                      <option value="record-keeping">{t('recordkeeping')}</option>
                     </Select>
                   </FormControl>
                   
                   <FormControl>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel>{t('priority')}</FormLabel>
                     <Select defaultValue={selectedTask.priority}>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
+                      <option value="low">{t('low')}</option>
+                      <option value="medium">{t('medium')}</option>
+                      <option value="high">{t('high')}</option>
+                      <option value="urgent">{t('urgent')}</option>
                     </Select>
                   </FormControl>
                 </SimpleGrid>
                 
                 <FormControl>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>{t('status')}</FormLabel>
                   <Select defaultValue={selectedTask.status}>
-                    <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
+                    <option value="pending">{t('pending')}</option>
+                    <option value="in-progress">{t('inprogress')}</option>
+                    <option value="completed">{t('completed')}</option>
                   </Select>
                 </FormControl>
                 
                 <HStack spacing={4} w="full" justify="flex-end">
                   <Button variant="ghost" onClick={onEditTaskClose}>
-                    Cancel
+                    {t('cancel')}
                   </Button>
                   <Button colorScheme="blue" onClick={onEditTaskClose}>
-                    Save Changes
+                    {t('saveChanges')}
                   </Button>
                 </HStack>
               </VStack>

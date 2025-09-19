@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Heading,
@@ -217,6 +218,7 @@ const vaccinationSchedule = [
 ];
 
 const FarmerHealthPage: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose } = useDisclosure();
@@ -289,10 +291,10 @@ const FarmerHealthPage: React.FC = () => {
         {/* Page Header */}
         <Box>
           <Heading size="lg" mb={2}>
-            Health Monitoring 🏥
+            {t('healthMonitoring')} 🏥
           </Heading>
           <Text color={textColor}>
-            Monitor your flock's health, manage vaccination schedules, and track health trends
+            {t('healthMonitoringDescription')}
           </Text>
         </Box>
 
@@ -302,13 +304,13 @@ const FarmerHealthPage: React.FC = () => {
             <Tab>
               <HStack>
                 <Icon as={FiHeart} />
-                <Text>Overview</Text>
+                <Text>{t('overview')}</Text>
               </HStack>
             </Tab>
             <Tab>
               <HStack>
                 <Icon as={FiAlertTriangle} />
-                <Text>Alerts</Text>
+                <Text>{t('alerts')}</Text>
                 <Badge colorScheme="red" borderRadius="full">
                   {alertsData.filter(a => a.status === 'active').length}
                 </Badge>
@@ -317,7 +319,7 @@ const FarmerHealthPage: React.FC = () => {
             <Tab>
               <HStack>
                 <Icon as={FiTrendingUp} />
-                <Text>Reports</Text>
+                <Text>{t('reports')}</Text>
               </HStack>
             </Tab>
           </TabList>
@@ -334,13 +336,13 @@ const FarmerHealthPage: React.FC = () => {
                         <StatLabel>
                           <HStack>
                             <Icon as={FiActivity} color="red.500" />
-                            <Text>Mortality Rate</Text>
+                            <Text>{t('mortalityRate')}</Text>
                           </HStack>
                         </StatLabel>
                         <StatNumber color="red.500">0.35%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="decrease" />
-                          12% from last week
+                          {t('decreaseFromLastWeek', { percentage: 12 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -352,13 +354,13 @@ const FarmerHealthPage: React.FC = () => {
                         <StatLabel>
                           <HStack>
                             <Icon as={FiThermometer} color="orange.500" />
-                            <Text>Avg Temperature</Text>
+                            <Text>{t('avgTemperature')}</Text>
                           </HStack>
                         </StatLabel>
                         <StatNumber color="orange.500">39.1°C</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Normal range
+                          {t('normalRange')}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -370,13 +372,13 @@ const FarmerHealthPage: React.FC = () => {
                         <StatLabel>
                           <HStack>
                             <Icon as={FiDroplet} color="blue.500" />
-                            <Text>Vaccination Rate</Text>
+                            <Text>{t('vaccinationRate')}</Text>
                           </HStack>
                         </StatLabel>
                         <StatNumber color="blue.500">92%</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          8% from last month
+                          {t('increaseFromLastMonth', { percentage: 8 })}
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -388,13 +390,13 @@ const FarmerHealthPage: React.FC = () => {
                         <StatLabel>
                           <HStack>
                             <Icon as={FiCheckCircle} color="green.500" />
-                            <Text>Avg Weight</Text>
+                            <Text>{t('avgWeight')}</Text>
                           </HStack>
                         </StatLabel>
                         <StatNumber color="green.500">1,880g</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          Target: 1,900g
+                          {t('target')}: 1,900g
                         </StatHelpText>
                       </Stat>
                     </CardBody>
@@ -405,7 +407,7 @@ const FarmerHealthPage: React.FC = () => {
                 <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
                   <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                     <CardHeader>
-                      <Heading size="md">Mortality & Morbidity Trends</Heading>
+                      <Heading size="md">{t('mortalityMorbidityTrends')}</Heading>
                     </CardHeader>
                     <CardBody>
                       <Box h="300px">

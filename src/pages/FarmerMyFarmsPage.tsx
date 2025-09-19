@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Heading,
@@ -40,6 +41,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const MyFarmsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -189,7 +191,7 @@ const MyFarmsPage: React.FC = () => {
   const EmptyState = () => (
     <Box textAlign="center" py={10}>
       <Icon as={FiPlus} w={16} h={16} color="gray.300" mb={4} />
-      <Heading size="md" color="gray.500" mb={2}>No Farms Yet</Heading>
+      <Heading size="md" color="gray.500" mb={2}>{t('noFarmsYet')}</Heading>
       <Text color="gray.400" mb={6}>Start your poultry journey by adding your first farm.</Text>
       <Button 
         colorScheme="teal" 
@@ -206,7 +208,7 @@ const MyFarmsPage: React.FC = () => {
       <Box px={{ base: 4, md: 8 }} py={8}>
         <Flex align="center" justify="space-between" mb={8} flexWrap="wrap" gap={4}>
           <VStack align="start" spacing={1}>
-            <Heading size="lg" color="gray.700">My Farms</Heading>
+            <Heading size="lg" color="gray.700">{t('myFarms')}</Heading>
             <Text color="gray.500">Manage and monitor your poultry operations</Text>
           </VStack>
           <Button 
@@ -217,7 +219,7 @@ const MyFarmsPage: React.FC = () => {
             onClick={onAddFarmModalOpen}
             shadow="md"
           >
-            Add New Farm
+            {t('addNewFarm')}
           </Button>
         </Flex>
 
@@ -580,7 +582,7 @@ const MyFarmsPage: React.FC = () => {
       <Modal isOpen={isAddFarmModalOpen} onClose={onAddFarmModalClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add New Farm</ModalHeader>
+          <ModalHeader>{t('addNewFarm')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
@@ -635,7 +637,7 @@ const MyFarmsPage: React.FC = () => {
               isLoading={addFarmMutation.isLoading}
               loadingText="Creating Farm..."
             >
-              Create Farm
+              {t('createFarm')}
             </Button>
           </ModalFooter>
         </ModalContent>
