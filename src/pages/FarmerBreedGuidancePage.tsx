@@ -39,6 +39,7 @@ import {
   TableContainer,
   Image,
 } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import { 
   FiTarget, 
   FiThermometer, 
@@ -59,6 +60,7 @@ import FarmerLayout from '../layouts/FarmerLayout';
 import SafeChartContainer from '../components/common/SafeChartContainer';
 
 const FarmerBreedGuidancePage: React.FC = () => {
+  const { t } = useTranslation();
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
@@ -176,10 +178,10 @@ const FarmerBreedGuidancePage: React.FC = () => {
         {/* Page Header */}
         <Box>
           <Heading size="lg" mb={2}>
-            Breed Guidance Center 📚
+            {t('breedGuidanceCenter')} 📚
           </Heading>
           <Text color={textColor}>
-            Comprehensive breed management guidance and performance optimization
+            {t('comprehensiveBreedManagement')}
           </Text>
         </Box>
 
@@ -187,16 +189,16 @@ const FarmerBreedGuidancePage: React.FC = () => {
         <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
           <CardBody>
             <HStack spacing={4} align="center">
-              <Text fontWeight="medium" color={textColor}>Select Breed:</Text>
+              <Text fontWeight="medium" color={textColor}>{t('breedSelectBreed')}:</Text>
               <Select 
                 value={selectedBreed} 
                 onChange={(e) => setSelectedBreed(e.target.value as 'broiler' | 'layer' | 'dual')}
                 maxW="300px"
                 bg={cardBg}
               >
-                <option value="broiler">Broiler Chicken</option>
-                <option value="layer">Layer Chicken</option>
-                <option value="dual">Dual Purpose</option>
+                <option value="broiler">{t('broilerChicken')}</option>
+                <option value="layer">{t('layerChicken')}</option>
+                <option value="dual">{t('dualPurpose')}</option>
               </Select>
               <Badge colorScheme="green" variant="subtle" px={3} py={1}>
                 {currentBreed.type}
@@ -211,25 +213,25 @@ const FarmerBreedGuidancePage: React.FC = () => {
             <Tab>
               <HStack>
                 <Icon as={FiBookOpen} />
-                <Text>Overview</Text>
+                <Text>{t('overview')}</Text>
               </HStack>
             </Tab>
             <Tab>
               <HStack>
                 <Icon as={FiTarget} />
-                <Text>Lifecycle</Text>
+                <Text>{t('lifecycle')}</Text>
               </HStack>
             </Tab>
             <Tab>
               <HStack>
                 <Icon as={FiBarChart} />
-                <Text>Performance</Text>
+                <Text>{t('performance')}</Text>
               </HStack>
             </Tab>
             <Tab>
               <HStack>
                 <Icon as={FiShield} />
-                <Text>Health & Care</Text>
+                <Text>{t('healthCare')}</Text>
               </HStack>
             </Tab>
           </TabList>
@@ -272,11 +274,11 @@ const FarmerBreedGuidancePage: React.FC = () => {
                         </Box>
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                           <Box>
-                            <Text fontSize="sm" color={textColor} mb={1}>Purpose</Text>
+                            <Text fontSize="sm" color={textColor} mb={1}>{t('purpose')}</Text>
                             <Badge colorScheme="blue" size="lg">{currentBreed.type}</Badge>
                           </Box>
                           <Box>
-                            <Text fontSize="sm" color={textColor} mb={1}>Category</Text>
+                            <Text fontSize="sm" color={textColor} mb={1}>{t('category')}</Text>
                             <Badge colorScheme="purple" size="lg">{currentBreed.purpose}</Badge>
                           </Box>
                         </SimpleGrid>
@@ -292,36 +294,36 @@ const FarmerBreedGuidancePage: React.FC = () => {
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Target Weight</StatLabel>
+                            <StatLabel color={textColor}>{t('breedTargetWeight')}</StatLabel>
                             <StatNumber color="green.500">{(currentBreed.performance as any).slaughterWeight}g</StatNumber>
-                            <StatHelpText>At {(currentBreed.performance as any).slaughterWeek} weeks</StatHelpText>
+                            <StatHelpText>{t('atWeeks', { weeks: (currentBreed.performance as any).slaughterWeek })}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Feed Conversion</StatLabel>
+                            <StatLabel color={textColor}>{t('feedConversion')}</StatLabel>
                             <StatNumber color="blue.500">{(currentBreed.performance as any).feedConversion}</StatNumber>
-                            <StatHelpText>FCR Ratio</StatHelpText>
+                            <StatHelpText>{t('fcrRatio')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Survival Rate</StatLabel>
+                            <StatLabel color={textColor}>{t('survivalRate')}</StatLabel>
                             <StatNumber color="purple.500">{(currentBreed.performance as any).survivalRate}%</StatNumber>
-                            <StatHelpText>Expected</StatHelpText>
+                            <StatHelpText>{t('expected')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Market Ready</StatLabel>
+                            <StatLabel color={textColor}>{t('marketReady')}</StatLabel>
                             <StatNumber color="orange.500">{(currentBreed.performance as any).slaughterWeek}</StatNumber>
-                            <StatHelpText>Weeks</StatHelpText>
+                            <StatHelpText>{t('breedWeeks')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
@@ -331,36 +333,36 @@ const FarmerBreedGuidancePage: React.FC = () => {
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Laying Rate</StatLabel>
+                            <StatLabel color={textColor}>{t('layingRate')}</StatLabel>
                             <StatNumber color="green.500">{(currentBreed.performance as any).layingRate}%</StatNumber>
-                            <StatHelpText>Peak production</StatHelpText>
+                            <StatHelpText>{t('peakProduction')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>First Egg</StatLabel>
+                            <StatLabel color={textColor}>{t('firstEgg')}</StatLabel>
                             <StatNumber color="blue.500">{(currentBreed.performance as any).layingStart}</StatNumber>
-                            <StatHelpText>Weeks old</StatHelpText>
+                            <StatHelpText>{t('weeksOld')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Egg Weight</StatLabel>
+                            <StatLabel color={textColor}>{t('eggWeight')}</StatLabel>
                             <StatNumber color="purple.500">{(currentBreed.performance as any).eggWeight || 60}g</StatNumber>
-                            <StatHelpText>Average</StatHelpText>
+                            <StatHelpText>{t('average')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
                       <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                         <CardBody>
                           <Stat>
-                            <StatLabel color={textColor}>Laying Period</StatLabel>
+                            <StatLabel color={textColor}>{t('layingPeriod')}</StatLabel>
                             <StatNumber color="orange.500">{(currentBreed.performance as any).layingPeriod || 52}</StatNumber>
-                            <StatHelpText>Weeks</StatHelpText>
+                            <StatHelpText>{t('breedWeeks')}</StatHelpText>
                           </Stat>
                         </CardBody>
                       </Card>
@@ -371,14 +373,14 @@ const FarmerBreedGuidancePage: React.FC = () => {
                 {/* Environmental Requirements */}
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Environmental Requirements</Heading>
+                    <Heading size="md">{t('environmentalRequirements')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                       <VStack align="stretch" spacing={4}>
                         <HStack>
                           <Icon as={FiThermometer} color="red.500" />
-                          <Text fontWeight="bold" color={textColor}>Temperature Range</Text>
+                          <Text fontWeight="bold" color={textColor}>{t('temperatureRange')}</Text>
                         </HStack>
                         <Box>
                           <Text fontSize="sm" color={textColor} mb={2}>
@@ -396,7 +398,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                       <VStack align="stretch" spacing={4}>
                         <HStack>
                           <Icon as={FiDroplet} color="blue.500" />
-                          <Text fontWeight="bold" color={textColor}>Humidity Range</Text>
+                          <Text fontWeight="bold" color={textColor}>{t('humidityRange')}</Text>
                         </HStack>
                         <Box>
                           <Text fontSize="sm" color={textColor} mb={2}>
@@ -447,15 +449,15 @@ const FarmerBreedGuidancePage: React.FC = () => {
                 {/* Growth Chart */}
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Expected Growth Curve</Heading>
+                    <Heading size="md">{t('expectedGrowthCurve')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <Box h="400px">
                       <SafeChartContainer minHeight={400}>
                         <AreaChart data={growthData} width={400} height={400}>
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="week" label={{ value: 'Week', position: 'insideBottom', offset: -5 }} />
-                          <YAxis label={{ value: 'Weight (g)', angle: -90, position: 'insideLeft' }} />
+                          <XAxis dataKey="week" label={{ value: t('breedWeek'), position: 'insideBottom', offset: -5 }} />
+                          <YAxis label={{ value: t('breedWeightG'), angle: -90, position: 'insideLeft' }} />
                           <Tooltip />
                           <Area 
                             type="monotone" 
@@ -463,7 +465,7 @@ const FarmerBreedGuidancePage: React.FC = () => {
                             stroke="#48BB78" 
                             fill="#48BB78" 
                             fillOpacity={0.6} 
-                            name="Weight (g)" 
+                            name={t('breedWeightG')} 
                           />
                         </AreaChart>
                       </SafeChartContainer>
@@ -474,18 +476,18 @@ const FarmerBreedGuidancePage: React.FC = () => {
                 {/* Feeding Schedule */}
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Feeding Schedule</Heading>
+                    <Heading size="md">{t('feedingSchedule')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <TableContainer>
                       <Table variant="simple">
                         <Thead>
                           <Tr>
-                            <Th>Stage</Th>
-                            <Th>Age (Weeks)</Th>
-                            <Th>Protein</Th>
-                            <Th>Energy</Th>
-                            <Th>Form</Th>
+                            <Th>{t('stage')}</Th>
+                            <Th>{t('breedAgeWeeks')}</Th>
+                            <Th>{t('protein')}</Th>
+                            <Th>{t('energy')}</Th>
+                            <Th>{t('form')}</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
