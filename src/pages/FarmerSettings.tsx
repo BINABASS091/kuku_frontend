@@ -34,6 +34,7 @@ import {
   FiSmartphone,
   FiSave,
 } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 import FarmerLayout from '../layouts/FarmerLayout';
 import { useAuth } from '../context/AuthContext';
 
@@ -58,6 +59,7 @@ interface ProfileSettings {
 
 const FarmerSettings: React.FC = () => {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   
   // Color mode values
@@ -78,9 +80,9 @@ const FarmerSettings: React.FC = () => {
 
   // Profile settings state
   const [profile, setProfile] = useState<ProfileSettings>({
-    language: 'en',
+    language: i18n.language || 'en',
     timezone: 'Africa/Nairobi',
-    currency: 'KES',
+    currency: localStorage.getItem('currency') || (i18n.language === 'sw' ? 'TZS' : 'USD'),
     dateFormat: 'DD/MM/YYYY',
     temperatureUnit: 'celsius',
   });
@@ -101,17 +103,35 @@ const FarmerSettings: React.FC = () => {
     }));
   };
 
-  const handleProfileChange = (key: keyof ProfileSettings, value: string) => {
+  const handleProfileChange = async (key: keyof ProfileSettings, value: string) => {
     setProfile(prev => ({
       ...prev,
       [key]: value
     }));
+
+    // Handle language change
+    if (key === 'language') {
+      await i18n.changeLanguage(value);
+      
+      // Update currency based on language
+      const newCurrency = value === 'sw' ? 'TZS' : 'USD';
+      setProfile(prev => ({
+        ...prev,
+        currency: newCurrency
+      }));
+      localStorage.setItem('currency', newCurrency);
+    }
+
+    // Handle currency change
+    if (key === 'currency') {
+      localStorage.setItem('currency', value);
+    }
   };
 
   const handleSaveNotifications = () => {
     // TODO: Save to API
     toast({
-      title: 'Notification settings updated',
+      title: t('profileUpdatedSuccessfully'),
       status: 'success',
       duration: 3000,
       isClosable: true,
@@ -121,7 +141,7 @@ const FarmerSettings: React.FC = () => {
   const handleSaveProfile = () => {
     // TODO: Save to API
     toast({
-      title: 'Profile settings updated',
+      title: t('profileUpdatedSuccessfully'),
       status: 'success',
       duration: 3000,
       isClosable: true,
@@ -160,9 +180,9 @@ const FarmerSettings: React.FC = () => {
       <VStack spacing={6} align="stretch">
         {/* Header */}
         <Box>
-          <Heading size="lg" mb={2}>Settings</Heading>
+          <Heading size="lg" mb={2}>{t('settings')}</Heading>
           <Text color="gray.600">
-            Manage your account preferences and farm settings
+            {t('applicationSettings')}
           </Text>
         </Box>
 
@@ -172,14 +192,14 @@ const FarmerSettings: React.FC = () => {
             <CardHeader>
               <HStack>
                 <Icon as={FiBell} color="blue.500" />
-                <Heading size="md">Notifications</Heading>
+                <Heading size="md">{t('notificationSettings')}</Heading>
               </HStack>
             </CardHeader>
             <CardBody>
               <VStack spacing={4} align="stretch">
                 <FormControl display="flex" alignItems="center">
                   <FormLabel htmlFor="email-notifications" mb="0">
-                    Email Notifications
+                    {t('emailNotifications')}
                   </FormLabel>
                   <Switch
                     id="email-notifications"
@@ -190,7 +210,7 @@ const FarmerSettings: React.FC = () => {
 
                 <FormControl display="flex" alignItems="center">
                   <FormLabel htmlFor="sms-notifications" mb="0">
-                    SMS Notifications
+                    {t('smsNotifications')}
                   </FormLabel>
                   <Switch
                     id="sms-notifications"
@@ -201,7 +221,7 @@ const FarmerSettings: React.FC = () => {
 
                 <FormControl display="flex" alignItems="center">
                   <FormLabel htmlFor="push-notifications" mb="0">
-                    Push Notifications
+                    {t('pushNotifications')}
                   </FormLabel>
                   <Switch
                     id="push-notifications"
@@ -289,14 +309,13 @@ const FarmerSettings: React.FC = () => {
             <CardBody>
               <VStack spacing={4} align="stretch">
                 <FormControl>
-                  <FormLabel>Language</FormLabel>
+                  <FormLabel>{t('language')}</FormLabel>
                   <Select
                     value={profile.language}
                     onChange={(e) => handleProfileChange('language', e.target.value)}
                   >
-                    <option value="en">English</option>
-                    <option value="sw">Kiswahili</option>
-                    <option value="fr">Français</option>
+                    <option value="en">{t('english')}</option>
+                    <option value="sw">{t('kiswahili')}</option>
                   </Select>
                 </FormControl>
 
@@ -313,15 +332,13 @@ const FarmerSettings: React.FC = () => {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Currency</FormLabel>
+                  <FormLabel>{t('currency')}</FormLabel>
                   <Select
                     value={profile.currency}
                     onChange={(e) => handleProfileChange('currency', e.target.value)}
                   >
-                    <option value="KES">Kenyan Shilling (KES)</option>
-                    <option value="USD">US Dollar (USD)</option>
-                    <option value="TZS">Tanzanian Shilling (TZS)</option>
-                    <option value="UGX">Ugandan Shilling (UGX)</option>
+                    <option value="USD">{t('usd')}</option>
+                    <option value="TZS">{t('tsh')}</option>
                   </Select>
                 </FormControl>
 
@@ -409,7 +426,7 @@ const FarmerSettings: React.FC = () => {
                 <Heading size="sm">Change Password</Heading>
                 
                 <FormControl>
-                  <FormLabel>Current Password</FormLabel>
+                  <FormLabel>{t('currentPassword')}</FormLabel>
                   <Input
                     type="password"
                     value={accountSettings.currentPassword}
@@ -418,7 +435,7 @@ const FarmerSettings: React.FC = () => {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{t('newPassword')}</FormLabel>
                   <Input
                     type="password"
                     value={accountSettings.newPassword}
@@ -427,7 +444,7 @@ const FarmerSettings: React.FC = () => {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Confirm New Password</FormLabel>
+                  <FormLabel>{t('confirmPassword')}</FormLabel>
                   <Input
                     type="password"
                     value={accountSettings.confirmPassword}
@@ -441,7 +458,7 @@ const FarmerSettings: React.FC = () => {
                   variant="outline"
                   onClick={handleChangePassword}
                 >
-                  Change Password
+                  {t('changePassword')}
                 </Button>
               </VStack>
             </SimpleGrid>

@@ -52,6 +52,7 @@ import DjangoAdmin from './pages/admin/DjangoAdmin';
 import SystemAdministration from './pages/admin/SystemAdministration';
 import SubscriptionsBilling from './pages/admin/SubscriptionsBilling';
 import BreedConfigurationManager from './components/admin/BreedConfigurationManager';
+import './i18n';
 
 // This component is used to wrap protected routes
 const ProtectedLayout = () => {
