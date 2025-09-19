@@ -266,7 +266,7 @@ const FarmerBatchesPage: React.FC = () => {
       batchId: '1',
       batchName: 'Batch A-2024',
       type: 'feeding',
-      description: 'Morning feed distribution',
+      description: t('morningFeedDistribution'),
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '07:00',
       performedBy: 'John Doe',
@@ -278,7 +278,7 @@ const FarmerBatchesPage: React.FC = () => {
       batchId: '2',
       batchName: 'Batch B-2024',
       type: 'health',
-      description: 'Weekly health inspection',
+      description: t('weeklyHealthInspection'),
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '09:30',
       performedBy: 'Jane Smith',
@@ -289,7 +289,7 @@ const FarmerBatchesPage: React.FC = () => {
       batchId: '1',
       batchName: 'Batch A-2024',
       type: 'cleaning',
-      description: 'Coop cleaning and sanitization',
+      description: t('coopCleaningAndSanitization'),
       date: format(subDays(new Date(), 1), 'yyyy-MM-dd'),
       time: '14:00',
       performedBy: 'John Doe',
@@ -396,14 +396,14 @@ const FarmerBatchesPage: React.FC = () => {
   // Ensure all batches have required properties with defaults
   const safeBatches = displayBatches.map((batch: any) => ({
     id: batch?.id || '',
-    name: batch?.name || 'Unnamed Batch',
-    breed: batch?.breed || 'Unknown Breed',
+    name: batch?.name || t('unnamedBatch'),
+    breed: batch?.breed || t('unknownBreed'),
     startDate: batch?.startDate || new Date().toISOString(),
     currentAge: batch?.currentAge || 0,
     totalBirds: batch?.totalBirds || 0,
     activeBirds: batch?.activeBirds || 0,
     status: batch?.status || 'active',
-    location: batch?.location || 'Unknown Location',
+    location: batch?.location || t('unknownLocation'),
     expectedHarvestDate: batch?.expectedHarvestDate || new Date().toISOString(),
     mortalityRate: batch?.mortalityRate || 0,
     feedConversion: batch?.feedConversion || 0,
@@ -787,13 +787,13 @@ const FarmerBatchesPage: React.FC = () => {
                               icon={<FiEye />}
                               size="sm"
                               variant="ghost"
-                              aria-label="View activity"
+                              aria-label={t('viewActivity')}
                             />
                             <IconButton
                               icon={<FiEdit />}
                               size="sm"
                               variant="ghost"
-                              aria-label="Edit activity"
+                              aria-label={t('editActivity')}
                             />
                           </HStack>
                         </Td>
@@ -1138,7 +1138,7 @@ const FarmerBatchesPage: React.FC = () => {
                     >
                       {batches?.map((batch: any) => (
                         <option key={batch.batchID || batch.id} value={batch.batchID || batch.id}>
-                          {batch.name || `Batch ${batch.batchID || batch.id}`}
+                          {batch.name || `${t('batch')} ${batch.batchID || batch.id}`}
                         </option>
                       ))}
                     </Select>
@@ -1192,13 +1192,13 @@ const FarmerBatchesPage: React.FC = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>{t('cost')} (₦)</FormLabel>
+                    <FormLabel>{t('cost')} ({t('currency')})</FormLabel>
                     <Input
                       type="number"
                       name="batchAcitivtyCost"
                       value={activityForm.batchAcitivtyCost}
                       onChange={handleActivityFormChange}
-                      placeholder="0.00"
+                      placeholder={t('enterCost')}
                       step="0.01"
                     />
                   </FormControl>

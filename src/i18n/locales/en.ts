@@ -427,5 +427,49 @@ export default {
   activityRecordedSuccessfully: "Activity recorded successfully!",
   failedToRecordActivity: "Failed to record activity. Please try again.",
   healthCheckSavedSuccessfully: "Health check saved successfully!",
-  failedToSaveHealthCheck: "Failed to save health check. Please try again."
+  failedToSaveHealthCheck: "Failed to save health check. Please try again.",
+  
+  // Additional Batches Page Keys
+  searchBatches: "Search batches...",
+  allStatus: "All Status",
+  viewActivity: "View Activity",
+  editActivity: "Edit Activity",
+  unnamedBatch: "Unnamed Batch",
+  unknownBreed: "Unknown Breed",
+  unknownLocation: "Unknown Location",
+  
+  // Batch Form Fields
+  arriveDate: "Arrive Date",
+  initialAge: "Initial Age",
+  harvestAge: "Harvest Age",
+  initialWeight: "Initial Weight",
+  enterInitialAge: "Enter initial age in days",
+  enterHarvestAge: "Enter expected harvest age in days",
+  averageWeightInGrams: "Average weight in grams",
+  
+  // Activity Form Fields
+  activityName: "Activity Name",
+  enterActivityName: "Enter activity name",
+  enterActivityDetails: "Enter activity details",
+  enterCost: "Enter cost",
+  
+  // Activity Types
+  monitoring: "Monitoring",
+  
+  // Activity Descriptions
+  morningFeedDistribution: "Morning feed distribution",
+  weeklyHealthInspection: "Weekly health inspection",
+  coopCleaningAndSanitization: "Coop cleaning and sanitization",
+  
+  // Table Headers
+  performedBy: "Performed By",
+  
+  // Chart Labels
+  eggs: "Eggs",
+  feedKg: "Feed (kg)",
+  mortality: "Mortality",
+  weightG: "Weight (g)",
+  
+  // Stats and Messages
+  recording: "Recording..."
 };

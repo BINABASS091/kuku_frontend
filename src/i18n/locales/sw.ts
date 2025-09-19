@@ -428,5 +428,49 @@ export default {
   activityRecordedSuccessfully: "Shughuli imerekodishwa kwa ufanisi!",
   failedToRecordActivity: "Imeshindwa kurekodi shughuli. Tafadhali jaribu tena.",
   healthCheckSavedSuccessfully: "Uchunguzi wa afya umehifadhiwa kwa ufanisi!",
-  failedToSaveHealthCheck: "Imeshindwa kuhifadhi uchunguzi wa afya. Tafadhali jaribu tena."
+  failedToSaveHealthCheck: "Imeshindwa kuhifadhi uchunguzi wa afya. Tafadhali jaribu tena.",
+  
+  // Funguo za Ziada za Ukurasa wa Makundi
+  searchBatches: "Tafuta makundi...",
+  allStatus: "Hali Zote",
+  viewActivity: "Ona Shughuli",
+  editActivity: "Hariri Shughuli",
+  unnamedBatch: "Kikundi Kisichojulikana",
+  unknownBreed: "Aina Isiyojulikana",
+  unknownLocation: "Mahali Pasipojulikana",
+  
+  // Mashamba ya Fomu ya Kikundi
+  arriveDate: "Tarehe ya Kuwasili",
+  initialAge: "Umri wa Awali",
+  harvestAge: "Umri wa Kuvuna",
+  initialWeight: "Uzito wa Awali",
+  enterInitialAge: "Ingiza umri wa awali kwa siku",
+  enterHarvestAge: "Ingiza umri unatarajiwa wa kuvuna kwa siku",
+  averageWeightInGrams: "Uzito wa wastani kwa gramu",
+  
+  // Mashamba ya Fomu ya Shughuli
+  activityName: "Jina la Shughuli",
+  enterActivityName: "Ingiza jina la shughuli",
+  enterActivityDetails: "Ingiza maelezo ya shughuli",
+  enterCost: "Ingiza gharama",
+  
+  // Aina za Shughuli
+  monitoring: "Ufuatiliaji",
+  
+  // Maelezo ya Shughuli
+  morningFeedDistribution: "Usambazaji wa chakula cha asubuhi",
+  weeklyHealthInspection: "Uchunguzi wa afya wa kila wiki",
+  coopCleaningAndSanitization: "Usafishaji na usafi wa banda",
+  
+  // Vichwa vya Jedwali
+  performedBy: "Imefanywa na",
+  
+  // Vitambulisho vya Chati
+  eggs: "Mayai",
+  feedKg: "Chakula (kg)",
+  mortality: "Vifo",
+  weightG: "Uzito (g)",
+  
+  // Ujumbe wa Takwimu
+  recording: "Inaendelea kurekodi..."
 };
