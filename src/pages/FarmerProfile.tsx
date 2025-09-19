@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from "../context/AuthContext";
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import {
   Box,
   VStack,
@@ -11,15 +12,35 @@ import {
   CardBody,
   Badge,
   Avatar,
-  Divider,
   SimpleGrid,
   useColorModeValue,
   Icon,
   Progress,
   Alert,
   AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  Spinner,
+  Center,
+  Container,
+  Flex,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+  Wrap,
+  WrapItem,
+  Select,
 } from '@chakra-ui/react';
 import {
   FiUser,
@@ -27,83 +48,168 @@ import {
   FiLayers,
   FiTrendingUp,
   FiEdit3,
+  FiPhone,
+  FiMail,
+  FiCalendar,
+  FiCheck,
+  FiX,
 } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
 import FarmerLayout from '../layouts/FarmerLayout';
+import { farmerAPI, farmAPI, batchAPI } from '../services/api';
 
-interface FarmerProfileData {
-  id: number;
+// Type definitions
+interface FarmerData {
+  farmerID: number;
   user: {
+    userID: number;
+    username: string;
+    email: string;
     first_name: string;
     last_name: string;
-    email: string;
   };
+  farmerName: string;
   phone: string;
   address: string;
   experience_level: string;
   profile_completed: boolean;
-  farm: {
-    id: number;
-    name: string;
-    location: string;
-    size: string;
-    farm_type: string;
-    total_capacity: number;
-    current_birds: number;
-  } | null;
-  batches: Array<{
-    id: number;
-    breed: string;
-    current_count: number;
-    start_date: string;
-    status: string;
-  }>;
 }
 
-const FarmerProfile = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+interface FarmData {
+  farmID: number;
+  farmName: string;
+  location: string;
+  size: number;
+  established_date: string;
+}
 
-  // Mock data - replace with actual API call
-  const [farmerData] = useState<FarmerProfileData>({
-    id: 1,
-    user: {
-      first_name: user?.name?.split(' ')[0] || 'John',
-      last_name: user?.name?.split(' ').slice(1).join(' ') || 'Doe',
-      email: user?.email || 'john.doe@example.com',
-    },
-    phone: '+254 712 345 678',
-    address: 'Kiambu County, Kenya',
-    experience_level: 'intermediate',
-    profile_completed: false,
-    farm: null,
-    batches: [],
+interface BatchData {
+  batchID: number;
+  batchName: string;
+  farmID: number;
+  breed: string;
+  currentPopulation: number;
+  status: string;
+}
+
+const FarmerProfile: React.FC = () => {
+  const { user } = useAuth();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  // Form state for editing profile
+  const [editForm, setEditForm] = useState({
+    farmerName: '',
+    phone: '',
+    address: '',
+    experience_level: '',
   });
 
-  const [isLoading, setIsLoading] = useState(true);
-
+  // Color mode values
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const gradientBg = useColorModeValue(
+    'linear(to-r, blue.400, purple.500)',
+    'linear(to-r, blue.600, purple.700)'
+  );
 
-  useEffect(() => {
-    // Simulate API call
-    const fetchFarmerData = async () => {
-      try {
-        // Here you would make an actual API call to get farmer profile
-        // const response = await api.get('/api/farmer/profile/');
-        // setFarmerData(response.data);
-        
-        // Simulate loading
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching farmer data:', error);
-        setIsLoading(false);
-      }
-    };
+  // API Queries
+  const { data: farmers, isLoading: farmersLoading, error: farmersError } = useQuery({
+    queryKey: ['farmers'],
+    queryFn: farmerAPI.list,
+  });
 
-    fetchFarmerData();
-  }, []);
+  const { data: farms, isLoading: farmsLoading } = useQuery({
+    queryKey: ['farms'],
+    queryFn: farmAPI.list,
+  });
+
+  const { data: batches, isLoading: batchesLoading } = useQuery({
+    queryKey: ['batches'],
+    queryFn: batchAPI.list,
+  });
+
+  const isLoading = farmersLoading || farmsLoading || batchesLoading;
+
+  // Extract arrays from paginated API responses
+  const farmersArray = Array.isArray(farmers) ? farmers : (farmers?.results || []);
+  const farmsArray = Array.isArray(farms) ? farms : (farms?.results || []);
+  const batchesArray = Array.isArray(batches) ? batches : (batches?.results || []);
+
+  // Find current farmer based on authenticated user
+  const currentFarmer = farmersArray.find((farmer: FarmerData) => 
+    farmer.user.userID === user?.id || farmer.user.email === user?.email
+  );
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: (updatedData: Partial<FarmerData>) => 
+      farmerAPI.update(currentFarmer?.farmerID || 0, updatedData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      toast({
+        title: 'Profile updated successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
+    },
+    onError: () => {
+      toast({
+        title: 'Failed to update profile',
+        description: 'Please try again later',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+
+  // Get farmer's farms (adjust logic based on your membership model)
+  const farmerFarms = farmsArray;
+
+  // Get farmer's batches
+  const farmerBatches = batchesArray.filter((batch: BatchData) => 
+    farmerFarms.some((farm: FarmData) => farm.farmID === batch.farmID)
+  );
+
+  const calculateProfileCompletion = () => {
+    if (!currentFarmer) return { percentage: 0, completed: 0, total: 6, items: [] };
+    
+    const completionItems = [
+      { label: 'Name', completed: !!currentFarmer.farmerName },
+      { label: 'Phone', completed: !!currentFarmer.phone },
+      { label: 'Address', completed: !!currentFarmer.address },
+      { label: 'Experience Level', completed: !!currentFarmer.experience_level },
+      { label: 'Email', completed: !!currentFarmer.user.email },
+      { label: 'Profile Picture', completed: false }, // Add avatar logic later
+    ];
+
+    const completed = completionItems.filter(item => item.completed).length;
+    const total = completionItems.length;
+    const percentage = Math.round((completed / total) * 100);
+
+    return { percentage, completed, total, items: completionItems };
+  };
+
+  const handleEditProfile = () => {
+    if (currentFarmer) {
+      setEditForm({
+        farmerName: currentFarmer.farmerName || '',
+        phone: currentFarmer.phone || '',
+        address: currentFarmer.address || '',
+        experience_level: currentFarmer.experience_level || '',
+      });
+      onOpen();
+    }
+  };
+
+  const handleSaveProfile = () => {
+    if (currentFarmer) {
+      updateProfileMutation.mutate(editForm);
+    }
+  };
 
   const getExperienceLabel = (level: string) => {
     const levels = {
@@ -112,7 +218,7 @@ const FarmerProfile = () => {
       experienced: 'Experienced',
       expert: 'Expert',
     };
-    return levels[level as keyof typeof levels] || 'Unknown';
+    return levels[level as keyof typeof levels] || 'Not Set';
   };
 
   const getExperienceColor = (level: string) => {
@@ -125,313 +231,314 @@ const FarmerProfile = () => {
     return colors[level as keyof typeof colors] || 'gray';
   };
 
-  const calculateProfileCompletion = () => {
-    let completed = 0;
-    const total = 6;
-    
-    if (farmerData.user.first_name) completed++;
-    if (farmerData.phone) completed++;
-    if (farmerData.address) completed++;
-    if (farmerData.experience_level) completed++;
-    if (farmerData.farm) completed++;
-    if (farmerData.batches.length > 0) completed++;
-    
-    return (completed / total) * 100;
-  };
-
-  const profileCompletion = calculateProfileCompletion();
-
   if (isLoading) {
     return (
       <FarmerLayout>
-        <Box display="flex" justifyContent="center" alignItems="center" h="400px">
-          <Text>Loading profile...</Text>
-        </Box>
+        <Center h="400px">
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" />
+            <Text>Loading your profile...</Text>
+          </VStack>
+        </Center>
       </FarmerLayout>
     );
   }
 
+  if (farmersError) {
+    return (
+      <FarmerLayout>
+        <Container maxW="container.xl" py={8}>
+          <Alert status="error">
+            <AlertIcon />
+            Failed to load profile data. Please refresh the page.
+          </Alert>
+        </Container>
+      </FarmerLayout>
+    );
+  }
+
+  if (!currentFarmer) {
+    return (
+      <FarmerLayout>
+        <Container maxW="container.xl" py={8}>
+          <Alert status="warning">
+            <AlertIcon />
+            Farmer profile not found. Please contact support.
+          </Alert>
+        </Container>
+      </FarmerLayout>
+    );
+  }
+
+  const profileCompletion = calculateProfileCompletion();
+
   return (
     <FarmerLayout>
-      <VStack spacing={6} align="stretch">
-        {/* Header */}
-        <HStack justify="space-between" align="center">
-          <VStack align="start" spacing={1}>
-            <Heading size="lg">My Profile</Heading>
-            <Text color="gray.600">
-              Manage your personal information and farm settings
-            </Text>
-          </VStack>
-          <Button
-            leftIcon={<Icon as={FiEdit3} />}
-            colorScheme="green"
-            variant="outline"
-            onClick={() => navigate('/farmer/profile/edit')}
+      <Container maxW="container.xl" py={8}>
+        <VStack spacing={6} align="stretch">
+          {/* Header Section with Gradient */}
+          <Box
+            bgGradient={gradientBg}
+            borderRadius="xl"
+            p={8}
+            color="white"
+            position="relative"
+            overflow="hidden"
           >
-            Edit Profile
-          </Button>
-        </HStack>
-
-        {/* Profile Completion Alert */}
-        {profileCompletion < 100 && (
-          <Alert status="warning" borderRadius="md">
-            <AlertIcon />
-            <Box flex="1">
-              <AlertTitle>Complete Your Profile</AlertTitle>
-              <AlertDescription display="block">
-                Your profile is {Math.round(profileCompletion)}% complete. 
-                <Button
-                  variant="link"
-                  colorScheme="orange"
-                  size="sm"
-                  ml={2}
-                  onClick={() => navigate('/farmer/onboarding')}
-                >
-                  Complete setup
-                </Button>
-              </AlertDescription>
-            </Box>
-          </Alert>
-        )}
-
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-          {/* Personal Information */}
-          <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-            <CardBody>
-              <VStack align="stretch" spacing={4}>
-                <HStack>
-                  <Icon as={FiUser} color="green.500" />
-                  <Heading size="md">Personal Information</Heading>
-                </HStack>
-                
-                <HStack>
-                  <Avatar
-                    size="lg"
-                    name={`${farmerData.user.first_name} ${farmerData.user.last_name}`}
-                    bg="green.500"
-                  />
-                  <VStack align="start" spacing={1}>
-                    <Text fontSize="lg" fontWeight="semibold">
-                      {farmerData.user.first_name} {farmerData.user.last_name}
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {farmerData.user.email}
-                    </Text>
-                    <Badge colorScheme={getExperienceColor(farmerData.experience_level)}>
-                      {getExperienceLabel(farmerData.experience_level)}
-                    </Badge>
-                  </VStack>
-                </HStack>
-
-                <Divider />
-
-                <VStack align="stretch" spacing={3}>
-                  <HStack>
-                    <Text fontWeight="semibold" w="100px">Phone:</Text>
-                    <Text>{farmerData.phone}</Text>
-                  </HStack>
-                  <HStack align="start">
-                    <Text fontWeight="semibold" w="100px">Address:</Text>
-                    <Text>{farmerData.address}</Text>
-                  </HStack>
-                </VStack>
-
-                {/* Profile Completion */}
-                <Box>
-                  <HStack justify="space-between" mb={2}>
-                    <Text fontWeight="semibold">Profile Completion</Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {Math.round(profileCompletion)}%
-                    </Text>
-                  </HStack>
-                  <Progress 
-                    value={profileCompletion} 
-                    colorScheme="green" 
-                    borderRadius="full"
-                  />
-                </Box>
-              </VStack>
-            </CardBody>
-          </Card>
-
-          {/* Farm Information */}
-          <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-            <CardBody>
-              <VStack align="stretch" spacing={4}>
-                <HStack justify="space-between">
-                  <HStack>
-                    <Icon as={FiMapPin} color="green.500" />
-                    <Heading size="md">Farm Information</Heading>
-                  </HStack>
-                  {!farmerData.farm && (
-                    <Button
-                      size="sm"
-                      colorScheme="green"
-                      variant="outline"
-                      onClick={() => navigate('/farmer/onboarding')}
+            <Box
+              position="absolute"
+              top={0}
+              right={0}
+              bottom={0}
+              left={0}
+              bgGradient="linear(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)"
+            />
+            <Flex direction={{ base: 'column', md: 'row' }} align="center" spacing={6}>
+              <Avatar
+                size="2xl"
+                name={currentFarmer.farmerName || `${currentFarmer.user.first_name} ${currentFarmer.user.last_name}`}
+                src=""
+                border="4px solid"
+                borderColor="white"
+                shadow="xl"
+                _hover={{ transform: 'scale(1.05)' }}
+                transition="transform 0.2s"
+              />
+              <Box flex={1} ml={{ base: 0, md: 6 }} textAlign={{ base: 'center', md: 'left' }}>
+                <Heading size="xl" mb={2}>
+                  {currentFarmer.farmerName || `${currentFarmer.user.first_name} ${currentFarmer.user.last_name}`}
+                </Heading>
+                <Text fontSize="lg" opacity={0.9} mb={3}>
+                  {currentFarmer.user.email}
+                </Text>
+                <Wrap>
+                  <WrapItem>
+                    <Badge
+                      colorScheme={getExperienceColor(currentFarmer.experience_level)}
+                      fontSize="sm"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
                     >
-                      Setup Farm
-                    </Button>
-                  )}
-                </HStack>
+                      {getExperienceLabel(currentFarmer.experience_level)}
+                    </Badge>
+                  </WrapItem>
+                  <WrapItem>
+                    <Badge
+                      colorScheme={profileCompletion.percentage === 100 ? 'green' : 'yellow'}
+                      fontSize="sm"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                    >
+                      {profileCompletion.percentage}% Complete
+                    </Badge>
+                  </WrapItem>
+                </Wrap>
+              </Box>
+              <Button
+                leftIcon={<Icon as={FiEdit3} />}
+                colorScheme="whiteAlpha"
+                variant="solid"
+                onClick={handleEditProfile}
+                _hover={{ transform: 'translateY(-2px)', shadow: 'lg' }}
+                transition="all 0.2s"
+              >
+                Edit Profile
+              </Button>
+            </Flex>
+          </Box>
 
-                {farmerData.farm ? (
-                  <VStack align="stretch" spacing={3}>
-                    <HStack>
-                      <Text fontWeight="semibold" w="100px">Name:</Text>
-                      <Text>{farmerData.farm.name}</Text>
-                    </HStack>
-                    <HStack align="start">
-                      <Text fontWeight="semibold" w="100px">Location:</Text>
-                      <Text>{farmerData.farm.location}</Text>
-                    </HStack>
-                    <HStack>
-                      <Text fontWeight="semibold" w="100px">Type:</Text>
-                      <Badge colorScheme="blue">{farmerData.farm.farm_type}</Badge>
-                    </HStack>
-                    <HStack>
-                      <Text fontWeight="semibold" w="100px">Size:</Text>
-                      <Text>{farmerData.farm.size}</Text>
-                    </HStack>
-                    <HStack>
-                      <Text fontWeight="semibold" w="100px">Capacity:</Text>
-                      <Text>
-                        {farmerData.farm.current_birds} / {farmerData.farm.total_capacity} birds
+          {/* Profile Completion Card */}
+          <Card bg={cardBg} borderColor={borderColor} shadow="lg">
+            <CardBody>
+              <VStack spacing={4} align="stretch">
+                <HStack justify="space-between">
+                  <Heading size="md">Profile Completion</Heading>
+                  <Text fontWeight="bold" color="blue.500">
+                    {profileCompletion.completed}/{profileCompletion.total} completed
+                  </Text>
+                </HStack>
+                <Progress
+                  value={profileCompletion.percentage}
+                  colorScheme="blue"
+                  size="lg"
+                  borderRadius="full"
+                />
+                <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4}>
+                  {profileCompletion.items.map((item, index) => (
+                    <HStack key={index} spacing={2}>
+                      <Icon
+                        as={item.completed ? FiCheck : FiX}
+                        color={item.completed ? 'green.500' : 'red.500'}
+                      />
+                      <Text fontSize="sm" opacity={item.completed ? 1 : 0.7}>
+                        {item.label}
                       </Text>
                     </HStack>
-                    <Progress 
-                      value={(farmerData.farm.current_birds / farmerData.farm.total_capacity) * 100}
-                      colorScheme="blue"
-                      borderRadius="full"
-                    />
-                  </VStack>
-                ) : (
-                  <Alert status="info" borderRadius="md">
-                    <AlertIcon />
-                    <Box>
-                      <AlertTitle>No Farm Setup</AlertTitle>
-                      <AlertDescription>
-                        You haven't set up your farm yet. Complete the onboarding to get started.
-                      </AlertDescription>
-                    </Box>
-                  </Alert>
-                )}
+                  ))}
+                </SimpleGrid>
               </VStack>
             </CardBody>
           </Card>
-        </SimpleGrid>
 
-        {/* Current Batches */}
-        <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-          <CardBody>
-            <VStack align="stretch" spacing={4}>
-              <HStack justify="space-between">
-                <HStack>
-                  <Icon as={FiLayers} color="green.500" />
-                  <Heading size="md">Current Batches</Heading>
-                </HStack>
-                {farmerData.batches.length === 0 && farmerData.farm && (
-                  <Button
-                    size="sm"
-                    colorScheme="green"
-                    onClick={() => navigate('/farmer/batches/create')}
-                  >
-                    Add Batch
-                  </Button>
-                )}
-              </HStack>
+          {/* Stats Grid */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            <Card bg={cardBg} borderColor={borderColor} shadow="lg" _hover={{ transform: 'translateY(-4px)' }} transition="all 0.2s">
+              <CardBody>
+                <Stat>
+                  <StatLabel color="blue.500" fontWeight="semibold">
+                    <Icon as={FiLayers} mr={2} />
+                    Total Farms
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" color="blue.600">
+                    {farmerFarms.length}
+                  </StatNumber>
+                  <StatHelpText>Active farms under management</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
 
-              {farmerData.batches.length > 0 ? (
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-                  {farmerData.batches.map((batch) => (
-                    <Card key={batch.id} borderWidth="1px" borderColor={borderColor}>
-                      <CardBody>
-                        <VStack align="stretch" spacing={2}>
-                          <HStack justify="space-between">
-                            <Text fontWeight="semibold">{batch.breed}</Text>
-                            <Badge 
-                              colorScheme={batch.status === 'active' ? 'green' : 'gray'}
-                            >
-                              {batch.status}
-                            </Badge>
-                          </HStack>
-                          <Text fontSize="sm" color="gray.600">
-                            {batch.current_count} birds
-                          </Text>
-                          <Text fontSize="xs" color="gray.500">
-                            Started: {new Date(batch.start_date).toLocaleDateString()}
-                          </Text>
-                        </VStack>
-                      </CardBody>
-                    </Card>
-                  ))}
+            <Card bg={cardBg} borderColor={borderColor} shadow="lg" _hover={{ transform: 'translateY(-4px)' }} transition="all 0.2s">
+              <CardBody>
+                <Stat>
+                  <StatLabel color="green.500" fontWeight="semibold">
+                    <Icon as={FiTrendingUp} mr={2} />
+                    Total Batches
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" color="green.600">
+                    {farmerBatches.length}
+                  </StatNumber>
+                  <StatHelpText>Active poultry batches</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+
+            <Card bg={cardBg} borderColor={borderColor} shadow="lg" _hover={{ transform: 'translateY(-4px)' }} transition="all 0.2s">
+              <CardBody>
+                <Stat>
+                  <StatLabel color="purple.500" fontWeight="semibold">
+                    <Icon as={FiUser} mr={2} />
+                    Total Birds
+                  </StatLabel>
+                  <StatNumber fontSize="3xl" color="purple.600">
+                    {farmerBatches.reduce((total, batch) => total + (batch.currentPopulation || 0), 0)}
+                  </StatNumber>
+                  <StatHelpText>Total birds across all batches</StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          </SimpleGrid>
+
+          {/* Contact Information */}
+          <Card bg={cardBg} borderColor={borderColor} shadow="lg">
+            <CardBody>
+              <VStack spacing={4} align="stretch">
+                <Heading size="md" mb={2}>Contact Information</Heading>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  <HStack spacing={3}>
+                    <Icon as={FiMail} color="blue.500" />
+                    <Box>
+                      <Text fontWeight="semibold">Email</Text>
+                      <Text opacity={0.8}>{currentFarmer.user.email}</Text>
+                    </Box>
+                  </HStack>
+                  <HStack spacing={3}>
+                    <Icon as={FiPhone} color="green.500" />
+                    <Box>
+                      <Text fontWeight="semibold">Phone</Text>
+                      <Text opacity={0.8}>{currentFarmer.phone || 'Not provided'}</Text>
+                    </Box>
+                  </HStack>
+                  <HStack spacing={3}>
+                    <Icon as={FiMapPin} color="red.500" />
+                    <Box>
+                      <Text fontWeight="semibold">Address</Text>
+                      <Text opacity={0.8}>{currentFarmer.address || 'Not provided'}</Text>
+                    </Box>
+                  </HStack>
+                  <HStack spacing={3}>
+                    <Icon as={FiCalendar} color="purple.500" />
+                    <Box>
+                      <Text fontWeight="semibold">Experience Level</Text>
+                      <Text opacity={0.8}>{getExperienceLabel(currentFarmer.experience_level)}</Text>
+                    </Box>
+                  </HStack>
                 </SimpleGrid>
-              ) : (
-                <Alert status="info" borderRadius="md">
-                  <AlertIcon />
-                  <Box>
-                    <AlertTitle>No Active Batches</AlertTitle>
-                    <AlertDescription>
-                      {farmerData.farm 
-                        ? "You don't have any active batches. Create your first batch to start managing your flock."
-                        : "Set up your farm first before creating batches."
-                      }
-                    </AlertDescription>
-                  </Box>
-                </Alert>
-              )}
-            </VStack>
-          </CardBody>
-        </Card>
+              </VStack>
+            </CardBody>
+          </Card>
+        </VStack>
 
-        {/* Quick Actions */}
-        <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
-          <CardBody>
-            <VStack align="stretch" spacing={4}>
-              <HStack>
-                <Icon as={FiTrendingUp} color="green.500" />
-                <Heading size="md">Quick Actions</Heading>
-              </HStack>
+        {/* Edit Profile Modal */}
+        <Modal isOpen={isOpen} onClose={onClose} size="lg">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Profile</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <VStack spacing={4}>
+                <FormControl>
+                  <FormLabel>Full Name</FormLabel>
+                  <Input
+                    value={editForm.farmerName}
+                    onChange={(e) => setEditForm({ ...editForm, farmerName: e.target.value })}
+                    placeholder="Enter your full name"
+                  />
+                </FormControl>
 
-              <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                <Button
-                  variant="outline"
-                  h="60px"
-                  onClick={() => navigate('/farmer/onboarding')}
-                  isDisabled={profileCompletion === 100}
-                >
-                  Complete Setup
-                </Button>
-                <Button
-                  variant="outline"
-                  h="60px"
-                  onClick={() => navigate('/farmer/batches')}
-                >
-                  Manage Batches
-                </Button>
-                <Button
-                  variant="outline"
-                  h="60px"
-                  onClick={() => navigate('/farmer/health')}
-                >
-                  Health Records
-                </Button>
-                <Button
-                  variant="outline"
-                  h="60px"
-                  onClick={() => navigate('/farmer/reports')}
-                >
-                  View Reports
-                </Button>
-              </SimpleGrid>
-            </VStack>
-          </CardBody>
-        </Card>
-      </VStack>
+                <FormControl>
+                  <FormLabel>Phone Number</FormLabel>
+                  <Input
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    placeholder="Enter your phone number"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Address</FormLabel>
+                  <Input
+                    value={editForm.address}
+                    onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                    placeholder="Enter your address"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Experience Level</FormLabel>
+                  <Select
+                    value={editForm.experience_level}
+                    onChange={(e) => setEditForm({ ...editForm, experience_level: e.target.value })}
+                    placeholder="Select experience level"
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="experienced">Experienced</option>
+                    <option value="expert">Expert</option>
+                  </Select>
+                </FormControl>
+              </VStack>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button 
+                colorScheme="blue" 
+                mr={3} 
+                onClick={handleSaveProfile} 
+                isLoading={updateProfileMutation.isPending}
+              >
+                Save Changes
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Container>
     </FarmerLayout>
   );
 };
 
 export default FarmerProfile;
-
-// Farmer.objects.create(user=user, farmerName='Farmer One', ...)
