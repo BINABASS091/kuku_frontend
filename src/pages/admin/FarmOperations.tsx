@@ -484,9 +484,8 @@ const FarmOperations = () => {
   const handleSubmitFarm = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Map frontend payload to backend expected format
+    // Map frontend payload to backend expected format (Farm model fields only)
     const payload = {
-      farmerID: farmFormData.farmer,
       farmName: farmFormData.name,
       location: farmFormData.location,
       farmSize: farmFormData.size,
