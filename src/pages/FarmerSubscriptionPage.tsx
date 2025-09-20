@@ -6,11 +6,13 @@ import {
   VStack,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import FarmerLayout from '../layouts/FarmerLayout';
 import SubscriptionManager from '../components/farmer/SubscriptionManager';
 import { useAuth } from '../context/AuthContext';
 
 const FarmerSubscriptionPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const textColor = useColorModeValue('gray.600', 'gray.300');
 
@@ -20,10 +22,10 @@ const FarmerSubscriptionPage: React.FC = () => {
         {/* Page Header */}
         <Box>
           <Heading size="lg" mb={2}>
-            Subscription Management 💳
+            {t('subscriptionManagement')} 💳
           </Heading>
           <Text color={textColor}>
-            Manage your subscription plan, track usage, and handle billing
+            {t('manageSubscriptionPlan')}
           </Text>
         </Box>
 

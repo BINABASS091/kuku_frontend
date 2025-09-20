@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import FarmerSidebar from '../components/farmer/FarmerSidebar';
+import LanguageSwitcher from '../components/common/LanguageSwitcher';
 
 interface FarmerLayoutProps {
   children: React.ReactNode;
@@ -57,7 +58,7 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
     logout();
     navigate('/login');
     toast({
-      title: 'Logged out successfully',
+      title: t('logoutSuccessful'),
       status: 'success',
       duration: 2000,
     });
@@ -79,7 +80,7 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
-            <Text fontWeight="bold" color="green.500">Smart Kuku</Text>
+            <Text fontWeight="bold" color="green.500">{t('smartKuku')}</Text>
           </DrawerHeader>
           <DrawerBody p={0}>
             <FarmerSidebar onNavigation={onClose} />
@@ -134,16 +135,19 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
                 />
                 <VStack align="start" spacing={0}>
                   <Heading size="md" color={textColor}>
-                    Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}!
+                    {new Date().getHours() < 12 ? t('goodMorning') : new Date().getHours() < 18 ? t('goodAfternoon') : t('goodEvening')}!
                   </Heading>
                   <Text fontSize="sm" color="gray.500">
-                    Welcome back, {user?.name || 'Farmer'}
+                    {t('welcomeBack')}, {user?.name || t('farmer')}
                   </Text>
                 </VStack>
               </HStack>
 
               {/* Right side */}
               <HStack spacing={4}>
+                {/* Language Switcher */}
+                <LanguageSwitcher />
+
                 {/* Notifications */}
                 <Box position="relative">
                   <IconButton
@@ -192,21 +196,21 @@ const FarmerLayout = ({ children }: FarmerLayoutProps) => {
                           {user?.name || 'Farmer'}
                         </Text>
                         <Text fontSize="xs" color="gray.500">
-                          Farmer
+                          {t('farmer')}
                         </Text>
                       </VStack>
                     </HStack>
                   </MenuButton>
                   <MenuList>
                     <MenuItem icon={<FiUser />} onClick={handleProfileClick}>
-                      {t('profile')}
+                      {t('userProfile')}
                     </MenuItem>
                     <MenuItem icon={<FiSettings />} onClick={handleSettingsClick}>
                       {t('settings')}
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem icon={<FiLogOut />} onClick={handleLogout}>
-                      {t('logout')}
+                      {t('userLogout')}
                     </MenuItem>
                   </MenuList>
                 </Menu>

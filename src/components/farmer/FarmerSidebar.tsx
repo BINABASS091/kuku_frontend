@@ -211,7 +211,7 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
     },
     {
       icon: FiDollarSign,
-      label: 'Subscription',
+      label: t('subscription'),
       href: '/farmer/subscription',
       badge: farmerStats.subscription,
       badgeColor: 'green',
@@ -232,10 +232,10 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
         {/* Logo/Brand */}
         <Box mb={6} textAlign="center">
           <Text fontSize="xl" fontWeight="bold" color="green.500" mb={1}>
-            Smart Kuku
+            {t('smartKuku')}
           </Text>
           <Text fontSize="xs" color={textColor}>
-            Farmer Portal
+            {t('farmerPortal')}
           </Text>
         </Box>
 
@@ -259,13 +259,13 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
                 {user?.name}
               </Text>
               <Text fontSize="xs" color={textColor}>
-                Poultry Farmer
+                {t('poultryFarmer')}
               </Text>
             </VStack>
             
             <Box w="full">
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="xs" color={textColor}>Farm Health</Text>
+                <Text fontSize="xs" color={textColor}>{t('farmHealth')}</Text>
                 <Text fontSize="xs" fontWeight="semibold" color="green.500">
                   {farmerStats.farmHealth}%
                 </Text>
@@ -283,19 +283,19 @@ const FarmerSidebar = ({ onNavigation }: FarmerSidebarProps) => {
         {/* Quick Stats */}
         <Box mb={4}>
           <Text fontSize="xs" fontWeight="semibold" color={textColor} mb={3} textTransform="uppercase" letterSpacing="wide">
-            Quick Overview
+            {t('sidebarQuickOverview')}
           </Text>
           <VStack spacing={2}>
             <HStack justify="space-between" w="full">
-              <Text fontSize="sm" color={textColor}>Active Batches</Text>
+              <Text fontSize="sm" color={textColor}>{t('sidebarActiveBatches')}</Text>
               <Badge colorScheme="green" variant="subtle">{farmerStats.activeBatches}</Badge>
             </HStack>
             <HStack justify="space-between" w="full">
-              <Text fontSize="sm" color={textColor}>Total Birds</Text>
+              <Text fontSize="sm" color={textColor}>{t('sidebarTotalBirds')}</Text>
               <Badge colorScheme="blue" variant="subtle">{farmerStats.totalBirds}</Badge>
             </HStack>
             <HStack justify="space-between" w="full">
-              <Text fontSize="sm" color={textColor}>Tasks Today</Text>
+              <Text fontSize="sm" color={textColor}>{t('tasksToday')}</Text>
               <Badge colorScheme="orange" variant="subtle">{farmerStats.tasksToday}</Badge>
             </HStack>
           </VStack>

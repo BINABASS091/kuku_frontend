@@ -71,6 +71,7 @@ import {
   Cell,
 } from 'recharts';
 import { format, subMonths } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import SafeChartContainer from '../common/SafeChartContainer';
 
 interface SubscriptionPlan {
@@ -109,6 +110,7 @@ interface SubscriptionManagerProps {
 }
 
 const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
+  const { t } = useTranslation();
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const textColor = useColorModeValue('gray.600', 'gray.300');
@@ -118,7 +120,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
   // Mock data - replace with real API calls
   const currentSubscription = {
     id: 'sub_123',
-    plan: 'Professional Farm',
+    plan: t('professionalFarm'),
     tier: 'NORMAL' as const,
     status: 'active',
     nextBilling: '2024-02-15',
@@ -135,67 +137,67 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
   const subscriptionPlans: SubscriptionPlan[] = [
     {
       id: 'starter',
-      name: 'Starter Farm',
+      name: t('starterFarm'),
       tier: 'INDIVIDUAL',
       price: 19,
       billingCycle: 'monthly',
       features: [
-        'Up to 500 birds monitoring',
-        'Basic health tracking',
-        'Daily production reports',
-        'Email notifications',
-        'Mobile app access',
-        'Standard support (24h response)',
-        'Basic analytics dashboard',
+        `${t('upTo')} 500 ${t('birdsMonitoring')}`,
+        t('basicHealthTracking'),
+        t('dailyProductionReports'),
+        t('subscriptionEmailNotifications'),
+        t('mobileAppAccess'),
+        `${t('standardSupport')} (${t('responseTime24h')})`,
+        t('basicAnalytics'),
       ],
       maxBirds: 500,
       maxSensors: 2,
       analyticsIncluded: false,
-      supportLevel: 'Email Support',
+      supportLevel: t('subscriptionEmailNotifications'),
     },
     {
       id: 'professional',
-      name: 'Professional Farm',
+      name: t('professionalFarm'),
       tier: 'NORMAL',
       price: 49,
       billingCycle: 'monthly',
       features: [
-        'Up to 2,000 birds monitoring',
-        'Advanced health analytics',
-        'Automated alerts & notifications',
-        'Batch management tools',
-        'Financial tracking & reports',
-        'Vaccination scheduling',
-        'Feed optimization insights',
-        'Priority support (12h response)',
-        'API access for integrations',
-        'Custom report generation',
+        `${t('upTo')} 2,000 ${t('birdsMonitoring')}`,
+        t('advancedHealthTracking'),
+        t('subscriptionSmsNotifications'),
+        t('multipleFarms'),
+        t('weeklyReports'),
+        t('realTimeReports'),
+        t('advancedAnalytics'),
+        `${t('prioritySupport')} (${t('responseTime12h')})`,
+        t('apiAccess'),
+        t('customReports'),
       ],
       maxBirds: 2000,
       maxSensors: 5,
       analyticsIncluded: true,
-      supportLevel: 'Phone & Email',
+      supportLevel: `${t('prioritySupport')}`,
       popular: true,
     },
     {
       id: 'enterprise',
-      name: 'Enterprise Farm',
+      name: t('enterpriseFarm'),
       tier: 'PREMIUM',
       price: 99,
       billingCycle: 'monthly',
       features: [
-        'Unlimited birds monitoring',
-        'AI-powered health predictions',
-        'Multi-farm management',
-        'Real-time environmental monitoring',
-        'Advanced breeding guidance',
-        'Automated feed dispensing control',
-        'Marketplace integration',
-        'White-label mobile app',
-        '24/7 dedicated support (2h response)',
-        'On-site technical visits',
-        'Custom integrations & training',
-        'Advanced analytics & forecasting',
+        `${t('unlimitedFarms')} ${t('birdsMonitoring')}`,
+        t('predictiveAnalytics'),
+        t('teamCollaboration'),
+        t('comprehensiveHealthTracking'),
+        t('integrations'),
+        t('dataExport'),
+        t('roleBasedAccess'),
+        t('webDashboard'),
+        `${t('dedicatedSupport')} (${t('responseTime2h')})`,
+        t('customReports'),
+        t('apiAccess'),
+        t('predictiveAnalytics'),
       ],
       maxBirds: 999999,
       maxSensors: 999,
@@ -295,27 +297,27 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               <HStack>
                 <Heading size="lg">{currentSubscription.plan}</Heading>
                 <Badge colorScheme={getTierColor(currentSubscription.tier)} variant="solid">
-                  {currentSubscription.tier}
+                  {t(currentSubscription.tier.toLowerCase() + 'Tier')}
                 </Badge>
               </HStack>
               
               <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color={textColor}>Monthly Cost</Text>
+                  <Text fontSize="sm" color={textColor}>{t('subscriptionMonthly')} {t('subscriptionPrice')}</Text>
                   <Text fontSize="2xl" fontWeight="bold" color="green.500">
                     ${currentSubscription.price}
                   </Text>
                 </VStack>
                 
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color={textColor}>Birds Monitored</Text>
+                  <Text fontSize="sm" color={textColor}>{t('birds')} {t('birdsMonitoring')}</Text>
                   <Text fontSize="lg" fontWeight="medium">
                     {currentSubscription.birdsCount.toLocaleString()} / {currentSubscription.maxBirds.toLocaleString()}
                   </Text>
                 </VStack>
                 
                 <VStack align="start" spacing={1}>
-                  <Text fontSize="sm" color={textColor}>Next Billing</Text>
+                  <Text fontSize="sm" color={textColor}>{t('subscriptionNextBilling')}</Text>
                   <Text fontSize="lg" fontWeight="medium">
                     {format(new Date(currentSubscription.nextBilling), 'MMM dd, yyyy')}
                   </Text>
@@ -325,10 +327,10 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
             
             <VStack spacing={2}>
               <Button colorScheme="blue" leftIcon={<FiArrowUp />}>
-                Upgrade Plan
+                {t('subscriptionUpgradePlan')}
               </Button>
               <Button variant="outline" leftIcon={<FiSettings />} size="sm">
-                Manage
+                {t('manageSubscription')}
               </Button>
             </VStack>
           </HStack>
@@ -339,19 +341,19 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
         <TabList>
           <Tab>
             <Icon as={FiBarChart} mr={2} />
-            Usage & Limits
+            {t('usageOverview')}
           </Tab>
           <Tab>
             <Icon as={FiPackage} mr={2} />
-            Available Plans
+            {t('subscriptionPlans')}
           </Tab>
           <Tab>
             <Icon as={FiCreditCard} mr={2} />
-            Payment History
+            {t('paymentHistory')}
           </Tab>
           <Tab>
             <Icon as={FiSettings} mr={2} />
-            Settings
+            {t('settings')}
           </Tab>
         </TabList>
 
@@ -364,7 +366,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Birds Monitored</StatLabel>
+                      <StatLabel color={textColor}>{t('birds')} {t('birdsMonitoring')}</StatLabel>
                       <StatNumber color="blue.500">
                         {usageStats.currentBirds.toLocaleString()} / {usageStats.maxBirds.toLocaleString()}
                       </StatNumber>
@@ -375,7 +377,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                         mt={2}
                       />
                       <StatHelpText>
-                        {((usageStats.currentBirds / usageStats.maxBirds) * 100).toFixed(1)}% capacity
+                        {((usageStats.currentBirds / usageStats.maxBirds) * 100).toFixed(1)}% {t('capacity')}
                       </StatHelpText>
                     </Stat>
                   </CardBody>
@@ -384,7 +386,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Smart Sensors</StatLabel>
+                      <StatLabel color={textColor}>{t('subscriptionSensorsActive')}</StatLabel>
                       <StatNumber color="green.500">
                         {usageStats.currentSensors} / {usageStats.maxSensors}
                       </StatNumber>
@@ -395,7 +397,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                         mt={2}
                       />
                       <StatHelpText>
-                        Active monitoring devices
+                        {t('activeMonitoringDevices')}
                       </StatHelpText>
                     </Stat>
                   </CardBody>
@@ -404,7 +406,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Monthly Reports</StatLabel>
+                      <StatLabel color={textColor}>{t('monthlyReports')}</StatLabel>
                       <StatNumber color="purple.500">
                         {usageStats.monthlyReports} / {usageStats.reportsLimit}
                       </StatNumber>
@@ -415,7 +417,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                         mt={2}
                       />
                       <StatHelpText>
-                        Generated this month
+                        {t('generatedThisMonth')}
                       </StatHelpText>
                     </Stat>
                   </CardBody>
@@ -424,7 +426,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardBody>
                     <Stat>
-                      <StatLabel color={textColor}>Data Storage</StatLabel>
+                      <StatLabel color={textColor}>{t('dataStorage')}</StatLabel>
                       <StatNumber color="orange.500">
                         {usageStats.storageUsed}GB / {usageStats.storageLimit}GB
                       </StatNumber>
@@ -435,7 +437,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                         mt={2}
                       />
                       <StatHelpText>
-                        Farm data & analytics
+                        {t('farmDataAnalytics')}
                       </StatHelpText>
                     </Stat>
                   </CardBody>
@@ -445,36 +447,36 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               {/* Quick Actions */}
               <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                 <CardHeader>
-                  <Heading size="md">Quick Actions</Heading>
+                  <Heading size="md">{t('subscriptionQuickActions')}</Heading>
                 </CardHeader>
                 <CardBody>
                   <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
                     <VStack spacing={2}>
                       <Icon as={FiTrendingUp} boxSize={6} color="blue.500" />
-                      <Text fontSize="sm" textAlign="center">View Analytics</Text>
+                      <Text fontSize="sm" textAlign="center">{t('subscriptionViewAnalytics')}</Text>
                       <Button size="sm" variant="outline" colorScheme="blue">
-                        Open Dashboard
+                        {t('openDashboard')}
                       </Button>
                     </VStack>
                     <VStack spacing={2}>
                       <Icon as={FiDownload} boxSize={6} color="green.500" />
-                      <Text fontSize="sm" textAlign="center">Export Data</Text>
+                      <Text fontSize="sm" textAlign="center">{t('subscriptionExportData')}</Text>
                       <Button size="sm" variant="outline" colorScheme="green">
-                        Generate Report
+                        {t('subscriptionGenerateReport')}
                       </Button>
                     </VStack>
                     <VStack spacing={2}>
                       <Icon as={FiActivity} boxSize={6} color="purple.500" />
-                      <Text fontSize="sm" textAlign="center">Add Sensors</Text>
+                      <Text fontSize="sm" textAlign="center">{t('addSensors')}</Text>
                       <Button size="sm" variant="outline" colorScheme="purple">
-                        Setup Device
+                        {t('setupDevice')}
                       </Button>
                     </VStack>
                     <VStack spacing={2}>
                       <Icon as={FiCreditCard} boxSize={6} color="orange.500" />
-                      <Text fontSize="sm" textAlign="center">Billing Info</Text>
+                      <Text fontSize="sm" textAlign="center">{t('billingInfo')}</Text>
                       <Button size="sm" variant="outline" colorScheme="orange">
-                        Update Payment
+                        {t('updatePayment')}
                       </Button>
                     </VStack>
                   </SimpleGrid>
@@ -484,7 +486,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Farm Activity Trends</Heading>
+                    <Heading size="md">{t('farmActivityTrends')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <Box h="250px">
@@ -526,7 +528,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
 
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="md">Resource Distribution</Heading>
+                    <Heading size="md">{t('resourceDistribution')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <Flex h="250px" align="center" justify="center">
@@ -560,9 +562,9 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
           {/* Available Plans Tab */}
           <TabPanel>
             <VStack spacing={4} align="stretch">
-              <Heading size="md">Choose Your Farm Plan</Heading>
+              <Heading size="md">{t('chooseFarmPlan')}</Heading>
               <Text color={textColor}>
-                Select the perfect plan for your farm size and requirements. All plans include mobile app access and basic support.
+                {t('selectPerfectPlan')}
               </Text>
               
               <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
@@ -587,7 +589,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                         py={1}
                         borderRadius="full"
                       >
-                        MOST POPULAR
+                        {t('mostPopular')}
                       </Badge>
                     )}
                     
@@ -602,7 +604,9 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                             <Text color={textColor}>/{plan.billingCycle}</Text>
                           </HStack>
                           <Text fontSize="sm" color={textColor}>
-                            Up to {plan.maxBirds === 999999 ? 'Unlimited' : plan.maxBirds.toLocaleString()} birds
+                            {t('upToBirds', { 
+                              birds: plan.maxBirds === 999999 ? t('unlimited') : plan.maxBirds.toLocaleString() 
+                            })}
                           </Text>
                         </VStack>
 
@@ -622,7 +626,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                           onClick={() => handleUpgrade(plan)}
                           disabled={currentSubscription.tier === plan.tier}
                         >
-                          {currentSubscription.tier === plan.tier ? 'Current Plan' : 'Select Plan'}
+                          {currentSubscription.tier === plan.tier ? t('subscriptionCurrentPlanLabel') : t('selectPlan')}
                         </Button>
                       </VStack>
                     </CardBody>
@@ -633,39 +637,39 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               {/* Plan Comparison */}
               <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                 <CardHeader>
-                  <Heading size="md">Feature Comparison</Heading>
+                  <Heading size="md">{t('featureComparison')}</Heading>
                 </CardHeader>
                 <CardBody>
                   <Table variant="simple" size="sm">
                     <Thead>
                       <Tr>
-                        <Th>Feature</Th>
-                        <Th textAlign="center">Starter</Th>
-                        <Th textAlign="center">Professional</Th>
-                        <Th textAlign="center">Enterprise</Th>
+                        <Th>{t('feature')}</Th>
+                        <Th textAlign="center">{t('starter')}</Th>
+                        <Th textAlign="center">{t('professional')}</Th>
+                        <Th textAlign="center">{t('enterprise')}</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       <Tr>
-                        <Td>Birds Capacity</Td>
+                        <Td>{t('birdsCapacity')}</Td>
                         <Td textAlign="center">500</Td>
                         <Td textAlign="center">2,000</Td>
-                        <Td textAlign="center">Unlimited</Td>
+                        <Td textAlign="center">{t('unlimited')}</Td>
                       </Tr>
                       <Tr>
-                        <Td>Smart Sensors</Td>
+                        <Td>{t('smartSensors')}</Td>
                         <Td textAlign="center">2</Td>
                         <Td textAlign="center">5</Td>
-                        <Td textAlign="center">Unlimited</Td>
+                        <Td textAlign="center">{t('unlimited')}</Td>
                       </Tr>
                       <Tr>
-                        <Td>AI Analytics</Td>
+                        <Td>{t('aiAnalytics')}</Td>
                         <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
                         <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
                         <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
                       </Tr>
                       <Tr>
-                        <Td>24/7 Support</Td>
+                        <Td>{t('support247')}</Td>
                         <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
                         <Td textAlign="center"><Icon as={FiX} color="red.500" /></Td>
                         <Td textAlign="center"><Icon as={FiCheck} color="green.500" /></Td>
@@ -681,20 +685,20 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
           <TabPanel>
             <VStack spacing={4} align="stretch">
               <HStack justify="space-between">
-                <Heading size="md">Payment History</Heading>
+                <Heading size="md">{t('paymentHistory')}</Heading>
                 <Button leftIcon={<FiDownload />} size="sm" variant="outline">
-                  Export
+                  {t('dataExport')}
                 </Button>
               </HStack>
 
               <Table variant="simple">
                 <Thead>
                   <Tr>
-                    <Th>Date</Th>
-                    <Th>Amount</Th>
-                    <Th>Method</Th>
-                    <Th>Status</Th>
-                    <Th>Invoice</Th>
+                    <Th>{t('paymentDate')}</Th>
+                    <Th>{t('amount')}</Th>
+                    <Th>{t('subscriptionMethod')}</Th>
+                    <Th>{t('status')}</Th>
+                    <Th>{t('downloadInvoice')}</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -707,13 +711,13 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                       <Td>{payment.method}</Td>
                       <Td>
                         <Badge colorScheme={getStatusColor(payment.status)} variant="subtle">
-                          {payment.status.toUpperCase()}
+                          {t(`paymentStatus.${payment.status.toLowerCase()}`)}
                         </Badge>
                       </Td>
                       <Td>
                         {payment.invoiceUrl && (
                           <Button size="xs" variant="outline" leftIcon={<FiDownload />}>
-                            Download
+                            {t('download')}
                           </Button>
                         )}
                       </Td>
@@ -725,9 +729,11 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               <Alert status="info" borderRadius="md">
                 <AlertIcon />
                 <Box>
-                  <AlertTitle>Automatic Payments Enabled</AlertTitle>
+                  <AlertTitle>{t('automaticPaymentsEnabled')}</AlertTitle>
                   <AlertDescription>
-                    Your subscription will automatically renew on {format(new Date(currentSubscription.nextBilling), 'MMMM dd, yyyy')}.
+                    {t('subscriptionAutoRenewMsg', {
+                      date: format(new Date(currentSubscription.nextBilling), 'MMMM dd, yyyy')
+                    })}
                   </AlertDescription>
                 </Box>
               </Alert>
@@ -737,23 +743,23 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
           {/* Settings Tab */}
           <TabPanel>
             <VStack spacing={6} align="stretch">
-              <Heading size="md">Subscription Settings</Heading>
+              <Heading size="md">{t('subscriptionSettings')}</Heading>
 
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="sm">Billing Information</Heading>
+                    <Heading size="sm">{t('billingInformation')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={3} align="stretch">
                       <Button leftIcon={<FiCreditCard />} variant="outline">
-                        Update Payment Method
+                        {t('updatePaymentMethod')}
                       </Button>
                       <Button leftIcon={<FiCalendar />} variant="outline">
-                        Change Billing Cycle
+                        {t('changeBillingCycle')}
                       </Button>
                       <Button leftIcon={<FiDownload />} variant="outline">
-                        Download Invoices
+                        {t('downloadInvoices')}
                       </Button>
                     </VStack>
                   </CardBody>
@@ -761,18 +767,18 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
 
                 <Card bg={cardBg} borderWidth="1px" borderColor={borderColor}>
                   <CardHeader>
-                    <Heading size="sm">Subscription Controls</Heading>
+                    <Heading size="sm">{t('subscriptionControls')}</Heading>
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={3} align="stretch">
                       <Button leftIcon={<FiArrowUp />} colorScheme="blue">
-                        Upgrade Plan
+                        {t('upgradePlan')}
                       </Button>
                       <Button leftIcon={<FiSettings />} variant="outline">
-                        Manage Features
+                        {t('manageFeatures')}
                       </Button>
                       <Button leftIcon={<FiX />} colorScheme="red" variant="outline">
-                        Cancel Subscription
+                        {t('cancelSubscription')}
                       </Button>
                     </VStack>
                   </CardBody>
@@ -782,9 +788,9 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
               <Alert status="warning" borderRadius="md">
                 <AlertIcon />
                 <Box>
-                  <AlertTitle>Need Help?</AlertTitle>
+                  <AlertTitle>{t('needHelp')}</AlertTitle>
                   <AlertDescription>
-                    Contact our support team for assistance with billing, upgrades, or technical issues. We're here to help your farm succeed!
+                    {t('supportContactMessage')}
                   </AlertDescription>
                 </Box>
               </Alert>
@@ -797,7 +803,7 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Upgrade to {selectedPlan?.name} Plan</ModalHeader>
+          <ModalHeader>{t('upgradeToPlan', { planName: selectedPlan?.name })}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedPlan && (
@@ -805,16 +811,19 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
                 <Alert status="info" borderRadius="md">
                   <AlertIcon />
                   <Box>
-                    <AlertTitle>Plan Upgrade</AlertTitle>
+                    <AlertTitle>{t('planUpgrade')}</AlertTitle>
                     <AlertDescription>
-                      You're upgrading to the {selectedPlan.name} plan for ${selectedPlan.price}/{selectedPlan.billingCycle}.
-                      Your new features will be available immediately.
+                      {t('upgradingToPlan', {
+                        planName: selectedPlan.name,
+                        price: selectedPlan.price,
+                        cycle: t(selectedPlan.billingCycle)
+                      })}
                     </AlertDescription>
                   </Box>
                 </Alert>
                 
                 <Box>
-                  <Heading size="sm" mb={2}>What you'll get:</Heading>
+                  <Heading size="sm" mb={2}>{t('whatYouWillGet')}</Heading>
                   <List spacing={2}>
                     {selectedPlan.features.map((feature, index) => (
                       <ListItem key={index}>
@@ -829,10 +838,10 @@ const SubscriptionManager: React.FC<SubscriptionManagerProps> = () => {
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
+              {t('subscriptionCancel')}
             </Button>
             <Button colorScheme="blue">
-              Confirm Upgrade
+              {t('subscriptionConfirmUpgrade')}
             </Button>
           </ModalFooter>
         </ModalContent>
