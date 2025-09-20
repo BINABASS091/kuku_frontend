@@ -352,7 +352,7 @@ const FarmOperations = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await alertAPI.list();
+      const response = await alertAPI.list({});
       setAlerts(response.results || response);
       setFilteredAlerts(response.results || response);
     } catch (error) {

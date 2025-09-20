@@ -1,30 +1,20 @@
-import { Box, Heading, Text, Button, VStack, Container, Flex, useColorModeValue, Icon } from '@chakra-ui/react';
+import { Box, Heading, Text, Button, VStack, Container, Flex, useColorModeValue } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiFeather, FiTrendingUp, FiShield } from 'react-icons/fi';
 
 const Home = () => {
   const bgGradient = useColorModeValue(
-    'linear(to-br, rgba(56, 178, 172, 0.9), rgba(59, 130, 246, 0.8))',
-    'linear(to-br, rgba(56, 178, 172, 0.8), rgba(59, 130, 246, 0.7))'
+    'linear(to-r, teal.400, blue.500)',
+    'linear(to-r, teal.500, blue.600)'
   );
   
-  const cardBg = useColorModeValue('rgba(255, 255, 255, 0.85)', 'rgba(26, 32, 44, 0.85)');
-  const textColor = useColorModeValue('gray.800', 'white');
-  const overlayBg = useColorModeValue('rgba(255, 255, 255, 0.05)', 'rgba(0, 0, 0, 0.1)');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.600', 'gray.200');
   
   return (
-    <>
-      <style>
-        {`
-          @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-          }
-        `}
-      </style>
     <Box
       minH="100vh"
+      bgGradient={bgGradient}
       position="relative"
       overflow="hidden"
       display="flex"
@@ -33,75 +23,34 @@ const Home = () => {
       alignItems="center"
       textAlign="center"
       px={4}
-      _before={{
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: 'url(/images/5.jpeg)',
-        backgroundSize: 'contain',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 0.8,
-        zIndex: 0,
-      }}
-      bgGradient={bgGradient}
     >
-      {/* Minimal overlay for slight text contrast */}
+      {/* Animated background elements */}
       <Box
         position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bg={overlayBg}
-        zIndex={1}
+        top="-10%"
+        right="0"
+        width="300px"
+        height="300px"
+        borderRadius="full"
+        bg="rgba(255, 255, 255, 0.1)"
+        filter="blur(40px)"
       />
-      {/* Enhanced animated background elements */}
       <Box
         position="absolute"
-        top="-5%"
-        right="-5%"
+        bottom="-10%"
+        left="0"
         width="400px"
         height="400px"
         borderRadius="full"
-        bg="rgba(255, 255, 255, 0.08)"
-        filter="blur(50px)"
-        zIndex={1}
-        animation="float 6s ease-in-out infinite"
-      />
-      <Box
-        position="absolute"
-        bottom="-5%"
-        left="-5%"
-        width="500px"
-        height="500px"
-        borderRadius="full"
-        bg="rgba(56, 178, 172, 0.1)"
-        filter="blur(60px)"
-        zIndex={1}
-        animation="float 8s ease-in-out infinite reverse"
-      />
-      <Box
-        position="absolute"
-        top="20%"
-        left="10%"
-        width="200px"
-        height="200px"
-        borderRadius="full"
-        bg="rgba(59, 130, 246, 0.08)"
+        bg="rgba(255, 255, 255, 0.1)"
         filter="blur(40px)"
-        zIndex={1}
-        animation="float 10s ease-in-out infinite"
       />
       
       <Container 
         maxW="container.lg" 
-        py={20} 
+        py={16} 
         position="relative" 
-        zIndex={3} 
+        zIndex={1} 
         display="flex" 
         flexDirection="column" 
         alignItems="center"
@@ -123,16 +72,13 @@ const Home = () => {
           >
             <Box
               bg={cardBg}
-              p={{ base: 6, md: 10 }}
-              borderRadius="2xl"
-              boxShadow="2xl"
+              p={8}
+              borderRadius="xl"
+              boxShadow="xl"
               textAlign="center"
               w="100%"
               position="relative"
               overflow="hidden"
-              backdropFilter="blur(2px)"
-              border="1px solid"
-              borderColor="rgba(255, 255, 255, 0.15)"
               _before={{
                 content: '""',
                 position: 'absolute',
@@ -140,193 +86,135 @@ const Home = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-                bgGradient: 'linear(to-r, teal.400, blue.500, purple.500)',
-              }}
-              _after={{
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                bgGradient: 'radial(circle at top right, rgba(56, 178, 172, 0.1), transparent 60%)',
-                pointerEvents: 'none',
+                bgGradient: 'linear(to-r, teal.400, blue.500)',
               }}
             >
               <motion.div
                 animate={{
-                  y: [0, -8, 0],
-                  rotateY: [0, 5, 0],
+                  y: [0, -10, 0],
                 }}
                 transition={{
-                  duration: 4,
+                  duration: 5,
                   repeat: Infinity,
                   repeatType: "reverse",
-                  ease: "easeInOut",
                 }}
                 style={{
                   display: 'inline-block',
-                  marginBottom: '2rem'
+                  marginBottom: '1.5rem'
                 }}
               >
                 <Box
                   as="span"
                   display="inline-block"
-                  p={6}
-                  borderRadius="xl"
-                  bgGradient="linear(135deg, teal.400, blue.500, purple.500)"
+                  p={4}
+                  borderRadius="lg"
+                  bgGradient={bgGradient}
                   color="white"
-                  boxShadow="xl"
-                  transform="perspective(1000px) rotateX(5deg)"
-                  _hover={{
-                    transform: "perspective(1000px) rotateX(0deg) scale(1.05)",
-                    transition: "all 0.3s ease",
-                  }}
+                  boxShadow="lg"
                 >
-                  <Icon as={FiFeather} boxSize={12} />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                  </svg>
                 </Box>
               </motion.div>
               
               <Heading 
                 as="h1" 
-                size={{ base: "xl", md: "2xl", lg: "3xl" }}
-                mb={6} 
-                bgGradient="linear(135deg, teal.400, blue.500, purple.600)"
+                size="2xl" 
+                mb={4} 
+                bgGradient={bgGradient}
                 bgClip="text"
                 fontWeight="extrabold"
-                letterSpacing="tight"
-                lineHeight="shorter"
-                textShadow="0 0 20px rgba(56, 178, 172, 0.3)"
               >
                 Welcome to Smart Kuku
               </Heading>
               
               <Text 
-                fontSize={{ base: "lg", md: "xl" }}
-                mb={10} 
+                fontSize="xl" 
+                mb={8} 
                 color={textColor}
-                maxW="3xl" 
+                maxW="2xl" 
                 mx="auto"
                 lineHeight="tall"
-                fontWeight="medium"
-                textAlign="center"
-                opacity={0.9}
               >
                 Transform your poultry farming with our comprehensive farm management solution. 
-                Monitor, manage, and grow your business with intelligent insights and real-time data.
+                Monitor, manage, and grow your business with ease.
               </Text>
               
-              <VStack spacing={8} maxW="md" mx="auto">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{ width: '100%' }}
+              <VStack spacing={6} maxW="md" mx="auto">
+                <Button
+                  as={RouterLink}
+                  to="/login"
+                  colorScheme="teal"
+                  size="lg"
+                  width="100%"
+                  py={6}
+                  fontSize="lg"
+                  fontWeight="bold"
+                  borderRadius="lg"
+                  _hover={{
+                    transform: 'translateY(-2px)',
+                    boxShadow: 'lg',
+                  }}
+                  transition="all 0.2s"
                 >
-                  <Button
-                    as={RouterLink}
-                    to="/login"
-                    size="lg"
-                    width="100%"
-                    py={8}
-                    fontSize="lg"
-                    fontWeight="bold"
-                    borderRadius="xl"
-                    bgGradient="linear(135deg, teal.400, blue.500)"
-                    color="white"
-                    _hover={{
-                      bgGradient: "linear(135deg, teal.500, blue.600)",
-                      transform: 'translateY(-3px)',
-                      boxShadow: '0 20px 40px rgba(56, 178, 172, 0.4)',
-                    }}
-                    _active={{
-                      transform: 'translateY(-1px)',
-                    }}
-                    transition="all 0.3s ease"
-                    position="relative"
-                    overflow="hidden"
-                    _before={{
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: '-100%',
-                      width: '100%',
-                      height: '100%',
-                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                      transition: 'left 0.5s',
-                    }}
-                    _groupHover={{
-                      _before: {
-                        left: '100%',
-                      }
-                    }}
-                  >
-                    🚀 Get Started - Login
-                  </Button>
-                </motion.div>
+                  Get Started - Login
+                </Button>
                 
-                <Text color={textColor} my={4} fontSize="md">
+                <Text color={textColor} my={2}>
                   Don't have an account?{' '}
                   <Button 
                     as={RouterLink} 
                     to="/register" 
                     variant="link" 
                     colorScheme="blue"
-                    fontSize="md"
-                    fontWeight="bold"
-                    textDecoration="underline"
+                    fontSize="lg"
+                    fontWeight="semibold"
                     _hover={{
                       textDecoration: 'none',
-                      color: 'blue.400',
-                      transform: 'scale(1.05)',
+                      color: 'blue.500',
                     }}
-                    transition="all 0.2s"
                   >
-                    Sign up now ✨
+                    Sign up now
                   </Button>
                 </Text>
               </VStack>
               
               <Flex 
-                mt={16} 
+                mt={12} 
                 justify="center" 
-                gap={{ base: 4, md: 8 }} 
+                gap={8} 
                 flexWrap="wrap"
                 color={textColor}
               >
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Flex align="center" gap={3} p={3} borderRadius="lg" bg="rgba(56, 178, 172, 0.1)" backdropFilter="blur(10px)">
-                    <Icon as={FiTrendingUp} color="green.400" boxSize={5} />
-                    <Text fontWeight="medium">Real-time Monitoring</Text>
-                  </Flex>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Flex align="center" gap={3} p={3} borderRadius="lg" bg="rgba(59, 130, 246, 0.1)" backdropFilter="blur(10px)">
-                    <Box w={5} h={5} borderRadius="full" bg="blue.400" />
-                    <Text fontWeight="medium">Smart Analytics</Text>
-                  </Flex>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Flex align="center" gap={3} p={3} borderRadius="lg" bg="rgba(147, 51, 234, 0.1)" backdropFilter="blur(10px)">
-                    <Icon as={FiShield} color="purple.400" boxSize={5} />
-                    <Text fontWeight="medium">24/7 Support</Text>
-                  </Flex>
-                </motion.div>
+                <Flex align="center" gap={2}>
+                  <Box w={3} h={3} borderRadius="full" bg="green.400" />
+                  <Text>Real-time Monitoring</Text>
+                </Flex>
+                <Flex align="center" gap={2}>
+                  <Box w={3} h={3} borderRadius="full" bg="blue.400" />
+                  <Text>Smart Analytics</Text>
+                </Flex>
+                <Flex align="center" gap={2}>
+                  <Box w={3} h={3} borderRadius="full" bg="purple.400" />
+                  <Text>24/7 Support</Text>
+                </Flex>
               </Flex>
             </Box>
           </motion.div>
         </VStack>
       </Container>
     </Box>
-    </>
   );
 };
 

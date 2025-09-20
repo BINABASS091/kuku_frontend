@@ -77,7 +77,10 @@ type ActivityType = {
 type ConditionType = {
   id: number;
   condition_typeID: number;
-  name: string;
+  conditionName: string;
+  condition_unit: string;
+  name: string; // duplicate field from serializer
+  unit: string; // duplicate field from serializer
   breed_conditions_count: number;
   active_conditions_count: number;
 };
@@ -491,7 +494,8 @@ const MasterData: React.FC = () => {
                     title="Condition Types"
                     endpoint="condition-types/"
                     columns={[
-                      { key: 'name', header: 'Condition Name' },
+                      { key: 'conditionName', header: 'Condition Name' },
+                      { key: 'condition_unit', header: 'Unit' },
                       { 
                         key: 'breed_conditions_count', 
                         header: 'Total Conditions',
@@ -512,9 +516,14 @@ const MasterData: React.FC = () => {
                       },
                     ]}
                     fields={[
-                      { type: 'text', name: 'name', label: 'Condition Name', required: true, placeholder: 'e.g., Temperature, Humidity' },
+                      { type: 'text', name: 'conditionName', label: 'Condition Name', required: true, placeholder: 'e.g., Temperature, Humidity' },
+                      { type: 'text', name: 'condition_unit', label: 'Unit', required: true, placeholder: 'e.g., °C, %' },
                     ]}
                     normalizeOut={(item) => ({ ...item, id: item.condition_typeID })}
+                    normalizeIn={(formData) => ({
+                      conditionName: formData.conditionName,
+                      condition_unit: formData.condition_unit,
+                    })}
                   />
                 </TabPanel>
 

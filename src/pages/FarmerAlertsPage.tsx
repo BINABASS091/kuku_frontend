@@ -13,7 +13,7 @@ const severityColor = (severity: string) => {
 };
 
 const FarmerAlertsPage: React.FC = () => {
-  const { data, isLoading, isError, error } = useQuery(['farmerAlerts'], () => alertAPI.list());
+  const { data, isLoading, isError, error } = useQuery(['farmerAlerts'], () => alertAPI.list({}));
   const alerts = data?.results || [];
 
   return (
