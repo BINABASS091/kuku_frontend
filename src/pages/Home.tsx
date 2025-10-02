@@ -7,14 +7,13 @@ const Home = () => {
     'linear(to-r, teal.400, blue.500)',
     'linear(to-r, teal.500, blue.600)'
   );
-  
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.200');
-  
+  const backgroundImageUrl = 'https://res.cloudinary.com/diyy8h0d9/image/upload/v1758970714/kuku7_s3x1wv.jpg';
+
   return (
     <Box
       minH="100vh"
-      bgGradient={bgGradient}
       position="relative"
       overflow="hidden"
       display="flex"
@@ -24,6 +23,35 @@ const Home = () => {
       textAlign="center"
       px={4}
     >
+      {/* Moving background image slightly forward */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={1}
+        pointerEvents="none"
+        sx={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          transition: 'background-position 1s',
+        }}
+      />
+      {/* Overlay for readability, more transparent */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        bgGradient={bgGradient}
+        opacity={0.4}
+        zIndex={2}
+        pointerEvents="none"
+      />
       {/* Animated background elements */}
       <Box
         position="absolute"
@@ -34,6 +62,7 @@ const Home = () => {
         borderRadius="full"
         bg="rgba(255, 255, 255, 0.1)"
         filter="blur(40px)"
+        pointerEvents="none"
       />
       <Box
         position="absolute"
@@ -44,6 +73,7 @@ const Home = () => {
         borderRadius="full"
         bg="rgba(255, 255, 255, 0.1)"
         filter="blur(40px)"
+        pointerEvents="none"
       />
       
       <Container 
@@ -63,6 +93,7 @@ const Home = () => {
           w="100%" 
           maxW="2xl"
           mx="auto"
+          zIndex={3}
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -79,6 +110,10 @@ const Home = () => {
               w="100%"
               position="relative"
               overflow="hidden"
+              sx={{
+                backgroundColor: 'rgba(255,255,255,0.3)', // more transparent
+                backdropFilter: 'blur(1px)', // less blur
+              }}
               _before={{
                 content: '""',
                 position: 'absolute',
